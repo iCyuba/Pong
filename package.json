@@ -1,0 +1,12 @@
+{
+  "name": "pongserver",
+  "version": "0.0.1",
+  "description": "A websocket server for my pong game written in C#",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "author": "iCyuba",
+  "homepage": "https://pong.icy.cx",
+  "license": "MIT"
+}
