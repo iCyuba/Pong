@@ -4,25 +4,30 @@
   "description": "A websocket server for my pong game written in C#",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon -r tsconfig-paths/register",
-    "build": "tsc",
-    "start": "node -r tsconfig-paths/register build/index.js",
+    "dev": "NODE_ENV=development webpack --watch",
+    "build": "webpack",
+    "start": "node dist/main.js",
     "prettier": "prettier --write ."
   },
   "author": "iCyuba",
   "homepage": "https://pong.icy.cx",
   "license": "MIT",
+  "sideEffects": false,
   "dependencies": {
-    "tsconfig-paths": "^4.2.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/node": "^20.2.5",
+    "@types/webpack-env": "^1.18.1",
     "@types/ws": "^8.5.4",
-    "nodemon": "^2.0.22",
+    "nodemon-webpack-plugin": "^4.8.1",
     "prettier": "^2.8.8",
+    "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "tsconfig-paths-webpack-plugin": "^4.0.1",
+    "typescript": "^5.0.4",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1"
   }
 }

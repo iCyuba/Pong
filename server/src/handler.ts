@@ -1,6 +1,3 @@
-import { readdir } from "fs/promises";
-import { join } from "path";
-
 import { RawData, WebSocket } from "ws";
 
 import GameEventHandler, { GameEvent } from "@/event";
@@ -113,12 +110,11 @@ export default class MessageHandler {
    */
   async registerAllHandlers(): Promise<void> {
     // Import all handlers from the events folder
-    const handlerFolder = join(__dirname, "events");
-    for (const file of await readdir(handlerFolder)) {
-      const path = join(handlerFolder, file);
+    const handlers = require.context("./events/", true, /\.ts$/);
 
+    for (const handler of handlers.keys()) {
       // We can assume that the default export is the a class that extends GameEventHandler
-      const module = await import(path);
+      const module = handlers(handler); // Import the module (the handler class)
       const Handler = module.default as typeof GameEventHandler;
 
       // Pass to the register function

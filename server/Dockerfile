@@ -11,6 +11,7 @@ RUN npm ci
 
 # Build the app
 COPY tsconfig.json ./
+COPY webpack.config.ts ./
 COPY src ./src
 RUN npm run build
 
@@ -19,12 +20,8 @@ FROM base as run
 
 WORKDIR /app
 
-# Install only production dependencies
-COPY package*.json ./
-RUN npm ci --only=production
-
 # Copy the built app
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/dist ./
 
 # Run the app
-CMD ["npm", "run", "start"]
+CMD ["node", "main.js"]

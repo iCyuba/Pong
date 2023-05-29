@@ -51,7 +51,7 @@ export default class Server extends WebSocketServer {
    */
   private onClose(ws: WebSocket): void {
     // If the server is running in devmode, log the close
-    if (this.dev) console.log(`${new Date()} - close`);
+    if (this.dev) console.log(new Date(), "Closed connection");
 
     // Remove the player from the game (if they're not registered, this does nothing)
     this.game.removePlayer(ws);
