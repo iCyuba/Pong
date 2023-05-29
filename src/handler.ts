@@ -1,0 +1,128 @@
+import { readdir } from "fs/promises";
+import { join } from "path";
+
+import { RawData, WebSocket } from "ws";
+
+import GameEventHandler, { GameEvent } from "@/event";
+import Server from "@/server";
+
+/**
+ * A class that handles messages for the WebSocket messages
+ */
+export default class MessageHandler {
+  /** The error message to send when the client sends invalid JSON */
+  private static invalidJSONError = JSON.stringify({
+    type: "error",
+    message: "Invalid JSON",
+  });
+
+  /** All of the loaded game event handlers */
+  handlers: Record<string, GameEventHandler> = {};
+
+  /** The WebSocket server, required because each handler is initialized with it */
+  private wss: Server;
+
+  /**
+   * Create a new MessageHandler instance
+   * @param {Server} wss The WebSocket server
+   * @param {boolean} registerAll Whether to load all game event handlers at initialization
+   * @throws Error
+   */
+  constructor(wss: Server, registerAll: boolean = true) {
+    this.wss = wss;
+
+    // Register all game event handlers
+    if (registerAll) this.registerAllHandlers();
+  }
+
+  /**
+   * Handle a message
+   * @param {WebSocket} ws The WebSocket connection
+   * @param {RawData} data The message data
+   * @throws Error
+   */
+  handle(ws: WebSocket, data: RawData): void {
+    // Parse the message as JSON
+    let message: GameEvent;
+    try {
+      message = JSON.parse(data.toString());
+    } catch (_) {
+      // If an error occurs, send an error message to the client
+      return ws.send(MessageHandler.invalidJSONError);
+    }
+
+    // Return an error if the message type is invalid or the handler for it doesn't exist
+    if (typeof message.type !== "string" || !Object.keys(this.handlers).includes(message.type)) {
+      return ws.send(MessageHandler.invalidJSONError);
+    }
+
+    // Call the handler for the message type
+    try {
+      const result = this.handlers[message.type].handle(ws, message);
+
+      // If the handler returns a promise, add a catch handler to send an error message to the client
+      if (result instanceof Promise) result.catch(err => MessageHandler.sendError(ws, err));
+    } catch (err) {
+      // If an error occurs, send an error message to the client
+      MessageHandler.sendError(ws, err as any);
+    }
+  }
+
+  /**
+   * Send an error message to the client
+   * @param {WebSocket} ws The WebSocket connection
+   * @param {string | Error} err The error object or message
+   */
+  static sendError(ws: WebSocket, err: string | Error): void {
+    // If the error is an Error object, get the message
+    if (err instanceof Error) err = err.message;
+
+    // Send the error message
+    ws.send(JSON.stringify({ type: "error", message: err }));
+
+    // Log the error if in development mode
+    if (process.env.NODE_ENV === "development") console.error(new Date(), err);
+  }
+
+  /**
+   * Register a new game event handler
+   * @param {GameEventHandler} Handler The handler to register (must extend GameEventHandler)
+   * @throws Error
+   */
+  register<T extends typeof GameEventHandler>(Handler: T): void {
+    // Check if HandlerClass is a class (typeof returns "function" for classes)
+    if (typeof Handler !== "function") throw new Error("Handler isn't a class!");
+
+    // Create a new instance of the handler
+    // @ts-ignore (I honestly dunno anymore, this ain't abstract... ts thinks it is tho)
+    const handler: InstanceType<T> = new Handler(this.wss);
+
+    // Check if the handler is valid (i.e. extends GameEventHandler)
+    if (!(handler instanceof GameEventHandler))
+      throw new Error(`Handler ${Handler.name} doesn't extend GameEventHandler!`);
+
+    // Register the handler (rewrite if already exists)
+    this.handlers[Handler.type] = handler;
+  }
+
+  /**
+   * Register all game event handlers
+   * (these are defined here cuz I don't want to have them in each of the ws connections)
+   * @async
+   * @throws Error
+   */
+  async registerAllHandlers(): Promise<void> {
+    // Import all handlers from the events folder
+    const handlerFolder = join(__dirname, "events");
+    for (const file of await readdir(handlerFolder)) {
+      const path = join(handlerFolder, file);
+
+      // We can assume that the default export is the a class that extends GameEventHandler
+      const module = await import(path);
+      const Handler = module.default as typeof GameEventHandler;
+
+      // Pass to the register function
+      this.register(Handler);
+    }
+  }
+}
