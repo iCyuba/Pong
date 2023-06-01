@@ -90,7 +90,7 @@ export default class Game {
     this.broadcast(Register(player), this.getPlayersNotInSession());
 
     // Send the player a list of all the players who aren't in a session
-    player.send(List(this.getPlayersNotInSession()));
+    player.send(List(this.getPlayersNotInSession(), player));
   }
 
   /**
@@ -108,14 +108,22 @@ export default class Game {
   }
 
   // My convenience methods:
-  // They're marked as private because they're only used internally.
+
+  /**
+   * Find a player from their websocket
+   * @param {WebSocket} ws The player's WebSocket connection
+   * @returns {Player | null}
+   */
+  getPlayer(ws: WebSocket): Player | undefined {
+    return this.players.find(player => player.ws === ws);
+  }
 
   /**
    * Find player's session
    * @param {WebSocket} ws A WebSocket connection
    * @returns {Session} The player's session
    */
-  private getPlayerSession(ws: WebSocket): Session | undefined {
+  getPlayerSession(ws: WebSocket): Session | undefined {
     return this.sessions.find(session => session.player1.ws === ws || session.player2.ws === ws);
   }
 
@@ -124,7 +132,7 @@ export default class Game {
    * @param {WebSocket} ws A WebSocket connection
    * @returns {boolean} Whether the player is in a session
    */
-  private isPlayerInSession(ws: WebSocket): boolean {
+  isPlayerInSession(ws: WebSocket): boolean {
     return this.getPlayerSession(ws) !== undefined;
   }
 
@@ -132,7 +140,7 @@ export default class Game {
    * Get all players who aren't in a session
    * @returns {Player[]} A list of players who aren't in a session
    */
-  private getPlayersNotInSession(): Player[] {
+  getPlayersNotInSession(): Player[] {
     return this.players.filter(player => !this.isPlayerInSession(player.ws));
   }
 }
