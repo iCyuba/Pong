@@ -32,7 +32,8 @@ namespace Pong.Connection
       EventHandlers();
 
       // If autoConnect is true, connect to the server
-      if (autoConnect) _ = Connect(); // don't wait for the connection to complete
+      if (autoConnect)
+        _ = Connect(); // don't wait for the connection to complete
     }
 
     /// <summary>

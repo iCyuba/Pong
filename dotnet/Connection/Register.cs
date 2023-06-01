@@ -6,7 +6,8 @@ namespace Pong.Connection
     {
       public string Name { get; set; }
 
-      public RegisterEvent(string name) : base("register")
+      public RegisterEvent(string name)
+        : base("register")
       {
         Name = name;
       }
@@ -48,8 +49,8 @@ namespace Pong.Connection
 
       var registerEvent = new Dictionary<string, string>
       {
-          { "type", "register" },
-          { "name", name }
+        { "type", "register" },
+        { "name", name }
       };
 
       await Send(registerEvent);

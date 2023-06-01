@@ -6,7 +6,8 @@ namespace Pong.Connection
 {
   partial class Connection
   {
-    static private JsonSerializerOptions JsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    static private JsonSerializerOptions JsonSerializerOptions =
+      new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     private class GameEvent
     {
@@ -20,9 +21,11 @@ namespace Pong.Connection
       /// <summary>
       /// Deserialize a GameEvent (or subclass) from json
       /// </summary>
-      public static T Deserialize<T>(string json) where T : GameEvent
+      public static T Deserialize<T>(string json)
+        where T : GameEvent
       {
-        return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions) ?? throw new Exception("Failed to parse event");
+        return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions)
+          ?? throw new Exception("Failed to parse event");
       }
 
       /// <summary>
@@ -103,7 +106,8 @@ namespace Pong.Connection
     /// </summary>
     public async Task Send(object data)
     {
-      if (WS.State != WebSocketState.Open) throw new Exception("The websocket is not open");
+      if (WS.State != WebSocketState.Open)
+        throw new Exception("The websocket is not open");
 
       string serialized = JsonSerializer.Serialize(data);
 
