@@ -45,7 +45,6 @@ namespace Pong.Connection
     {
       // On message
       OnMessageHandler += OnMessage;
-      OnMessageHandler += (object? _, string message) => Console.WriteLine(message);
 
       // On register
       OnRegisterHandler += OnRegister;

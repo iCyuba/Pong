@@ -42,6 +42,9 @@ namespace Pong.Connection
     /// </summary>
     private void OnMessage(object? _, string message)
     {
+      // Log the message
+      Console.WriteLine($"< {message}");
+
       // Parse the response
       GameEvent gameEvent;
       try
@@ -110,6 +113,9 @@ namespace Pong.Connection
         throw new Exception("The websocket is not open");
 
       string serialized = JsonSerializer.Serialize(data);
+
+      // Log the message
+      Console.WriteLine($"> {serialized}");
 
       byte[] bytes = Encoding.UTF8.GetBytes(serialized);
       await WS.SendAsync(bytes, WebSocketMessageType.Text, true, default);
