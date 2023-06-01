@@ -1,4 +1,4 @@
-﻿namespace Pong
+namespace Pong
 {
   public class Game
   {
@@ -22,39 +22,36 @@
       LeftPaddle = new(Width / 8, Height / 2, 20, 100);
     }
 
+    /// <summary>
+    /// Start the game (set IsRunning to true)
+    /// </summary>
     public void Start()
     {
       IsRunning = true;
-
-      Heart.RandomlyStartMoving(600);
-
-      Heart.SetPosToMiddle(Width, Height);
     }
 
-    public void Draw(Graphics g, double deltaTime)
+    /// <summary>
+    /// Updates the position of objects in the game
+    /// </summary>
+    public void Move(double deltaTime)
     {
       if (!IsRunning)
         return;
 
+      // Heart
       Heart.Move(deltaTime);
-      Heart.Bounce(Width, Height, LeftPaddle);
-      Heart.Draw(g);
 
+      // Paddles
       LeftPaddle.Move(deltaTime, Height);
+    }
+
+    /// <summary>
+    /// Draw the game. This is called every tick
+    /// </summary>
+    public void Draw(Graphics g, double deltaTime)
+    {
+      Heart.Draw(g);
       LeftPaddle.Draw(g);
-    }
-
-    public void KeyDown(Keys key)
-    {
-      if (key == Keys.W)
-        LeftPaddle.MoveUp();
-      else if (key == Keys.S)
-        LeftPaddle.MoveDown();
-    }
-
-    public void KeyUp(Keys key)
-    {
-      LeftPaddle.Stop();
     }
   }
 }

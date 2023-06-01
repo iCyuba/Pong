@@ -42,13 +42,13 @@
             pictureBox.Size = new Size(784, 561);
             pictureBox.TabIndex = 0;
             pictureBox.TabStop = false;
-            pictureBox.Paint += pictureBox_Paint;
+            pictureBox.Paint += OnPaint;
             // 
             // timer1
             // 
             timer1.Enabled = true;
             timer1.Interval = 50;
-            timer1.Tick += timer1_Tick;
+            timer1.Tick += OnTick;
             // 
             // Form1
             // 
@@ -60,9 +60,9 @@
             MaximizeBox = false;
             Name = "GameWindow";
             Text = "Pong";
-            Load += GameWindow_Load;
-            KeyDown += GameWindow_KeyDown;
-            KeyUp += GameWindow_KeyUp;
+            Load += OnLoad;
+            KeyDown += OnKeyDown;
+            KeyUp += OnKeyUp;
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             ResumeLayout(false);
         }

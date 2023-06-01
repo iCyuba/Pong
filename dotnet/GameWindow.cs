@@ -2,8 +2,7 @@ namespace Pong
 {
   public partial class GameWindow : Form
   {
-    public Game GameInstance { get; set; }
-
+    public GameServer GameInstance { get; set; }
     private Menu MainMenu { get; set; }
 
     public GameWindow(Menu menu)
@@ -17,31 +16,63 @@ namespace Pong
       MainMenu = menu;
     }
 
-    private void GameWindow_Load(object sender, EventArgs e)
+    /// <summary>
+    /// This is the method that gets called when the game window is loaded
+    /// <br />
+    /// It probably shouldn't start the game. But it does...
+    /// </summary>
+    private void OnLoad(object sender, EventArgs e)
     {
       GameInstance.Start();
     }
 
-    private void pictureBox_Paint(object sender, PaintEventArgs e)
+    /// <summary>
+    /// This is the that renders the game (notice that it isn't updating the game, just rendering it)
+    /// </summary>
+    private void OnPaint(object sender, PaintEventArgs e)
     {
       GameInstance.Draw(e.Graphics, timer1.Interval / 1000.0);
     }
 
-    private void timer1_Tick(object sender, EventArgs e)
+    /// <summary>
+    /// This is the method that gets called every tick (every 50ms [20 times per second])
+    /// <br />
+    /// It's used to update the game
+    /// </summary>
+    private void OnTick(object sender, EventArgs e)
     {
+      // Update the game
+      GameInstance.Move(timer1.Interval / 1000.0);
+
+      // Render the game
       pictureBox.Refresh();
     }
 
-    private void GameWindow_KeyDown(object sender, KeyEventArgs e)
+    /// <summary>
+    /// This is the method that gets called when a key is pressed
+    /// <br />
+    /// It's used to move the paddles
+    /// </summary>
+    private void OnKeyDown(object sender, KeyEventArgs e)
     {
       GameInstance.KeyDown(e.KeyCode);
     }
 
-    private void GameWindow_KeyUp(object sender, KeyEventArgs e)
+    /// <summary>
+    /// This is the method that gets called when a key is released
+    /// <br />
+    /// It's used to stop the paddles
+    /// </summary>
+    private void OnKeyUp(object sender, KeyEventArgs e)
     {
       GameInstance.KeyUp(e.KeyCode);
     }
 
+    /// <summary>
+    /// This is the method that gets called when the game window is closed
+    /// <br />
+    /// It's used to close the main menu as well
+    /// </summary>
     protected override void OnClosed(EventArgs e)
     {
       base.OnClosed(e);
