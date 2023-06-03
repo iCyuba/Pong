@@ -2,7 +2,7 @@ import { find, remove } from "lodash-es";
 
 import { WebSocket } from "ws";
 
-import { List, Register } from "@/messages";
+import { List, Register, Unregister } from "@/messages";
 import Player from "@/player";
 import Server from "@/server";
 
@@ -107,6 +107,9 @@ export default class Game {
 
     // Remove the player from the list of players
     remove(this.players, player);
+
+    // Send the player unregistered message to players who aren't in a session
+    this.broadcast(Unregister(player), this.getPlayersNotInSession());
 
     // Return the player
     return player;
