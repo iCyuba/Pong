@@ -3,17 +3,13 @@ namespace Pong
   public partial class GameWindow : Form
   {
     public GameServer GameInstance { get; set; }
-    private Menu MainMenu { get; set; }
 
-    public GameWindow(Menu menu)
+    public GameWindow()
     {
       InitializeComponent();
 
       // Initialize the game instance
       GameInstance = new(pictureBox.Width, pictureBox.Height);
-
-      // Save the main menu for later
-      MainMenu = menu;
     }
 
     /// <summary>

@@ -16,42 +16,44 @@
       Connection
         .Connect()
         .ContinueWith(
-          (task) =>
+          (t) =>
           {
-            // Handle an exception if there is one
-            if (task.Exception != null)
-            {
-              Console.WriteLine(task.Exception);
-              return;
-            }
-
-            // Enable the multiplayer button
-            Invoke(new Action(() => button3.Enabled = true));
+            // Enable the multiplayer button if the connection is successful
+            if (t.Status == TaskStatus.RanToCompletion)
+              Invoke(new Action(() => button3.Enabled = true));
           }
         );
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    /// <summary>
+    /// Shows a form and hides the main menu
+    /// </summary>
+    /// <param name="form">The form to show</param>
+    public void ShowForm(Form form)
     {
-      // Create a new game window
-      GameWindow GameWindow = new GameWindow(this);
-
-      // Add an event listener for when the game window is closed so we can show the main menu again
-      GameWindow.Closed += (_, __) =>
+      // Add an event listener for when the form is closed so we can show the main menu again
+      form.Closed += (_, __) =>
       {
-        // Change the main menu's location to the same as the game window
-        Location = GameWindow.Location;
+        // Change the main menu's location to the same as the form
+        Location = form.Location;
 
         // Show the main menu again
         Show();
       };
 
-      // Hide the main menu and show the game window
+      // Hide the main menu and show the form
       Hide();
-      GameWindow.Show();
+      form.Show();
 
-      // Set the game window's position to the same as the main menu
-      GameWindow.Location = Location;
+      // Set the form's position to the same as the main menu
+      form.Location = Location;
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+      // Create a new game window and show it
+      GameWindow GameWindow = new();
+      ShowForm(GameWindow);
     }
 
     private void button3_Click(object sender, EventArgs e)
@@ -65,17 +67,13 @@
         .ContinueWith(
           (t) =>
           {
-            // An error is thrown here when the connection fails so just ignore it
-            if (t.Exception != null)
-              return;
-
-            // Hide the menu window and show the game window
+            // Hide the menu window and show the players window
             Invoke(
               new Action(() =>
               {
-                Hide();
-
-                // GameWindow.Show();
+                // Show the players window
+                Players Players = new(Connection);
+                ShowForm(Players);
               })
             );
           }

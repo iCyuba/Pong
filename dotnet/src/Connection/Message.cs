@@ -9,7 +9,7 @@ namespace Pong
     static private JsonSerializerOptions JsonSerializerOptions =
       new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-    private class GameEvent
+    public class GameEvent
     {
       public string Type { get; set; }
 
@@ -65,6 +65,7 @@ namespace Pong
           OnRegisterHandler?.Invoke(this, RegisterEvent.Deserialize(message));
           break;
         case "list":
+          OnListHandler?.Invoke(this, ListEvent.Deserialize(message));
           break;
         case "start":
           break;

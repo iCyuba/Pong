@@ -13,9 +13,10 @@ namespace Pong
     public bool Registered { get; private set; }
 
     // The event handlers
-    EventHandler? OnCloseHandler { get; set; }
-    EventHandler<string>? OnMessageHandler { get; set; }
-    EventHandler<RegisterEvent>? OnRegisterHandler { get; set; }
+    public EventHandler? OnCloseHandler { get; set; }
+    public EventHandler<string>? OnMessageHandler { get; set; }
+    public EventHandler<RegisterEvent>? OnRegisterHandler { get; set; }
+    public EventHandler<ListEvent>? OnListHandler { get; set; }
 
     /// <summary>
     /// Create a new connection to the server

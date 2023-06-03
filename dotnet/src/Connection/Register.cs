@@ -2,7 +2,7 @@ namespace Pong
 {
   partial class Connection
   {
-    private class RegisterEvent : GameEvent
+    public class RegisterEvent : GameEvent
     {
       public string Name { get; set; }
 
@@ -26,16 +26,12 @@ namespace Pong
     /// </summary>
     private void OnRegister(object? _, RegisterEvent registerEvent)
     {
-      // Check if this is another player registering or if it's us
-      if (registerEvent.Name == Name)
-      {
-        // User has successfully registered so set registered to true
-        Registered = true;
-      }
-      else
-      {
-        throw new NotImplementedException("Other players registering is not implemented yet");
-      }
+      // Ignore the event if it's for another player
+      if (registerEvent.Name != Name)
+        return;
+
+      // If the event is for this player, set registered to true
+      Registered = true;
     }
 
     /// <summary>
