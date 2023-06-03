@@ -2,7 +2,7 @@
 {
   public partial class Menu : Form
   {
-    private Connection.Connection Connection { get; set; }
+    private Connection Connection { get; set; }
 
     public Menu()
     {

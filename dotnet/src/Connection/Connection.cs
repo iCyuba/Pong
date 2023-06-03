@@ -1,6 +1,6 @@
 ﻿using System.Net.WebSockets;
 
-namespace Pong.Connection
+namespace Pong
 {
   // My handler methods are defined in the partial classes
   // Also the message loop is defined in the partial class (MessageLoop.cs)

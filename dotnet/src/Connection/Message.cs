@@ -2,7 +2,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 
-namespace Pong.Connection
+namespace Pong
 {
   partial class Connection
   {

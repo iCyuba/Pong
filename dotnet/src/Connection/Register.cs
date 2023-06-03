@@ -1,4 +1,4 @@
-namespace Pong.Connection
+namespace Pong
 {
   partial class Connection
   {
