@@ -97,14 +97,12 @@ export default class Game {
 
   /**
    * Remove a player from the list of players
-   * @param {WebSocket} ws A WebSocket connection
+   * @param {Player | WebSocket} player The player or the player's WebSocket connection to remove
    * @returns {Player | undefined} The player who was removed
    */
-  removePlayer(ws: WebSocket): Player | undefined {
-    // Find the player
-    const player = this.getPlayer(ws);
-
-    // If no player was found, return nothing
+  removePlayer(player?: Player | WebSocket): Player | undefined {
+    // If the parameter is a WebSocket, find the player. If the player is not found, return nothing
+    if (player instanceof WebSocket) player = this.getPlayer(player);
     if (!player) return;
 
     // Remove the player from the list of players
@@ -114,7 +112,7 @@ export default class Game {
     return player;
 
     // TODO: End the player's session
-    const session = this.getPlayerSession(ws);
+    const session = this.getPlayerSession(player);
   }
 
   // My convenience methods:

@@ -1,22 +1,13 @@
-import { WebSocket } from "ws";
-
-import GameEventHandler, { GameEvent } from "@/event";
+import { RegisteredGameEventHandler } from "@/event";
 import { List } from "@/messages";
+import Player from "@/player";
 
-interface ListEvent extends GameEvent {
-  type: "list";
-}
-
-export default class ListHandler extends GameEventHandler<ListEvent> {
+export default class ListHandler extends RegisteredGameEventHandler {
   static type = "list";
 
-  handle(ws: WebSocket, event: ListEvent) {
+  handleRegistered(player: Player) {
     // Log the list event
-    console.log(new Date(), "Listing players");
-
-    // Find the player and throw an error if they're not registered
-    const player = this.wss.game.getPlayer(ws);
-    if (!player) throw new Error("Not registered!");
+    console.log(new Date(), "Listing players", player.name);
 
     // Send them the list of all players
     player.send(List(this.wss.game.getPlayersNotInSession(), player));
