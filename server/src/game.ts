@@ -1,3 +1,5 @@
+import { find, remove } from "lodash-es";
+
 import { WebSocket } from "ws";
 
 import { List, Register } from "@/messages";
@@ -106,10 +108,7 @@ export default class Game {
     if (!player) return;
 
     // Remove the player from the list of players
-    // I'm not using Array.filter() because I don't want to create a new array
-    // (I'm not sure if this is a good idea or not, I hope it is)
-    const index = this.players.indexOf(player);
-    this.players.splice(index, 1);
+    remove(this.players, player);
 
     // Return the player
     return player;
@@ -126,25 +125,23 @@ export default class Game {
    * @returns {Player | null}
    */
   getPlayer(ws: WebSocket): Player | undefined {
-    return this.players.find(player => player.ws === ws);
+    return find(this.players, { ws });
   }
 
   /**
    * Find player's session
-   * @param {WebSocket} ws A WebSocket connection
+   * @param {Player | WebSocket} player A player or the player's WebSocket connection
    * @returns {Session} The player's session
    */
-  getPlayerSession(ws: WebSocket): Session | undefined {
-    return this.sessions.find(session => session.player1.ws === ws || session.player2.ws === ws);
-  }
+  getPlayerSession(player?: Player | WebSocket): Session | undefined {
+    // If the parameter is a WebSocket, find the player
+    if (player instanceof WebSocket) player = this.getPlayer(player);
 
-  /**
-   * Check if a player is in a session
-   * @param {WebSocket} ws A WebSocket connection
-   * @returns {boolean} Whether the player is in a session
-   */
-  isPlayerInSession(ws: WebSocket): boolean {
-    return this.getPlayerSession(ws) !== undefined;
+    // If no player was found, return nothing
+    if (!player) return;
+
+    // Find the player's session
+    return this.sessions.find(session => session.player1 === player || session.player2 === player);
   }
 
   /**
@@ -152,6 +149,6 @@ export default class Game {
    * @returns {Player[]} A list of players who aren't in a session
    */
   getPlayersNotInSession(): Player[] {
-    return this.players.filter(player => !this.isPlayerInSession(player.ws));
+    return this.players.filter(player => !this.getPlayerSession(player.ws));
   }
 }

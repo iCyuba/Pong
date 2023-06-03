@@ -14,10 +14,12 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
+    "lodash-es": "^4.17.21",
     "ws": "^8.13.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "@types/lodash-es": "^4.17.7",
     "@types/node": "^20.2.5",
     "@types/webpack-env": "^1.18.1",
     "@types/ws": "^8.5.4",

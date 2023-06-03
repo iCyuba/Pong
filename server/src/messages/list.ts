@@ -1,3 +1,5 @@
+import { map, without } from "lodash-es";
+
 import Player from "@/player";
 
 interface ListMessage {
@@ -13,9 +15,11 @@ interface ListMessage {
  * @returns {ListMessage} A List message
  */
 function List(players: Player[], requestedBy: Player): ListMessage {
+  const playersToSend = without(players, requestedBy);
+
   return {
     type: "list",
-    players: players.filter(player => player !== requestedBy).map(player => player.name),
+    players: map(playersToSend, "name"), // TODO: This is only for now. Some info should be sent
   };
 }
 

@@ -7,12 +7,6 @@ import Server from "@/server";
  * A class that handles messages for the WebSocket messages
  */
 export default class MessageHandler {
-  /** The error message to send when the client sends invalid JSON */
-  private static invalidJSONError = JSON.stringify({
-    type: "error",
-    message: "Invalid JSON",
-  });
-
   /** All of the loaded game event handlers */
   handlers: Record<string, GameEventHandler> = {};
 
@@ -38,27 +32,23 @@ export default class MessageHandler {
    * @param {RawData} data The message data
    * @throws Error
    */
-  handle(ws: WebSocket, data: RawData): void {
+  async handle(ws: WebSocket, data: RawData): Promise<void> {
     // Parse the message as JSON
     let message: GameEvent;
     try {
       message = JSON.parse(data.toString());
-    } catch (_) {
-      // If an error occurs, send an error message to the client
-      return ws.send(MessageHandler.invalidJSONError);
-    }
 
-    // Return an error if the message type is invalid or the handler for it doesn't exist
-    if (typeof message.type !== "string" || !Object.keys(this.handlers).includes(message.type)) {
-      return ws.send(MessageHandler.invalidJSONError);
+      // Check if the message type is valid
+      if (typeof message.type !== "string" || !Object.keys(this.handlers).includes(message.type))
+        throw new Error("Invalid message type");
+    } catch (err) {
+      // If an error occurs, send an error message to the client
+      return MessageHandler.sendError(ws, err as any);
     }
 
     // Call the handler for the message type
     try {
-      const result = this.handlers[message.type].handle(ws, message);
-
-      // If the handler returns a promise, add a catch handler to send an error message to the client
-      if (result instanceof Promise) result.catch(err => MessageHandler.sendError(ws, err));
+      await this.handlers[message.type].handle(ws, message);
     } catch (err) {
       // If an error occurs, send an error message to the client
       MessageHandler.sendError(ws, err as any);
@@ -105,7 +95,6 @@ export default class MessageHandler {
   /**
    * Register all game event handlers
    * (these are defined here cuz I don't want to have them in each of the ws connections)
-   * @async
    * @throws Error
    */
   async registerAllHandlers(): Promise<void> {
