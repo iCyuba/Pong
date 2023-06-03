@@ -64,6 +64,9 @@ namespace Pong
         case "register":
           OnRegisterHandler?.Invoke(this, RegisterEvent.Deserialize(message));
           break;
+        case "unregister":
+          OnUnregisterHandler?.Invoke(this, UnregisterEvent.Deserialize(message));
+          break;
         case "list":
           OnListHandler?.Invoke(this, ListEvent.Deserialize(message));
           break;

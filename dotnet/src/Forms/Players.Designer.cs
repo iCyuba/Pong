@@ -71,7 +71,7 @@
       refresh.TabIndex = 1;
       refresh.Text = "Refresh player list";
       refresh.UseVisualStyleBackColor = true;
-      refresh.Click += refreshList;
+      refresh.Click += RefreshList;
       // 
       // topLayout
       // 
@@ -115,7 +115,7 @@
       dataGrid.ShowEditingIcon = false;
       dataGrid.Size = new Size(778, 499);
       dataGrid.TabIndex = 1;
-      dataGrid.CellClick += inviteClicked;
+      dataGrid.CellClick += InviteClicked;
       // 
       // Players
       // 
@@ -125,6 +125,7 @@
       Controls.Add(topLayout);
       Name = "Players";
       Text = "Players";
+      FormClosed += ListClosed;
       barLayout.ResumeLayout(false);
       barLayout.PerformLayout();
       topLayout.ResumeLayout(false);

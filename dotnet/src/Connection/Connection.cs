@@ -13,9 +13,29 @@ namespace Pong
     public bool Registered { get; private set; }
 
     // The event handlers
+    /// <summary>
+    /// Event handler for when the connection is closed
+    /// </summary>
     public EventHandler? OnCloseHandler { get; set; }
+
+    /// <summary>
+    /// Event handler for when a message is received
+    /// </summary>
     public EventHandler<string>? OnMessageHandler { get; set; }
+
+    /// <summary>
+    /// Event handler for when the a player registers (including this player)
+    /// </summary>
     public EventHandler<RegisterEvent>? OnRegisterHandler { get; set; }
+
+    /// <summary>
+    /// Event handler for when the a player unregisters (excluding this player)
+    /// </summary>
+    public EventHandler<UnregisterEvent>? OnUnregisterHandler { get; set; }
+
+    /// <summary>
+    /// Event handler for when the a list of all players is received
+    /// </summary>
     public EventHandler<ListEvent>? OnListHandler { get; set; }
 
     /// <summary>
