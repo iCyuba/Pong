@@ -2,9 +2,8 @@
 {
   public class GameServer : Game
   {
-    public GameServer(int width, int height) : base(width, height)
-    {
-    }
+    public GameServer(int width, int height)
+      : base(width, height) { }
 
     /// <summary>
     /// Start the game (set IsRunning to true)
@@ -21,7 +20,8 @@
     /// <summary>
     /// Updates the position of objects in the game
     /// </summary>
-    public new void Move(double deltaTime) {
+    public new void Move(double deltaTime)
+    {
       if (!IsRunning)
         return;
 

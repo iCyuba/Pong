@@ -105,6 +105,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 561);
             Controls.Add(tableLayoutPanel1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "Menu";
             Text = "Menu";
             tableLayoutPanel1.ResumeLayout(false);

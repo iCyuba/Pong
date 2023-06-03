@@ -50,7 +50,7 @@
             timer1.Interval = 50;
             timer1.Tick += OnTick;
             // 
-            // Form1
+            // GameWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;

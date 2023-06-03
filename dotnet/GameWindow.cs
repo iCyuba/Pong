@@ -67,18 +67,5 @@ namespace Pong
     {
       GameInstance.KeyUp(e.KeyCode);
     }
-
-    /// <summary>
-    /// This is the method that gets called when the game window is closed
-    /// <br />
-    /// It's used to close the main menu as well
-    /// </summary>
-    protected override void OnClosed(EventArgs e)
-    {
-      base.OnClosed(e);
-
-      // When you close the game window, the main menu should also get closed
-      MainMenu.Close();
-    }
   }
 }

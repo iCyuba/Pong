@@ -2,17 +2,13 @@
 {
   public partial class Menu : Form
   {
-    private GameWindow GameWindow { get; set; }
-
     private Connection.Connection Connection { get; set; }
 
     public Menu()
     {
       InitializeComponent();
 
-      // Prepare the game window
-      GameWindow = new GameWindow(this);
-
+      // Disable the multiplayer button until the connection is established
       button3.Enabled = false;
 
       // Create the connection and connect to the server (idk why I made the autoConnect a thing, i'm not using it lmao)
@@ -37,10 +33,25 @@
 
     private void button1_Click(object sender, EventArgs e)
     {
-      // Hide the menu window and show the game window
-      Hide();
+      // Create a new game window
+      GameWindow GameWindow = new GameWindow(this);
 
+      // Add an event listener for when the game window is closed so we can show the main menu again
+      GameWindow.Closed += (_, __) =>
+      {
+        // Change the main menu's location to the same as the game window
+        Location = GameWindow.Location;
+
+        // Show the main menu again
+        Show();
+      };
+
+      // Hide the main menu and show the game window
+      Hide();
       GameWindow.Show();
+
+      // Set the game window's position to the same as the main menu
+      GameWindow.Location = Location;
     }
 
     private void button3_Click(object sender, EventArgs e)
@@ -64,7 +75,7 @@
               {
                 Hide();
 
-                GameWindow.Show();
+                // GameWindow.Show();
               })
             );
           }
