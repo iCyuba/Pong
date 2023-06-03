@@ -11,8 +11,8 @@ export default class ListHandler extends GameEventHandler<ListEvent> {
   static type = "list";
 
   handle(ws: WebSocket, event: ListEvent) {
-    // Log the list event if in development mode
-    if (this.wss.dev) console.log(new Date(), "Listing players");
+    // Log the list event
+    console.log(new Date(), "Listing players");
 
     // Find the player and throw an error if they're not registered
     const player = this.wss.game.getPlayer(ws);

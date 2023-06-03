@@ -16,9 +16,6 @@ export default class Server extends WebSocketServer {
   /** A handler for the messages. It's a separate class because it loads all of the GameEventHandlers */
   readonly messageHandler: MessageHandler = new MessageHandler(this);
 
-  /** Whether the server is running in development mode */
-  dev = process.env.NODE_ENV === "development";
-
   /**
    * Create a new WSServer
    * @param {ServerOptions} options The options to pass to the WebSocket server
@@ -37,8 +34,8 @@ export default class Server extends WebSocketServer {
    * @param {WebSocket} ws A WebSocket connection
    */
   private onConnection(ws: WebSocket, req: IncomingMessage): void {
-    // If the server is running in devmode, log the connection
-    if (this.dev) console.log(new Date(), "Connect", req.socket.remoteAddress);
+    // Log the connection
+    console.log(new Date(), "Connect", req.socket.remoteAddress);
 
     // Attach the event handlers to the websocket
     ws.on("message", data => this.messageHandler.handle(ws, data));
@@ -50,10 +47,10 @@ export default class Server extends WebSocketServer {
    * @param {WebSocket} ws A WebSocket connection
    */
   private onClose(ws: WebSocket): void {
-    // If the server is running in devmode, log the close
-    if (this.dev) console.log(new Date(), "Closed connection");
-
     // Remove the player from the game (if they're not registered, this does nothing)
-    this.game.removePlayer(ws);
+    const player = this.game.removePlayer(ws);
+
+    // Log the disconnection
+    console.log(new Date(), "Closed connection", player?.name || "unregistered");
   }
 }

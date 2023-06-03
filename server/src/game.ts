@@ -96,15 +96,26 @@ export default class Game {
   /**
    * Remove a player from the list of players
    * @param {WebSocket} ws A WebSocket connection
+   * @returns {Player | undefined} The player who was removed
    */
-  removePlayer(ws: WebSocket): void {
+  removePlayer(ws: WebSocket): Player | undefined {
+    // Find the player
+    const player = this.getPlayer(ws);
+
+    // If no player was found, return nothing
+    if (!player) return;
+
     // Remove the player from the list of players
-    this.players = this.players.filter(player => player.ws !== ws);
+    // I'm not using Array.filter() because I don't want to create a new array
+    // (I'm not sure if this is a good idea or not, I hope it is)
+    const index = this.players.indexOf(player);
+    this.players.splice(index, 1);
 
-    // End the player's session
+    // Return the player
+    return player;
+
+    // TODO: End the player's session
     const session = this.getPlayerSession(ws);
-
-    if (session) return; // TODO: End the session
   }
 
   // My convenience methods:

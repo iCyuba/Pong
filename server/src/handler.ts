@@ -77,8 +77,8 @@ export default class MessageHandler {
     // Send the error message
     ws.send(JSON.stringify({ type: "error", message: err }));
 
-    // Log the error if in development mode
-    if (process.env.NODE_ENV === "development") console.error(new Date(), err);
+    // Log the error
+    console.error(new Date(), err);
   }
 
   /**

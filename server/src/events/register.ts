@@ -15,8 +15,8 @@ export default class RegistrationHandler extends GameEventHandler<RegistrationEv
       throw new Error("Invalid name: " + event.name);
     }
 
-    // Log the registration if in development mode
-    if (this.wss.dev) console.log(new Date(), "Registering", event.name);
+    // Log the registration
+    console.log(new Date(), "Registering", event.name);
 
     // Add the player to the game
     this.wss.game.addPlayer(ws, event.name);
