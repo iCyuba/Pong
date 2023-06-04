@@ -1,3 +1,4 @@
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import NodemonPlugin from "nodemon-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 
@@ -6,21 +7,24 @@ export default {
   target: "node",
   resolve: {
     plugins: [new TsconfigPathsPlugin()],
-    // Add `.ts` and `.tsx` as a resolvable extension.
-    extensions: [".ts", ".tsx", ".js"],
-    // Add support for TypeScripts fully qualified ESM imports.
-    extensionAlias: {
-      ".js": [".js", ".ts"],
-      ".cjs": [".cjs", ".cts"],
-      ".mjs": [".mjs", ".mts"],
-    },
+    extensions: [".js", ".ts", ".jsx", ".tsx"],
   },
   module: {
-    rules: [
-      // all files with a `.ts`, `.cts`, `.mts` or `.tsx` extension will be handled by `ts-loader`
-      { test: /\.([cm]?ts|tsx)$/, loader: "ts-loader" },
-    ],
+    rules: [{ test: /\.(js|jsx|tsx|ts)$/, exclude: /node_modules/, loader: "babel-loader" }],
   },
-  plugins: [new NodemonPlugin()],
+  plugins: [
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true,
+        },
+      },
+    }),
+    new NodemonPlugin(),
+  ],
+  watchOptions: {
+    ignored: /node_modules/,
+  },
   stats: "errors-only",
 };

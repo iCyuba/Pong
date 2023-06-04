@@ -4,6 +4,8 @@
     "module": "CommonJS",
     "moduleResolution": "Node",
     "esModuleInterop": true,
+    "allowJs": true,
+    "noEmit": true, // I'm using babel to compile
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"]
