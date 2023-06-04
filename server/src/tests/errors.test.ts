@@ -8,8 +8,10 @@ import waitForResponse from "@/tests/waitForResponse";
 import { ErrorMessage } from "@/messages";
 import Server from "@/server";
 
-// All tests related to errors
+// Some basic tests related to errors
 // Each message should receive a response with type "error" and a message
+// More specific errors are tested in other files
+// These are just the most basic ones
 describe("Try sending invalid messages to the server", () => {
   let server: Server;
   let ws: WebSocket;
@@ -49,8 +51,7 @@ describe("Try sending invalid messages to the server", () => {
     const response = await waitForResponse<ErrorMessage>(ws, false);
 
     // Expect the response to be an error message
-    expect(response.type).toBe("error");
-    expect(response.message).toBe("Invalid message type");
+    expect(response).toEqual({ type: "error", message: "Invalid message type" });
 
     // Expect the connection to be still open
     expect(ws.readyState).toBe(WebSocket.OPEN);
@@ -62,8 +63,7 @@ describe("Try sending invalid messages to the server", () => {
     const response = await waitForResponse<ErrorMessage>(ws, false);
 
     // Expect the response to be an error message
-    expect(response.type).toBe("error");
-    expect(response.message).toBe("Not registered");
+    expect(response).toEqual({ type: "error", message: "Not registered" });
 
     // Expect the connection to be still open
     expect(ws.readyState).toBe(WebSocket.OPEN);
