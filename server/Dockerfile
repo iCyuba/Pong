@@ -10,6 +10,7 @@ COPY package*.json ./
 RUN npm ci
 
 # Build the app
+COPY babel.config.json ./
 COPY tsconfig.json ./
 COPY webpack.config.ts ./
 COPY src ./src
