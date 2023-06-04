@@ -7,7 +7,7 @@ const config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
-  setupFiles: ["<rootDir>/src/tests/registerContext.ts"],
+  setupFiles: ["<rootDir>/src/tests/setup.ts"],
 };
 
 module.exports = config;
