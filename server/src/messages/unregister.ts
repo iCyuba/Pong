@@ -1,6 +1,6 @@
 import Player from "@/player";
 
-interface UnregisterMessage {
+export interface UnregisterMessage {
   type: "unregister";
   name: string;
 }

@@ -1,6 +1,6 @@
 import Player from "@/player";
 
-interface RegisterMessage {
+export interface RegisterMessage {
   type: "register";
   name: string;
 }

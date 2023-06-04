@@ -2,7 +2,7 @@ import { map, without } from "lodash-es";
 
 import Player from "@/player";
 
-interface ListMessage {
+export interface ListMessage {
   type: "list";
   players: string[];
 }

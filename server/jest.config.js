@@ -1,4 +1,4 @@
-/** @type {import('@jest/types').Config} */
+/** @type {import('@jest/types').Config.ProjectConfig} */
 const config = {
   testEnvironment: "node",
   roots: ["<rootDir>"],
@@ -7,6 +7,7 @@ const config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+  setupFiles: ["<rootDir>/src/tests/registerContext.ts"],
 };
 
 module.exports = config;
