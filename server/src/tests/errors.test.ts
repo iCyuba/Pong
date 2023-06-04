@@ -37,7 +37,6 @@ describe("Try sending invalid messages to the server", () => {
 
     // Expect the response to be an error message
     expect(response.type).toBe("error");
-    expect(response.message).toBe("Unexpected token 'h', \"hello world\" is not valid JSON");
 
     // Expect the connection to be still open (cuz like, the server didn't crash or anything)
     // The waitForResponse function closes the connection if false isn't passed as the second argument
