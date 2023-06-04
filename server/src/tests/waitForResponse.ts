@@ -51,38 +51,61 @@ function waitForResponse<T = any>(
 
 /**
  * Wait for multiple responses from the server
- * (just calls waitForResponse multiple times lmao)
  * @param {WebSocket} ws The WebSocket connection
  * @param {number} count The number of responses to wait for
  * @param {boolean} close Whether or not to close the connection after the response is received (defaults to true)
  * @param {number} timeout The timeout in milliseconds (defaults to 1s)
  * @returns {Promise<any>} A promise that resolves to an array of responses from the server
  */
-export async function waitForResponses<T extends any[] = any[]>(
+export function waitForResponses<T extends any[] = any[]>(
   ws: WebSocket,
   count: number,
   close: boolean = true,
-  timeout: number = 1000
+  timeoutMs: number = 1000
 ): Promise<T> {
-  // Create a new array of responses
-  // Ignore the types here. I have no clue what's up with this
-  const responses: T = [] as unknown as T;
+  return new Promise((resolve, reject) => {
+    // This is so that the promise doesn't hang forever
+    // If the responses aren't received after x milliseconds, reject the promise
+    const timeout = setTimeout(() => {
+      reject(new Error("Response timed out"));
 
-  // Wait for the specified number of responses
-  for (let i = 0; i < count; i++) {
-    // Wait for a response
-    // The type is T[number] because T is an array and we want the type of the array items
-    // Don't close the connection after the response is received because we need to wait for more responses
-    const response = await waitForResponse<T[number]>(ws, false, timeout);
+      // Remove the event listener
+      ws.off("message", onMessage);
 
-    // Push the response to the array
-    responses.push(response);
-  }
+      // Terminate the connection
+      ws.terminate();
+    }, timeoutMs);
 
-  if (close) ws.close();
+    // Create a new array of responses
+    // Ignore the types here. I have no clue what's up with this
+    const messages: T = [] as unknown as T;
 
-  // Return the array
-  return responses;
+    function onMessage(data: RawData) {
+      // Remove the timeout
+      clearTimeout(timeout);
+
+      // Parse the message as JSON
+      try {
+        messages.push(JSON.parse(data.toString()));
+      } catch (err) {
+        // If an error occurs, reject the promise
+        return reject(err);
+      }
+
+      // If we have received the required number of responses, resolve the promise
+      if (messages.length === count) {
+        if (close) ws.close();
+
+        // Resolve the promise
+        resolve(messages);
+
+        // Remove the event listener
+        ws.off("message", onMessage);
+      }
+    }
+
+    ws.on("message", onMessage);
+  });
 }
 
 export default waitForResponse;
