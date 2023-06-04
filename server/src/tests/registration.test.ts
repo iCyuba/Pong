@@ -33,48 +33,22 @@ describe("Registrations / Unregistrations", () => {
     // Close the connection after each test (if it's open)
     afterEach(() => closeConnection(ws));
 
-    test("Register without a name", async () => {
-      ws.send(JSON.stringify({ type: "register" }));
+    // Register with an invalid name (undefined, empty, too long, or a not a string)
+    test.each([{}, { name: "" }, { name: "a".repeat(17) }, { name: 123 }])(
+      "Register with an invalid name: %p",
+      async data => {
+        ws.send(JSON.stringify({ type: "register", ...data }));
 
-      const response = await waitForResponse<ErrorMessage>(ws, false);
+        const response = await waitForResponse<ErrorMessage>(ws, false);
 
-      // Expect the response to be an error message
-      expect(response.type).toBe("error");
-      expect(response.message).toBe("Invalid name: undefined");
+        // Expect the response to be an error message
+        expect(response.type).toBe("error");
+        expect(response.message).toBe(`Invalid name: ${data.name}`);
 
-      // Expect the connection to be still open
-      expect(ws.readyState).toBe(WebSocket.OPEN);
-    });
-
-    // test("Register with an empty name", async () => {
-    //   ws.send(JSON.stringify({ type: "register", name: "" }));
-
-    //   const response = await waitForResponse<ErrorMessage>(ws);
-
-    //   // Expect the response to be an error message
-    //   expect(response.type).toBe("error");
-    //   expect(response.message).toBe("Invalid name: ");
-    // });
-
-    // test("Register with a name that is too long", async () => {
-    //   ws.send(JSON.stringify({ type: "register", name: "a".repeat(17) }));
-
-    //   const response = await waitForResponse<ErrorMessage>(ws);
-
-    //   // Expect the response to be an error message
-    //   expect(response.type).toBe("error");
-    //   expect(response.message).toBe("Invalid name: aaaaaaaaaaaaaaaaa");
-    // });
-
-    test("Register with a number instead of a name", async () => {
-      ws.send(JSON.stringify({ type: "register", name: 123 }));
-
-      const response = await waitForResponse<ErrorMessage>(ws);
-
-      // Expect the response to be an error message
-      expect(response.type).toBe("error");
-      expect(response.message).toBe("Invalid name: 123");
-    });
+        // Expect the connection to be still open
+        expect(ws.readyState).toBe(WebSocket.OPEN);
+      }
+    );
 
     test("Register and disconnect", async () => {
       ws.send(JSON.stringify({ type: "register", name: "test" }));

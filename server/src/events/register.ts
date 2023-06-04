@@ -11,7 +11,8 @@ export default class RegistrationHandler extends GameEventHandler<RegistrationEv
   static type = "register";
 
   handle(ws: WebSocket, event: RegistrationEvent) {
-    if (typeof event.name !== "string") {
+    // Check if the name is valid (not empty and less than 16 characters)
+    if (typeof event.name !== "string" || !event.name.length || event.name.length > 16) {
       throw new Error("Invalid name: " + event.name);
     }
 
