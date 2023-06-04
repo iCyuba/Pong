@@ -19,6 +19,6 @@ export default class RegistrationHandler extends GameEventHandler<RegistrationEv
     console.log(new Date(), "Registering", event.name);
 
     // Add the player to the game
-    this.wss.game.addPlayer(ws, event.name);
+    this.game.addPlayer(ws, event.name);
   }
 }

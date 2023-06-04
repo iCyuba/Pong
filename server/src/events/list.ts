@@ -10,6 +10,6 @@ export default class ListHandler extends RegisteredGameEventHandler {
     console.log(new Date(), "Listing players", player.name);
 
     // Send them the list of all players
-    player.send(List(this.wss.game.getPlayersNotInSession(), player));
+    player.send(List(this.game.getPlayersNotInSession(), player));
   }
 }

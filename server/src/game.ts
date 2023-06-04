@@ -4,7 +4,6 @@ import { WebSocket } from "ws";
 
 import { List, Register, Unregister } from "@/messages";
 import Player from "@/player";
-import Server from "@/server";
 
 /**
  * A simple helper type for x and y values (used for position and velocity)
@@ -37,26 +36,11 @@ export interface Session {
  */
 export default class Game {
   /** A list of all the players in the game */
-  players: Player[];
+  players: Player[] = [];
   /** A record of all the active invites */
-  invites: Record<string, string>;
+  invites: Record<string, string> = {};
   /** A list of all the active sessions */
-  sessions: Session[];
-
-  /** The WebSocket server */
-  private wss: Server;
-
-  /**
-   * Create a new Game instance
-   * @param {Server} wss The WebSocket server
-   */
-  constructor(wss: Server) {
-    this.players = [];
-    this.invites = {};
-    this.sessions = [];
-
-    this.wss = wss;
-  }
+  sessions: Session[] = [];
 
   /**
    * Send a message to all players

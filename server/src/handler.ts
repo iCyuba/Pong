@@ -1,7 +1,7 @@
 import { RawData, WebSocket } from "ws";
 
 import GameEventHandler, { GameEvent } from "@/event";
-import Server from "@/server";
+import Game from "@/game";
 
 /**
  * A class that handles messages for the WebSocket messages
@@ -10,17 +10,17 @@ export default class MessageHandler {
   /** All of the loaded game event handlers */
   handlers: Record<string, GameEventHandler> = {};
 
-  /** The WebSocket server, required because each handler is initialized with it */
-  private wss: Server;
+  /** The game instance, required because each handler is initialized with it */
+  private game: Game;
 
   /**
    * Create a new MessageHandler instance
-   * @param {Server} wss The WebSocket server
+   * @param {Game} game The game instance
    * @param {boolean} registerAll Whether to load all game event handlers at initialization
    * @throws Error
    */
-  constructor(wss: Server, registerAll: boolean = true) {
-    this.wss = wss;
+  constructor(game: Game, registerAll: boolean = true) {
+    this.game = game;
 
     // Register all game event handlers
     if (registerAll) this.registerAllHandlers();
@@ -82,7 +82,7 @@ export default class MessageHandler {
 
     // Create a new instance of the handler
     // @ts-ignore (I honestly dunno anymore, this ain't abstract... ts thinks it is tho)
-    const handler: InstanceType<T> = new Handler(this.wss);
+    const handler: InstanceType<T> = new Handler(this.game);
 
     // Check if the handler is valid (i.e. extends GameEventHandler)
     if (!(handler instanceof GameEventHandler))

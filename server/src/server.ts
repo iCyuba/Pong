@@ -11,10 +11,10 @@ import MessageHandler from "@/handler";
  */
 export default class Server extends WebSocketServer {
   /** An instance of the Game class. This is what contains the info about the players, sessions, ... */
-  readonly game: Game = new Game(this);
+  readonly game: Game = new Game();
 
   /** A handler for the messages. It's a separate class because it loads all of the GameEventHandlers */
-  readonly messageHandler: MessageHandler = new MessageHandler(this);
+  readonly messageHandler: MessageHandler = new MessageHandler(this.game);
 
   /**
    * Create a new WSServer
