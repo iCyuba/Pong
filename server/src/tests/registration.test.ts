@@ -1,4 +1,6 @@
 // Start a new server instance. This is the entry point for the server.
+import { without } from "lodash-es";
+
 import { WebSocket } from "ws";
 
 // The test helper functions
@@ -133,7 +135,7 @@ describe("Registrations / Unregistrations", () => {
     });
 
     // Close each connection after each test (if they're open)
-    afterEach(() => websockets.forEach(ws => ws.readyState === WebSocket.OPEN && ws.close()));
+    afterEach(() => Promise.all(websockets.map(closeConnection)));
 
     test("Register with the same name", async () => {
       websockets[0].send(JSON.stringify({ type: "register", name: "test" }));
@@ -210,6 +212,70 @@ describe("Registrations / Unregistrations", () => {
 
       // Expect the response to be a list message with no players
       expect(response3).toEqual({ type: "list", players: [] });
+    });
+  });
+
+  // This test is just for fun, it's not really necessary
+  // The server should be able to handle 50 players without any problems
+  // I think the test will fail with more tho cuz it's more about the performance of the machine the tests are running on
+  describe("With 50 players (for fun lmao)", () => {
+    let websockets: WebSocket[];
+
+    // Create 50 new connections to the server before each test
+    beforeEach(async () => {
+      // Create 50 websockets
+      websockets = await Promise.all(Array.from({ length: 50 }, () => createConnection(server)));
+    });
+
+    // Close each connection after each test (if they're open)
+    // Promise.all to resolve a map of all the closeConnection promises (it's like an async forEach)
+    afterEach(() => Promise.all(websockets.map(closeConnection)));
+
+    test("Register with the same name", async () => {
+      // Register all players under the name 50Sockets (idk, just some random name)
+      await Promise.all(
+        websockets.map(ws => {
+          ws.send(JSON.stringify({ type: "register", name: "50Sockets" }));
+          return waitForResponse(ws, false); // Only 1 will have two responses (register and list). The rest will have 1 (the error message)
+        })
+      );
+
+      // Expect that only 1 player is inside game.players
+      expect(server.game.players.length).toBe(1);
+      expect(server.game.players[0].name).toBe("50Sockets");
+
+      // Expect the sockets to be still open
+      websockets.forEach(ws => expect(ws.readyState).toBe(WebSocket.OPEN));
+    });
+
+    test("Register normally, list and unregister", async () => {
+      const names = Array.from({ length: websockets.length }, (_, i) => `player-${i}`);
+
+      // Register all players under their index (0, 1, 2, 3, ...)
+      await Promise.all(
+        websockets.map((ws, i) => {
+          ws.send(JSON.stringify({ type: "register", name: `player-${i}` }));
+          return waitForResponse(ws, false); // Wait for the register message on each socket
+        })
+      );
+
+      // Expect that all players are inside game.players
+      expect(server.game.players.length).toBe(websockets.length);
+      expect(server.game.players.map(p => p.name)).toEqual(names);
+
+      // Basically an asynchronous forEach on the websockets array
+      // Request the list of players from all sockets
+      await Promise.all(
+        websockets.map(async (ws, i) => {
+          ws.send(JSON.stringify({ type: "list" }));
+          const response = await waitForResponse<ListMessage>(ws, false);
+
+          expect(response).toEqual({
+            type: "list",
+            players: without(names, names[i]), // Expect the list to not include the player that requested it
+          });
+        })
+      );
     });
   });
 });

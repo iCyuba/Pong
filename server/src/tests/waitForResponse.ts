@@ -71,9 +71,6 @@ export function waitForResponses<T extends any[] = any[]>(
 
       // Remove the event listener
       ws.off("message", onMessage);
-
-      // Terminate the connection
-      ws.terminate();
     }, timeoutMs);
 
     // Create a new array of responses

@@ -2,6 +2,7 @@ import { find, remove } from "lodash-es";
 
 import { WebSocket } from "ws";
 
+import Invite from "@/invite";
 import { List, Register, Unregister } from "@/messages";
 import Player from "@/player";
 
@@ -37,8 +38,8 @@ export interface Session {
 export default class Game {
   /** A list of all the players in the game */
   players: Player[] = [];
-  /** A record of all the active invites */
-  invites: Record<string, string> = {};
+  /** A list of all the invites */
+  invites: Invite[] = [];
   /** A list of all the active sessions */
   sessions: Session[] = [];
 
@@ -95,6 +96,9 @@ export default class Game {
     // Send the player unregistered message to players who aren't in a session
     this.broadcast(Unregister(player), this.getPlayersNotInSession());
 
+    // Delete any invites the player sent or received
+    Invite.deleteForPlayer(this, player);
+
     // Return the player
     return player;
 
@@ -111,6 +115,15 @@ export default class Game {
    */
   getPlayer(ws: WebSocket): Player | undefined {
     return find(this.players, { ws });
+  }
+
+  /**
+   * Find a player from their name
+   * @param {string} name The player's username
+   * @returns {Player | null}
+   */
+  getPlayerByName(name: string): Player | undefined {
+    return find(this.players, { name });
   }
 
   /**
