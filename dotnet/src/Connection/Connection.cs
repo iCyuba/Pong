@@ -39,6 +39,11 @@ namespace Pong
     public EventHandler<ListEvent>? OnListHandler { get; set; }
 
     /// <summary>
+    /// Event handler for when an invitation is received (either for us or by us)
+    /// </summary>
+    public EventHandler<InviteEvent>? OnInviteHandler { get; set; }
+
+    /// <summary>
     /// Create a new connection to the server
     /// <br />
     /// By default, the connection will be automatically opened

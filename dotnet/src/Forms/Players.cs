@@ -40,6 +40,7 @@ namespace Pong
       Connection.OnListHandler += SetPlayers;
       Connection.OnRegisterHandler += AddPlayerRegistration;
       Connection.OnUnregisterHandler += RemovePlayer;
+      Connection.OnInviteHandler += Invited;
 
       // Set the label to the player's name
       username.Text = $"Registered as: {Connection.Name}";
@@ -131,18 +132,81 @@ namespace Pong
 
       string? player = Data.Rows[e.RowIndex].Field<string>("Name");
 
-      Console.WriteLine($"Invited player: {player}");
+      // Make sure the player is not null
+      if (player == null)
+        return;
 
-      // Replace the invite button with a text saying "Invited"
-      DataGridViewTextBoxCell cell = new() { Value = "Invited" };
-      dataGrid.Rows[e.RowIndex].Cells[e.ColumnIndex] = cell;
+      // Send an invite to the player
+      _ = Connection.Invite(player);
     }
 
+    /// <summary>
+    /// Handles the invite event
+    /// <br />
+    /// If the invite is for this player, show a message box asking if the player wants to accept the invite
+    /// <br />
+    /// If the invite is by this player, replace the invite button with a text saying "Invited"
+    /// </summary>
+    private void Invited(object? _, Connection.InviteEvent inviteEvent)
+    {
+      // Check if the invite is for this player or by this player
+      if (inviteEvent.By == Connection.Name)
+      {
+        // If it's by us. Replace the invite button with a text saying "Invited"
+        // Find the row with the player's name
+        foreach (DataGridViewRow row in dataGrid.Rows)
+        {
+          // The player's name is in the column with index 1 (column 0 is the invite button. In the rendered app it's different tho)
+          if (row.Cells[1].Value?.ToString() == inviteEvent.To)
+          {
+            // Replace the invite button with a text saying "Invited"
+            DataGridViewTextBoxCell cell = new() { Value = "Invited" };
+            row.Cells[0] = cell;
+            break;
+          }
+        }
+      }
+      else if (inviteEvent.To == Connection.Name)
+      {
+        // Change the invite button to "Accept"
+        // Find the row with the player's name
+        foreach (DataGridViewRow row in dataGrid.Rows)
+        {
+          // The player's name is in the column with index 1 (column 0 is the invite button. In the rendered app it's different tho)
+          if (row.Cells[1].Value?.ToString() == inviteEvent.By)
+          {
+            // Replace the invite button with a text saying "Accept"
+            var cell = (DataGridViewButtonCell)row.Cells[0];
+            cell.Value = "Accept";
+            cell.UseColumnTextForButtonValue = false; // Make sure the text is shown
+
+            break;
+          }
+        }
+
+        // The invite is for this player, so we want to show a message box asking if the player wants to accept the invite
+        DialogResult result = MessageBox.Show(
+          $"{inviteEvent.By} wants to play against you. Do you accept?",
+          "Invitation",
+          MessageBoxButtons.YesNo
+        );
+
+        // If the player accepted the invite, send an invite response (by sending a new invite)
+        if (result == DialogResult.Yes)
+          _ = Connection.Invite(inviteEvent.By);
+      }
+    }
+
+    /// <summary>
+    /// Unregisters the player when the form is closed (also unregisters the event listeners)
+    /// </summary>
     private void ListClosed(object sender, FormClosedEventArgs e)
     {
       // Unregister the event listeners
       Connection.OnListHandler -= SetPlayers;
       Connection.OnRegisterHandler -= AddPlayerRegistration;
+      Connection.OnUnregisterHandler -= RemovePlayer;
+      Connection.OnInviteHandler -= Invited;
 
       // Send an unregister event
       _ = Connection.Unregister();

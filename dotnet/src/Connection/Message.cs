@@ -70,11 +70,8 @@ namespace Pong
         case "list":
           OnListHandler?.Invoke(this, ListEvent.Deserialize(message));
           break;
-        case "start":
-          break;
-        case "update":
-          break;
-        case "end":
+        case "invite":
+          OnInviteHandler?.Invoke(this, InviteEvent.Deserialize(message));
           break;
         default:
           break;
