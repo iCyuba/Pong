@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 
 import GameEventHandler, { GameEvent } from "@/event";
+import * as Messages from "@/messages";
 
 interface RegistrationEvent extends GameEvent {
   type: "register";
@@ -11,15 +12,13 @@ export default class RegistrationHandler extends GameEventHandler<RegistrationEv
   static type = "register";
 
   handle(ws: WebSocket, event: RegistrationEvent) {
-    // Check if the name is valid (not empty and less than 16 characters)
-    if (typeof event.name !== "string" || !event.name.length || event.name.length > 16) {
-      throw new Error("Invalid name: " + event.name);
-    }
-
     // Log the registration
     console.log(new Date(), "Registering", event.name);
 
     // Add the player to the game
-    this.game.addPlayer(ws, event.name);
+    const player = this.game.players.addPlayer(ws, event.name);
+
+    // Send them a list of players
+    player.send(Messages.List(this.game.players.notInSession, player));
   }
 }

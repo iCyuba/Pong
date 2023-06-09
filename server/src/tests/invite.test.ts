@@ -156,10 +156,10 @@ describe("Sending invitations from player to player", () => {
       expect(server.game.invites[0].player2.name).toBe("p: 2");
 
       // Expect all 3 players to be still in the game
-      expect(server.game.players.length).toBe(3);
-      expect(server.game.players[0].name).toBe("p: 1");
-      expect(server.game.players[1].name).toBe("p: 2");
-      expect(server.game.players[2].name).toBe("p: 3");
+      expect(server.game.players.all).toHaveLength(3);
+      expect(server.game.players.all[0].name).toBe("p: 1");
+      expect(server.game.players.all[1].name).toBe("p: 2");
+      expect(server.game.players.all[2].name).toBe("p: 3");
     });
 
     test("Player 1 invites player 2, player 2 accepts, player 3 should be notified", async () => {

@@ -48,7 +48,7 @@ export default class Server extends WebSocketServer {
    */
   private onClose(ws: WebSocket): void {
     // Remove the player from the game (if they're not registered, this does nothing)
-    const player = this.game.removePlayer(ws);
+    const player = this.game.players.removeWebSocket(ws);
 
     // Log the disconnection
     // I give up. This will only log if the NODE_ENV isn't test.

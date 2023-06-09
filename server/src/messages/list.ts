@@ -1,6 +1,6 @@
 import { map, without } from "lodash-es";
 
-import Player from "@/player";
+import Player from "@/players/player";
 
 export interface ListMessage {
   type: "list";

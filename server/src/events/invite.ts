@@ -2,7 +2,7 @@ import { find } from "lodash-es";
 
 import { GameEvent, RegisteredGameEventHandler } from "@/event";
 import Invite from "@/invite";
-import Player from "@/player";
+import Player from "@/players/player";
 
 interface InviteEvent extends GameEvent {
   type: "invite";
@@ -13,7 +13,7 @@ export default class InviteHandler extends RegisteredGameEventHandler<InviteEven
   static type = "invite";
 
   handleRegistered(player: Player, event: InviteEvent) {
-    const player2 = this.game.getPlayerByName(event.name);
+    const player2 = this.game.players.fromName(event.name);
 
     if (!player2) throw new Error("Player not found: " + event.name);
 

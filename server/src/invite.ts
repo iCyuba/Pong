@@ -2,7 +2,7 @@ import { filter, find, remove } from "lodash-es";
 
 import Game from "@/game";
 import * as messages from "@/messages";
-import Player from "@/player";
+import Player from "@/players/player";
 
 /**
  * Represents an invite from a player to another player.
@@ -28,11 +28,7 @@ export default class Invite {
 
     this.game = game;
 
-    // Check if the players are already in a session
-    if (game.sessions.find(session => session.player1 === player1 || session.player2 === player1))
-      throw new Error("Player 1 is in a session");
-    if (game.sessions.find(session => session.player1 === player2 || session.player2 === player2))
-      throw new Error("Player 2 is in a session");
+    // TODO: Check if the players are already in a session
 
     // Check if the invite already exists and throw an error if it does
     if (Invite.findExact(game, player1, player2)) throw new Error("Invite already exists");
@@ -55,12 +51,11 @@ export default class Invite {
 
     // Inform everyone that a session has been created between the two players
     // TODO: Move this to the session class
-    this.game.broadcast(
+    this.game.players.broadcast(
       messages.Create(this.player1, this.player2),
-      this.game.getPlayersNotInSession()
+      this.game.players.notInSession
     );
 
-    // Create a new session
     // TODO: Create a new session
   }
 

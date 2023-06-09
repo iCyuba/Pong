@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 
 import Game from "@/game";
-import Player from "@/player";
+import Player from "@/players/player";
 
 export interface GameEvent {
   type: string;
@@ -38,7 +38,7 @@ export abstract class RegisteredGameEventHandler<
    */
   handle(ws: WebSocket, event: Event): void | Promise<void> {
     // Get the player that sent the event
-    const player = this.game.getPlayer(ws);
+    const player = this.game.players.fromWebSocket(ws);
 
     // If the player is not registered, throw an error
     if (!player) throw new Error("Not registered");

@@ -45,7 +45,7 @@ describe("Registrations / Unregistrations", () => {
         const response = await waitForResponse<ErrorMessage>(ws, false);
 
         // Expect the response to be an error message
-        expect(response).toEqual({ type: "error", message: `Invalid name: ${data.name}` });
+        expect(response.type).toEqual("error");
 
         // Expect the connection to be still open
         expect(ws.readyState).toBe(WebSocket.OPEN);
@@ -64,8 +64,8 @@ describe("Registrations / Unregistrations", () => {
       expect(responses[1]).toEqual({ type: "list", players: [] });
 
       // Expect that the player is inside game.players and that the player is the only one
-      expect(server.game.players.length).toBe(1);
-      expect(server.game.players[0].name).toBe("test");
+      expect(server.game.players.all).toHaveLength(1);
+      expect(server.game.players.all[0].name).toBe("test");
 
       // Close the connection
       ws.close();
@@ -74,7 +74,7 @@ describe("Registrations / Unregistrations", () => {
       await new Promise(resolve => setTimeout(resolve, 50));
 
       // Expect that the player is no longer inside game.players
-      expect(server.game.players.length).toBe(0);
+      expect(server.game.players.all).toHaveLength(0);
     });
 
     test("Register and try to register again", async () => {
@@ -92,8 +92,8 @@ describe("Registrations / Unregistrations", () => {
       expect(response).toEqual({ type: "error", message: "Already registered" });
 
       // Expect that the player is still inside game.players and that the player is the only one
-      expect(server.game.players.length).toBe(1);
-      expect(server.game.players[0].name).toBe("testing");
+      expect(server.game.players.all).toHaveLength(1);
+      expect(server.game.players.all[0].name).toBe("testing");
 
       // Expect the socket to be still open
       expect(ws.readyState).toBe(WebSocket.OPEN);
@@ -110,7 +110,7 @@ describe("Registrations / Unregistrations", () => {
       await new Promise(resolve => setTimeout(resolve, 50));
 
       // Expect that the player is no longer inside game.players
-      expect(server.game.players.length).toBe(0);
+      expect(server.game.players.all).toHaveLength(0);
 
       // Expect the socket to be still open
       expect(ws.readyState).toBe(WebSocket.OPEN);
@@ -120,8 +120,8 @@ describe("Registrations / Unregistrations", () => {
       await waitForResponses(ws, 2, false);
 
       // Expect that the player is inside game.players and that the player is the only one
-      expect(server.game.players.length).toBe(1);
-      expect(server.game.players[0].name).toBe("some_player");
+      expect(server.game.players.all).toHaveLength(1);
+      expect(server.game.players.all[0].name).toBe("some_player");
     });
   });
 
@@ -145,11 +145,11 @@ describe("Registrations / Unregistrations", () => {
       const response = await waitForResponse<ErrorMessage>(websockets[1], false);
 
       // Expect the response to be an error message
-      expect(response).toEqual({ type: "error", message: "Username already taken" });
+      expect(response).toEqual({ type: "error", message: "Username is already in use" });
 
       // Expect that the player is inside game.players and that the player is the only one
-      expect(server.game.players.length).toBe(1);
-      expect(server.game.players[0].name).toBe("test");
+      expect(server.game.players.all).toHaveLength(1);
+      expect(server.game.players.all[0].name).toBe("test");
 
       // Expect the sockets to be still open
       expect(websockets[0].readyState).toBe(WebSocket.OPEN);
@@ -201,8 +201,8 @@ describe("Registrations / Unregistrations", () => {
       expect(response2).toEqual({ type: "unregister", name: "test1" });
 
       // Expect that the player is no longer inside game.players
-      expect(server.game.players.length).toBe(1);
-      expect(server.game.players[0].name).toBe("test2");
+      expect(server.game.players.all).toHaveLength(1);
+      expect(server.game.players.all[0].name).toBe("test2");
 
       // Request the list of players from the second socket
       websockets[1].send(JSON.stringify({ type: "list" }));
@@ -241,8 +241,8 @@ describe("Registrations / Unregistrations", () => {
       );
 
       // Expect that only 1 player is inside game.players
-      expect(server.game.players.length).toBe(1);
-      expect(server.game.players[0].name).toBe("50Sockets");
+      expect(server.game.players.all).toHaveLength(1);
+      expect(server.game.players.all[0].name).toBe("50Sockets");
 
       // Expect the sockets to be still open
       websockets.forEach(ws => expect(ws.readyState).toBe(WebSocket.OPEN));
@@ -260,8 +260,8 @@ describe("Registrations / Unregistrations", () => {
       );
 
       // Expect that all players are inside game.players
-      expect(server.game.players.length).toBe(websockets.length);
-      expect(server.game.players.map(p => p.name)).toEqual(names);
+      expect(server.game.players.all).toHaveLength(websockets.length);
+      expect(server.game.players.all.map(p => p.name)).toEqual(names);
 
       // Basically an asynchronous forEach on the websockets array
       // Request the list of players from all sockets

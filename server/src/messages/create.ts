@@ -1,4 +1,4 @@
-import Player from "@/player";
+import Player from "@/players/player";
 
 export interface CreateMessage {
   type: "create";

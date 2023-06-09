@@ -1,6 +1,6 @@
 import { RegisteredGameEventHandler } from "@/event";
-import { List } from "@/messages";
-import Player from "@/player";
+import * as Messages from "@/messages";
+import Player from "@/players/player";
 
 export default class ListHandler extends RegisteredGameEventHandler {
   static type = "list";
@@ -10,6 +10,6 @@ export default class ListHandler extends RegisteredGameEventHandler {
     console.log(new Date(), "Listing players", player.name);
 
     // Send them the list of all players
-    player.send(List(this.game.getPlayersNotInSession(), player));
+    player.send(Messages.List(this.game.players.notInSession, player));
   }
 }
