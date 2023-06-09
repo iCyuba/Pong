@@ -49,14 +49,8 @@ export default class Invite {
     // Remove the invite from the list of invites
     this.delete();
 
-    // Inform everyone that a session has been created between the two players
-    // TODO: Move this to the session class
-    this.game.players.broadcast(
-      messages.Create(this.player1, this.player2),
-      this.game.players.notInSession
-    );
-
-    // TODO: Create a new session
+    // Create a new session
+    this.game.sessions.create(this);
   }
 
   /**

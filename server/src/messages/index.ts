@@ -6,6 +6,7 @@ export interface ErrorMessage {
   message: string;
 }
 
+export { default as Bounce } from "@/messages/bounce";
 export { default as Create } from "@/messages/create";
 export { default as Invite } from "@/messages/invite";
 export { default as List } from "@/messages/list";
