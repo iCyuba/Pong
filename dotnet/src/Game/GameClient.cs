@@ -31,8 +31,8 @@ namespace Pong
       Ball = new BallClient(connection, this);
 
       // Initialize the paddles
-      LeftPaddle = new(this);
-      RightPaddle = new(this);
+      LeftPaddle = new(this, Paddle.Side.Left);
+      RightPaddle = new(this, Paddle.Side.Right);
 
       // Position the paddles
       LeftPaddle.Left = Offset.X;

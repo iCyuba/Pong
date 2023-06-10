@@ -38,9 +38,23 @@ namespace Pong
     }
 
     /// <summary>
+    /// Check if the box collides with another box (i think the axis detection only works if the other box is bigger but idk)
+    /// </summary>
+    public bool CollidesWith(Box other)
+    {
+      bool collidesX = Right > other.Left && Left < other.Right;
+      bool collidesY = Bottom > other.Top && Top < other.Bottom;
+
+      bool collides = collidesX && collidesY;
+
+      // If the box doesn't collide with the other box, return null
+      return collides;
+    }
+
+    /// <summary>
     /// The top side of the box
     /// </summary>
-    public double Top
+    public virtual double Top
     {
       get => PosY - Height / 2;
       set => PosY = value + Height / 2;
@@ -49,7 +63,7 @@ namespace Pong
     /// <summary>
     /// The bottom side of the box
     /// </summary>
-    public double Bottom
+    public virtual double Bottom
     {
       get => PosY + Height / 2;
       set => PosY = value - Height / 2;
@@ -58,7 +72,7 @@ namespace Pong
     /// <summary>
     /// The left side of the box
     /// </summary>
-    public double Left
+    public virtual double Left
     {
       get => PosX - Width / 2;
       set => PosX = value + Width / 2;
@@ -67,7 +81,7 @@ namespace Pong
     /// <summary>
     /// The right side of the box
     /// </summary>
-    public double Right
+    public virtual double Right
     {
       get => PosX + Width / 2;
       set => PosX = value - Width / 2;

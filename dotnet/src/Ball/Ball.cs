@@ -80,6 +80,16 @@
     }
 
     /// <summary>
+    /// Whether the ball was colliding with the walls in the last frame
+    /// </summary>
+    private bool lastCollisionForWalls { get; set; } = false;
+
+    /// <summary>
+    /// Whether or not the ball was colliding with each box in the last frame
+    /// </summary>
+    private Dictionary<Box, bool> lastCollisionForBoxes { get; set; } = new();
+
+    /// <summary>
     /// Checks if the ball is colliding with the top or bottom of the screen. If it is, it returns true
     /// </summary>
     public bool CheckWallCollision()
@@ -97,9 +107,35 @@
       // This is so if the client is lagging, the ball will still bounce off the walls
       // Also it will bounce off the walls in the space behind the paddle (on the server the game stops once the ball is behind the paddle)
       if (CheckWallCollision())
-        VelY *= -1;
+      {
+        if (!lastCollisionForWalls)
+          VelY *= -1;
+        lastCollisionForWalls = true;
+      }
+      else
+        lastCollisionForWalls = false;
 
-      // TODO: Implement collision with boxes
+      // If there are no boxes, don't bother checking for collisions
+      if (boxes == null)
+        return;
+
+      // Check the collisions for each box
+      foreach (Box box in boxes)
+      {
+        bool collision = CollidesWith(box);
+
+        bool lastCollisionForBox = lastCollisionForBoxes.ContainsKey(box)
+          ? lastCollisionForBoxes[box]
+          : false;
+
+        // If the ball is colliding with the box, but it wasn't in the last frame
+        // Bounce the ball
+        if (collision && !lastCollisionForBox)
+          VelX *= -1;
+
+        // Remember te last collision for the box
+        lastCollisionForBoxes[box] = collision;
+      }
     }
   }
 }

@@ -24,8 +24,8 @@
       Ball = new BallServer(this);
 
       // Initialize the paddles
-      LeftPaddle = new(this);
-      RightPaddle = new(this);
+      LeftPaddle = new(this, Paddle.Side.Left);
+      RightPaddle = new(this, Paddle.Side.Right);
 
       // Position the paddles
       LeftPaddle.Left = Offset.X;
@@ -52,7 +52,7 @@
 
       // Ball
       BallInstance.Move(deltaTime);
-      BallInstance.Bounce(new[] { LeftPaddle, RightPaddle });
+      BallInstance.Bounce(new[] { LeftPaddle.Hitbox, RightPaddle.Hitbox });
     }
 
     // Add support for the right paddle
