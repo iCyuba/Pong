@@ -1,7 +1,7 @@
 import Ball from "@/sessions/ball";
 
-export interface BounceMessage {
-  type: "bounce";
+export interface UpdateMessage {
+  type: "update";
 
   // Position
   posX: number;
@@ -10,15 +10,18 @@ export interface BounceMessage {
   // Velocity
   velX: number;
   velY: number;
+
+  // Timestamp
+  timestamp: number;
 }
 
 /**
- * Notify that the ball has bounced
+ * Notify that the velocity of the ball has changed
  * Sent to both players in the session
- * @param {Ball} ball The ball that bounced
- * @returns {BounceMessage} A Bounce message
+ * @param {Ball} ball The ball to send the update message for
+ * @returns {UpdateMessage} An Update message
  */
-function Bounce(ball: Ball): BounceMessage {
+function Update(ball: Ball): UpdateMessage {
   // Get the x and y coordinates of the ball
   const { x: posX, y: posY } = ball.position;
 
@@ -26,12 +29,13 @@ function Bounce(ball: Ball): BounceMessage {
   const { x: velX, y: velY } = ball.velocityInAxes;
 
   return {
-    type: "bounce",
+    type: "update",
     posX,
     posY,
     velX,
     velY,
+    timestamp: Date.now(),
   };
 }
 
-export default Bounce;
+export default Update;

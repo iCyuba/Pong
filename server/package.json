@@ -16,6 +16,7 @@
   "sideEffects": false,
   "dependencies": {
     "lodash-es": "^4.17.21",
+    "tiny-typed-emitter": "^2.1.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
+import * as Messages from "@/messages";
+
 import Game from "@/game";
 import Invite from "@/invite";
-import * as Messages from "@/messages";
 import Session from "@/sessions/session";
 
 /**

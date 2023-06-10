@@ -1,4 +1,10 @@
+import { WebSocket } from "ws";
+
+import createConnection, { closeConnection } from "@/tests/createConnection";
+import waitForResponse, { waitForResponses } from "@/tests/waitForResponse";
+
 import Player from "@/players/player";
+import Server from "@/server";
 
 /** Don't ask. Just use them */
 export const usernames = [
@@ -24,39 +30,25 @@ export const usernames = [
   "usernames <3",
 ];
 
+export const invalidUsernames: { name: unknown; error: string }[] = [
+  { name: undefined, error: "A name must be a string (got undefined)" },
+  { name: 123, error: "A name must be a string (got number)" },
+  { name: /a/, error: "A name must be a string (got object)" },
+  { name: null, error: "A name must be a string (got object)" },
+  { name: false, error: "A name must be a string (got boolean)" },
+  { name: "", error: "A name must not be empty" },
+  { name: "AAAAAAAAAAAAAAAAAAAA", error: "A name must not be longer than 16 characters" },
+];
+
 describe("Offline tests", () => {
   describe("Player.validateName and Player.safeValidateName", () => {
     // Try validating all sorts of garbage. What is the point of this??
-    test.each([undefined, 123, /a/, null, false, NaN, Infinity, () => {}])(
-      "Non-string: %s",
-      (value: unknown) => {
-        // Calling Player.validateName should throw.
-        expect(() => Player.validateName(value as string)).toThrowError(
-          `A name must be a string (got ${typeof value})`
-        );
+    test.each(invalidUsernames)("Invalid: $name", ({ name, error }) => {
+      // Calling Player.validateName should throw.
+      expect(() => Player.validateName(name as string)).toThrowError(error);
 
-        // Calling Player.safeValidateName should return false
-        expect(Player.safeValidateName(value as string)).toBe(false);
-      }
-    );
-
-    // ""....
-    // I'm not gonna comment this. Read the code (if u want, idc)
-    test("0 length string", () => {
-      expect(() => Player.validateName("")).toThrowError("A name must not be empty");
-
-      expect(Player.safeValidateName("")).toBe(false);
-    });
-
-    // AAAAAAAAAAAAAAAAAAAA (for example)
-    test("Too long", () => {
-      const name = "AAAAAAAAAAAAAAAAAAAA";
-
-      expect(() => Player.validateName(name)).toThrowError(
-        "A name must not be longer than 16 characters"
-      );
-
-      expect(Player.safeValidateName(name)).toBe(false);
+      // Calling Player.safeValidateName should return false
+      expect(Player.safeValidateName(name as string)).toBe(false);
     });
 
     // Very great (valid) names
@@ -64,6 +56,55 @@ describe("Offline tests", () => {
       expect(() => Player.validateName(name)).not.toThrow();
 
       expect(Player.safeValidateName(name)).toBe(true);
+    });
+  });
+});
+
+describe("Online tests", () => {
+  let server: Server;
+
+  // Create a new server instance before all tests with a random port
+  beforeAll(done => {
+    server = new Server({ port: 0 }, done);
+  });
+
+  // Close the server after all tests
+  afterAll(done => {
+    server.close(done);
+  });
+
+  describe("Register with names", () => {
+    let ws: WebSocket;
+
+    // Create a new connection to the server before each test
+    beforeEach(async () => {
+      ws = await createConnection(server);
+    });
+
+    // Close the connection after each test (if it's open)
+    afterEach(async () => {
+      await closeConnection(ws);
+    });
+
+    // Try registering with an invalid name
+    test.each(invalidUsernames)("Invalid: $name", async ({ name, error }) => {
+      ws.send(JSON.stringify({ type: "register", name }));
+
+      const response = await waitForResponse(ws, false);
+
+      // Expect the response to be an error message
+      expect(response).toMatchObject({ type: "error", message: error });
+    });
+
+    // Register with a valid name
+    test.each(usernames)("Valid: %s", async name => {
+      const register = { type: "register", name };
+      ws.send(JSON.stringify(register));
+
+      const [response] = await waitForResponses(ws, 2, false);
+
+      // Expect the response to be a register message
+      expect(response).toMatchObject(register);
     });
   });
 });

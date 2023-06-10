@@ -1,7 +1,8 @@
 import { filter, find, remove } from "lodash-es";
 
-import Game from "@/game";
 import * as messages from "@/messages";
+
+import Game from "@/game";
 import Player from "@/players/player";
 
 /**

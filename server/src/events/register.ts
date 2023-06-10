@@ -1,7 +1,8 @@
 import { WebSocket } from "ws";
 
-import GameEventHandler, { GameEvent } from "@/event";
 import * as Messages from "@/messages";
+
+import GameEventHandler, { GameEvent } from "@/event";
 
 interface RegistrationEvent extends GameEvent {
   type: "register";

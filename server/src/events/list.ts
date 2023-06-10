@@ -1,5 +1,6 @@
-import { RegisteredGameEventHandler } from "@/event";
 import * as Messages from "@/messages";
+
+import { RegisteredGameEventHandler } from "@/event";
 import Player from "@/players/player";
 
 export default class ListHandler extends RegisteredGameEventHandler {

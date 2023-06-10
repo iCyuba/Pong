@@ -1,6 +1,7 @@
+import * as Messages from "@/messages";
+
 import Game from "@/game";
 import Invite from "@/invite";
-import * as Messages from "@/messages";
 import Player from "@/players/player";
 import Ball from "@/sessions/ball";
 
@@ -68,10 +69,10 @@ export default class Session {
   }
 
   /**
-   * A bounce happened
+   * The ball bounced off a wall or player
    */
   private bounce() {
-    // Send a bounce message to both players
-    this.game.players.broadcast(Messages.Bounce(this.ball), [this.player1, this.player2]);
+    // Send an update message to both players
+    this.game.players.broadcast(Messages.Update(this.ball), [this.player1, this.player2]);
   }
 }

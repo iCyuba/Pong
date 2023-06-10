@@ -1,5 +1,5 @@
-import EventEmitter from "events";
 import { memoize } from "lodash-es";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 /**
  * X and Y coordinates / velocity
@@ -27,7 +27,7 @@ interface BallEvents {
  *
  * The server handles it as a square, but the client sees it as a circle lmao
  */
-export default class Ball extends EventEmitter {
+export default class Ball extends TypedEmitter<BallEvents> {
   /** The position of the ball */
   position: XandY;
 
@@ -35,7 +35,7 @@ export default class Ball extends EventEmitter {
   velocity: number;
 
   /** The angle of the ball (internal) */
-  private _angle: number;
+  private _angle!: number;
 
   /** The angle of the ball (in degrees) */
   get angle() {
@@ -76,10 +76,8 @@ export default class Ball extends EventEmitter {
     this.velocity = 50;
 
     // Set a random angle for the ball
-    this._angle = Ball.randomAngle();
+    this.angle = Ball.randomAngle();
   }
-
-  // private updatePosition = throttle(() => this.emit("bounce"), 300);
 
   /**
    * Move the ball based on the velocity and delta time
@@ -90,15 +88,9 @@ export default class Ball extends EventEmitter {
     this.position.x += (this.velocityInAxes.x * delta) / 1000;
     this.position.y += (this.velocityInAxes.y * delta) / 1000;
 
-    // TODO: REMOVE!
-    // console.log(this.position);
-
     // Collision detection
     this.wallBounce();
     this.goal();
-
-    // Send a bounce event TODO: REMOVE!
-    // this.updatePosition();
   }
 
   /** Checks if the last time the ball was colliding with the top or bottom wall */

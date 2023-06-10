@@ -2,9 +2,10 @@ import { find, remove } from "lodash-es";
 
 import { WebSocket } from "ws";
 
+import * as Messages from "@/messages";
+
 import Game from "@/game";
 import Invite from "@/invite";
-import * as Messages from "@/messages";
 import Player from "@/players/player";
 
 /**

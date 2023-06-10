@@ -1,7 +1,7 @@
 {
   "printWidth": 100,
   "arrowParens": "avoid",
-  "importOrder": ["^ws$", "@/tests/(.*?)$", "^@/(.*?)$", "^[./]"],
+  "importOrder": ["^ws$", "^@/tests/(.*?)$", "^@/messages$", "^@/(.*?)$", "^[./]"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "importOrderCaseInsensitive": true
