@@ -52,11 +52,6 @@ namespace Pong
       BallInstance.UnregisterEventHandlers();
     }
 
-    public override void Start()
-    {
-      IsRunning = true;
-    }
-
     public override void Move(double deltaTime)
     {
       if (!IsRunning)
@@ -68,28 +63,6 @@ namespace Pong
 
       // Ball
       BallInstance.Move();
-    }
-
-    public override void KeyDown(Keys key)
-    {
-      // Start the game when a key is pressed
-      if (!IsRunning)
-        Start();
-
-      if (key == Keys.W)
-        LeftPaddle.MoveUp();
-      else if (key == Keys.S)
-        LeftPaddle.MoveDown();
-    }
-
-    public override void KeyUp(Keys key)
-    {
-      // This code looks stupid. See the explanation in Game.cs or hover over the method name
-
-      if (key == Keys.W)
-        LeftPaddle.MoveDown();
-      else if (key == Keys.S)
-        LeftPaddle.MoveUp();
     }
   }
 }

@@ -21,7 +21,7 @@
       : base(width, height)
     {
       // This is here so the ball is of type BallServer..
-      Ball = new BallServer();
+      Ball = new BallServer(this);
 
       // Initialize the paddles
       LeftPaddle = new(this);
@@ -34,7 +34,7 @@
 
     public override void Start()
     {
-      IsRunning = true;
+      base.Start();
 
       // Place the ball in the middle of the screen and start it moving
       BallInstance.RandomlyStartMoving(600);
@@ -52,34 +52,27 @@
 
       // Ball
       BallInstance.Move(deltaTime);
-      BallInstance.Bounce(Width, Height, LeftPaddle);
+      BallInstance.Bounce(new[] { LeftPaddle, RightPaddle });
     }
 
+    // Add support for the right paddle
     public override void KeyDown(Keys key)
     {
-      // Start the game when a key is pressed
-      if (!IsRunning)
-        Start();
+      base.KeyDown(key);
 
-      if (key == Keys.W)
-        LeftPaddle.MoveUp();
-      else if (key == Keys.S)
-        LeftPaddle.MoveDown();
-      else if (key == Keys.Up)
+      if (key == Keys.Up)
         RightPaddle.MoveUp();
       else if (key == Keys.Down)
         RightPaddle.MoveDown();
     }
 
+    // Add support for the right paddle
     public override void KeyUp(Keys key)
     {
-      // This code looks stupid. See the explanation in Game.cs or hover over the method name
+      base.KeyUp(key);
 
-      if (key == Keys.W)
-        LeftPaddle.MoveDown();
-      else if (key == Keys.S)
-        LeftPaddle.MoveUp();
-      else if (key == Keys.Up)
+      // This code looks stupid. See the explanation in Game.cs or hover over the method name
+      if (key == Keys.Up)
         RightPaddle.MoveDown();
       else if (key == Keys.Down)
         RightPaddle.MoveUp();

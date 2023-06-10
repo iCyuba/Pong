@@ -8,11 +8,6 @@ namespace Pong
     private Connection Connection { get; set; }
 
     /// <summary>
-    /// The game client that created this ball
-    /// </summary>
-    private GameClient GameClient { get; set; }
-
-    /// <summary>
     /// The timestamp of the last time the server sent the ball's position (in milliseconds)
     /// </summary>
     private long LastServerTimestamp { get; set; }
@@ -52,15 +47,11 @@ namespace Pong
     /// A connection is required to initialize a BallClient
     /// </summary>
     /// <param name="connection">The connection to the server</param>
-    /// <param name="gameClient">The game client that created this ball</param>
-    public BallClient(Connection connection, GameClient gameClient)
-      : base()
+    /// <param name="game">The game that created this ball</param>
+    public BallClient(Connection connection, Game game)
+      : base(game)
     {
       Connection = connection;
-      GameClient = gameClient;
-
-      // Update the radius of the ball to match the scale of the game
-      Radius = 1 * GameClient.Scale;
 
       Connection.OnUpdateHandler += OnUpdate;
     }
@@ -74,8 +65,8 @@ namespace Pong
     /// </summary>
     public void Move()
     {
-      PosX = (ServerPosX + GameClient.Offset.X) + VelX * DeltaTime;
-      PosY = (ServerPosY + GameClient.Offset.Y) + VelY * DeltaTime;
+      PosX = (ServerPosX + Game.Offset.X) + VelX * DeltaTime;
+      PosY = (ServerPosY + Game.Offset.Y) + VelY * DeltaTime;
     }
 
     /// <summary>
@@ -96,10 +87,10 @@ namespace Pong
       // TODO: Change this to the timestamp the server sent the update event
       LastServerTimestamp = DateTime.Now.Ticks;
 
-      ServerPosX = updateEvent.PosX * GameClient.Scale;
-      ServerPosY = updateEvent.PosY * GameClient.Scale;
-      VelX = updateEvent.VelX * GameClient.Scale;
-      VelY = updateEvent.VelY * GameClient.Scale;
+      ServerPosX = updateEvent.PosX * Game.Scale;
+      ServerPosY = updateEvent.PosY * Game.Scale;
+      VelX = updateEvent.VelX * Game.Scale;
+      VelY = updateEvent.VelY * Game.Scale;
     }
   }
 }

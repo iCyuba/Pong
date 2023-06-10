@@ -20,7 +20,7 @@ namespace Pong
     /// Draw the box using the specified graphics object
     /// </summary>
     /// <param name="g">The graphics object to use to draw the box</param>
-    public void Draw(Graphics g)
+    public virtual void Draw(Graphics g)
     {
       g.FillRectangle(Brush, (float)Left, (float)Top, (int)Width, (int)Height);
     }

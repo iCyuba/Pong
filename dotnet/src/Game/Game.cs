@@ -68,7 +68,10 @@ namespace Pong
     /// <summary>
     /// Start the game when a key is pressed
     /// </summary>
-    public abstract void Start();
+    public virtual void Start()
+    {
+      IsRunning = true;
+    }
 
     /// <summary>
     /// Updates the position of objects in the game
@@ -90,13 +93,29 @@ namespace Pong
     /// <summary>
     /// This is the method that gets called when a key is pressed
     /// </summary>
-    public abstract void KeyDown(Keys key);
+    public virtual void KeyDown(Keys key)
+    {
+      // Start the game when a key is pressed
+      if (!IsRunning)
+        Start();
+
+      if (key == Keys.W)
+        LeftPaddle.MoveUp();
+      else if (key == Keys.S)
+        LeftPaddle.MoveDown();
+    }
 
     /// <summary>
     /// This is the method that gets called when a key is released
     /// <br/>
     /// This calls the opposite function of the key that was released intentionally. It cancels out the velocity change and it is smoother imo.
     /// </summary>
-    public abstract void KeyUp(Keys key);
+    public virtual void KeyUp(Keys key)
+    {
+      if (key == Keys.W)
+        LeftPaddle.MoveDown();
+      else if (key == Keys.S)
+        LeftPaddle.MoveUp();
+    }
   }
 }

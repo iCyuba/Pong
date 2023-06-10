@@ -20,7 +20,7 @@ namespace Pong
     /// <summary>
     /// The height of the paddle.
     /// </summary>
-    public double Height { get; set; }
+    public virtual double Height { get; set; }
 
     /// <summary>
     /// Create a new instance of a Box with the specified position, width and height

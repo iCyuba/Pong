@@ -3,8 +3,16 @@ namespace Pong
   public class BallServer : Ball
   {
     /// <summary>
+    /// Create a new instance of a BallServer
+    /// </summary>
+    /// <param name="game">The game that the ball is in</param>
+    public BallServer(Game game)
+      : base(game) { }
+
+    /// <summary>
     /// Move the ball according to its velocity and the time passed
     /// </summary>
+    /// <param name="deltaTime">The time passed since the last frame</param>
     public void Move(double deltaTime)
     {
       PosX += VelX * deltaTime;
@@ -30,42 +38,22 @@ namespace Pong
       int angleInDegrees = r.Next(0, 360);
       double angleInRadians = (angleInDegrees / 180.0) * Math.PI;
 
+      // Math :/
       VelX = Math.Cos(angleInRadians) * vel;
       VelY = Math.Sin(angleInRadians) * vel;
     }
 
-    public bool CheckHColission(int width)
+    /// Checks if the ball is colliding with the left or right of the screen. If it is, it returns true
+    public bool CheckGoalCollision()
     {
-      return PosX <= Diameter / 2 || PosX >= width - (Diameter / 2 * 3);
+      return Left < 0 || Right > Game.Width;
     }
 
-    public bool CheckVColission(int height)
+    public override void Bounce(Box[]? boxes = null)
     {
-      return PosY <= Diameter / 2 || PosY >= height - (Diameter / 2 * 3);
-    }
+      base.Bounce(boxes);
 
-    public bool CheckPaddleHColission(Paddle paddle)
-    {
-      double x1 = paddle.PosX;
-      double x2 = x1 + paddle.Width;
-
-      double y1 = paddle.PosY;
-      double y2 = y1 + paddle.Height;
-
-      // if we're under it / above it. just return false now
-      if (PosY > y2 || PosY < y1)
-        return false;
-
-      return PosX <= x2 && PosX >= x1;
-    }
-
-    public void Bounce(int width, int height, Paddle paddle)
-    {
-      if (CheckHColission(width))
-        VelX *= -1;
-      if (CheckVColission(height))
-        VelY *= -1;
-      if (CheckPaddleHColission(paddle))
+      if (CheckGoalCollision())
         VelX *= -1;
     }
   }
