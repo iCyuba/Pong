@@ -1,56 +1,22 @@
-using System.Numerics;
-
 namespace Pong
 {
   public class GameClient : Game
   {
+    public override Ball Ball { get; set; }
+    public override Paddle LeftPaddle { get; set; }
+    public override Paddle RightPaddle { get; set; }
+
     /// <summary>
     /// The connection to the server
     /// </summary>
     private Connection Connection { get; set; }
 
     /// <summary>
-    /// The ball in the game (abstract)
-    /// </summary>
-    public override Ball Ball { get; set; }
-
-    /// <summary>
     /// The ball in the game (Client) [i don't like this but it works for now]
     /// </summary>
     private BallClient BallInstance
     {
-      get =>
-        Ball as BallClient ?? throw new InvalidOperationException("Ball is not of type BallClient");
-    }
-
-    /// <summary>
-    /// The size of the playable area
-    /// <br/>
-    /// Required because the on the server the game is a square, but on the client it's a rectangle
-    /// </summary>
-    public double Size
-    {
-      get => Math.Min(Width, Height);
-    }
-
-    /// <summary>
-    /// The scaling factor for all of the positions, sizes, velocities, etc.
-    /// <br/>
-    /// Required because the on the server the width and height are 100%. Here we have to scale it up to the size of the window
-    /// </summary>
-    public double Scale
-    {
-      get => Size / 100;
-    }
-
-    /// <summary>
-    /// The offset of the game from the top left corner of the window
-    /// <br/>
-    /// Required because the on the server the game is a square, but on the client it's a rectangle
-    /// </summary>
-    public Vector2 Offset
-    {
-      get => new((float)(Width - Size) / 2, (float)(Height - Size) / 2);
+      get => (BallClient)Ball;
     }
 
     /// <summary>
@@ -59,9 +25,18 @@ namespace Pong
     public GameClient(int width, int height, Connection connection)
       : base(width, height)
     {
+      Connection = connection;
+
+      // Initialize the ball with the provided connection
       Ball = new BallClient(connection, this);
 
-      Connection = connection;
+      // Initialize the paddles
+      LeftPaddle = new(this);
+      RightPaddle = new(this);
+
+      // Position the paddles
+      LeftPaddle.Left = Offset.X;
+      RightPaddle.Right = Width - Offset.X;
 
       Start();
     }
@@ -74,23 +49,47 @@ namespace Pong
     public void UnregisterEventHandlers()
     {
       // Unregister event handlers for the connection
-
-      // Required check if the ball is a BallClient (it should always be)
-      if (Ball is BallClient ballClient)
-        ballClient.UnregisterEventHandlers();
+      BallInstance.UnregisterEventHandlers();
     }
 
-    /// <summary>
-    /// Updates the position of objects in the game
-    /// </summary>
-    /// <param name="_">Unused, this is the delta time. Only the GameServer needs this</param>
-    public override void Move(double _)
+    public override void Start()
+    {
+      IsRunning = true;
+    }
+
+    public override void Move(double deltaTime)
     {
       if (!IsRunning)
         return;
 
+      // Paddles
+      LeftPaddle.Move(deltaTime, Height);
+      // RightPaddle.Move(deltaTime, Height);
+
       // Ball
       BallInstance.Move();
+    }
+
+    public override void KeyDown(Keys key)
+    {
+      // Start the game when a key is pressed
+      if (!IsRunning)
+        Start();
+
+      if (key == Keys.W)
+        LeftPaddle.MoveUp();
+      else if (key == Keys.S)
+        LeftPaddle.MoveDown();
+    }
+
+    public override void KeyUp(Keys key)
+    {
+      // This code looks stupid. See the explanation in Game.cs or hover over the method name
+
+      if (key == Keys.W)
+        LeftPaddle.MoveDown();
+      else if (key == Keys.S)
+        LeftPaddle.MoveUp();
     }
   }
 }

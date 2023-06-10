@@ -37,7 +37,7 @@ namespace Pong
     /// </summary>
     private void OnPaint(object sender, PaintEventArgs e)
     {
-      GameInstance.Draw(e.Graphics, timer1.Interval / 1000.0);
+      GameInstance.Draw(e.Graphics);
     }
 
     /// <summary>
