@@ -123,6 +123,8 @@
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(784, 561);
       Controls.Add(topLayout);
+      FormBorderStyle = FormBorderStyle.FixedSingle;
+      MaximizeBox = false;
       Name = "Players";
       Text = "Players";
       FormClosed += ListClosed;
