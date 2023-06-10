@@ -3,18 +3,27 @@
   public class GameServer : Game
   {
     /// <summary>
-    /// The ball in the game (server version)
+    /// The ball in the game (abstract)
     /// </summary>
-    public new BallServer Ball { get; set; }
+    public override Ball Ball { get; set; }
+
+    /// <summary>
+    /// The ball in the game (Server) [i don't like this but it works for now]
+    /// </summary>
+    private BallServer BallInstance
+    {
+      get =>
+        Ball as BallServer ?? throw new InvalidOperationException("Ball is not of type BallServer");
+    }
 
     /// <summary>
     /// Create a new instance of a GameServer with the specified width and height
     /// </summary>
     public GameServer(int width, int height)
-      : base(width, height, new BallServer())
+      : base(width, height)
     {
       // This is here so the ball is of type BallServer..
-      Ball = (BallServer)base.Ball;
+      Ball = new BallServer();
 
       Start();
     }
@@ -26,9 +35,9 @@
     {
       base.Start();
 
-      Ball.RandomlyStartMoving(600);
+      BallInstance.RandomlyStartMoving(600);
 
-      Ball.SetPosToMiddle(Width, Height);
+      BallInstance.SetPosToMiddle(Width, Height);
     }
 
     /// <summary>
@@ -43,8 +52,8 @@
       LeftPaddle.Move(deltaTime, Height);
 
       // Ball
-      Ball.Move(deltaTime);
-      Ball.Bounce(Width, Height, LeftPaddle);
+      BallInstance.Move(deltaTime);
+      BallInstance.Bounce(Width, Height, LeftPaddle);
     }
   }
 }

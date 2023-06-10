@@ -7,18 +7,15 @@ namespace Pong
 
     public bool IsRunning { get; set; }
 
-    public Ball Ball { get; set; }
+    abstract public Ball Ball { get; set; }
     public Paddle LeftPaddle { get; set; }
 
-    public Game(int width, int height, Ball ball)
+    public Game(int width, int height)
     {
       Width = width;
       Height = height;
 
       IsRunning = false;
-
-      // Use the ball passed in
-      Ball = ball;
 
       LeftPaddle = new(Width / 8, Height / 2, 20, 100);
     }

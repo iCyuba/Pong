@@ -8,6 +8,11 @@ namespace Pong
     private Connection Connection { get; set; }
 
     /// <summary>
+    /// The game client that created this ball
+    /// </summary>
+    private GameClient GameClient { get; set; }
+
+    /// <summary>
     /// The timestamp of the last time the server sent the ball's position (in milliseconds)
     /// </summary>
     private long LastServerTimestamp { get; set; }
@@ -47,10 +52,15 @@ namespace Pong
     /// A connection is required to initialize a BallClient
     /// </summary>
     /// <param name="connection">The connection to the server</param>
-    public BallClient(Connection connection)
+    /// <param name="gameClient">The game client that created this ball</param>
+    public BallClient(Connection connection, GameClient gameClient)
       : base()
     {
       Connection = connection;
+      GameClient = gameClient;
+
+      // Update the radius of the ball to match the scale of the game
+      Radius = 1 * GameClient.Scale;
 
       Connection.OnUpdateHandler += OnUpdate;
     }
@@ -64,8 +74,8 @@ namespace Pong
     /// </summary>
     public void Move()
     {
-      PosX = ServerPosX + VelX * DeltaTime;
-      PosY = ServerPosY + VelY * DeltaTime;
+      PosX = (ServerPosX + GameClient.Offset.X) + VelX * DeltaTime;
+      PosY = (ServerPosY + GameClient.Offset.Y) + VelY * DeltaTime;
     }
 
     /// <summary>
@@ -86,10 +96,10 @@ namespace Pong
       // TODO: Change this to the timestamp the server sent the update event
       LastServerTimestamp = DateTime.Now.Ticks;
 
-      ServerPosX = updateEvent.PosX * 6;
-      ServerPosY = updateEvent.PosY * 6;
-      VelX = updateEvent.VelX * 6;
-      VelY = updateEvent.VelY * 6;
+      ServerPosX = updateEvent.PosX * GameClient.Scale;
+      ServerPosY = updateEvent.PosY * GameClient.Scale;
+      VelX = updateEvent.VelX * GameClient.Scale;
+      VelY = updateEvent.VelY * GameClient.Scale;
     }
   }
 }
