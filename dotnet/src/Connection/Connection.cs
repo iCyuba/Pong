@@ -44,6 +44,16 @@ namespace Pong
     public EventHandler<InviteEvent>? OnInviteHandler { get; set; }
 
     /// <summary>
+    /// Event handler for when a player accepts an invitation and the session is created
+    /// </summary>
+    public EventHandler<CreateEvent>? OnCreateHandler { get; set; }
+
+    /// <summary>
+    /// Event handler for when the ball position is updated
+    /// </summary>
+    public EventHandler<UpdateEvent>? OnUpdateHandler { get; set; }
+
+    /// <summary>
     /// Create a new connection to the server
     /// <br />
     /// By default, the connection will be automatically opened

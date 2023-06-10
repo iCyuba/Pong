@@ -41,9 +41,31 @@ namespace Pong
       Connection.OnRegisterHandler += AddPlayerRegistration;
       Connection.OnUnregisterHandler += RemovePlayer;
       Connection.OnInviteHandler += Invited;
+      Connection.OnCreateHandler += SessionCreated;
 
       // Set the label to the player's name
       username.Text = $"Registered as: {Connection.Name}";
+    }
+
+    /// <summary>
+    /// Show a game client window when a new session is created and we're in it
+    /// </summary>
+    private void SessionCreated(object? _, Connection.CreateEvent createEvent)
+    {
+      if (createEvent.Player1 == Connection.Name || createEvent.Player2 == Connection.Name)
+      {
+        // Create a new game client window and show it
+        GameClient game = new(100, 100, Connection);
+        GameWindow gameWindow = new(game);
+
+        Menu.ShowForm(this, gameWindow);
+      }
+      else
+      {
+        // Remove the players who are in the session from the data table
+        RemovePlayer(null, new(createEvent.Player1));
+        RemovePlayer(null, new(createEvent.Player2));
+      }
     }
 
     /// <summary>
@@ -207,6 +229,7 @@ namespace Pong
       Connection.OnRegisterHandler -= AddPlayerRegistration;
       Connection.OnUnregisterHandler -= RemovePlayer;
       Connection.OnInviteHandler -= Invited;
+      Connection.OnCreateHandler -= SessionCreated;
 
       // Send an unregister event
       _ = Connection.Unregister();

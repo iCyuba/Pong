@@ -2,14 +2,17 @@ namespace Pong
 {
   public partial class GameWindow : Form
   {
-    public GameServer GameInstance { get; set; }
+    public Game GameInstance { get; set; }
 
-    public GameWindow()
+    public GameWindow(Game? game = null)
     {
       InitializeComponent();
 
-      // Initialize the game instance
-      GameInstance = new(pictureBox.Width, pictureBox.Height);
+      // If the game is null, then create a new game (server)
+      game ??= new GameServer(pictureBox.Width, pictureBox.Height);
+
+      // Set the game instance
+      GameInstance = game;
     }
 
     /// <summary>
@@ -62,6 +65,15 @@ namespace Pong
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
       GameInstance.KeyUp(e.KeyCode);
+    }
+
+    private void OnClose(object sender, FormClosedEventArgs e)
+    {
+      // If the game is a client, unbind the events
+      if (GameInstance is GameClient GameClientInstance)
+      {
+        GameClientInstance.UnregisterEventHandlers();
+      }
     }
   }
 }

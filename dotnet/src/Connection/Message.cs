@@ -73,6 +73,12 @@ namespace Pong
         case "invite":
           OnInviteHandler?.Invoke(this, InviteEvent.Deserialize(message));
           break;
+        case "create":
+          OnCreateHandler?.Invoke(this, CreateEvent.Deserialize(message));
+          break;
+        case "update":
+          OnUpdateHandler?.Invoke(this, UpdateEvent.Deserialize(message));
+          break;
         default:
           break;
       }

@@ -1,50 +1,28 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
 namespace Pong
 {
-  public class Heart
+  public class BallServer : Ball
   {
-    public double PosX { get; set; }
-    public double PosY { get; set; }
-
-    // Short for velocity...
-    public double VelX { get; set; }
-    public double VelY { get; set; }
-
-    public double Diameter { get; set; }
-
-    public Heart()
-    {
-      PosX = 0;
-      PosY = 0;
-      VelX = 0;
-      VelY = 0;
-      Diameter = 25;
-    }
-
+    /// <summary>
+    /// Move the ball according to its velocity and the time passed
+    /// </summary>
     public void Move(double deltaTime)
     {
       PosX += VelX * deltaTime;
       PosY += VelY * deltaTime;
     }
 
-    public void Draw(Graphics g)
-    {
-      double x = PosX - (Diameter / 2);
-      double y = PosY - (Diameter / 2);
-
-      Font f = new("Segoe MDL2 Assets", (float)Diameter);
-
-      g.FillRectangle(Brushes.LightPink, (float)x, (float)y, (float)Diameter, (float)Diameter);
-      g.DrawString("", f, Brushes.HotPink, (float)x, (float)y);
-    }
-
+    /// <summary>
+    /// Set the position of the ball to the middle of the screen
+    /// </summary>
     public void SetPosToMiddle(int width, int height)
     {
       PosX = width / 2;
       PosY = height / 2;
     }
 
+    /// <summary>
+    /// Randomly start moving the ball in a random direction
+    /// </summary>
     public void RandomlyStartMoving(int vel)
     {
       Random r = new();
@@ -89,11 +67,6 @@ namespace Pong
         VelY *= -1;
       if (CheckPaddleHColission(paddle))
         VelX *= -1;
-    }
-
-    private void HeartToCircleOffset()
-    {
-      // The heart doesn't render from the middle so this hopefully fixes it
     }
   }
 }

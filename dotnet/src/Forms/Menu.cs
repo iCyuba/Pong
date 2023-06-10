@@ -26,34 +26,35 @@
     }
 
     /// <summary>
-    /// Shows a form and hides the main menu
+    /// Replaces one form with another. When the new form is closed, the old form is shown again
     /// </summary>
-    /// <param name="form">The form to show</param>
-    public void ShowForm(Form form)
+    /// <param name="hide">The form to hide</param>
+    /// <param name="show">The form to show</param>
+    public static void ShowForm(Form hide, Form show)
     {
       // Add an event listener for when the form is closed so we can show the main menu again
-      form.Closed += (_, __) =>
+      show.Closed += (_, __) =>
       {
         // Change the main menu's location to the same as the form
-        Location = form.Location;
+        hide.Location = show.Location;
 
         // Show the main menu again
-        Show();
+        hide.Show();
       };
 
       // Hide the main menu and show the form
-      Hide();
-      form.Show();
+      hide.Hide();
+      show.Show();
 
       // Set the form's position to the same as the main menu
-      form.Location = Location;
+      show.Location = hide.Location;
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
       // Create a new game window and show it
       GameWindow GameWindow = new();
-      ShowForm(GameWindow);
+      ShowForm(this, GameWindow);
     }
 
     private void button3_Click(object sender, EventArgs e)
@@ -73,7 +74,7 @@
               {
                 // Show the players window
                 Players Players = new(Connection);
-                ShowForm(Players);
+                ShowForm(this, Players);
               })
             );
           }

@@ -2,8 +2,22 @@
 {
   public class GameServer : Game
   {
+    /// <summary>
+    /// The ball in the game (server version)
+    /// </summary>
+    public new BallServer Ball { get; set; }
+
+    /// <summary>
+    /// Create a new instance of a GameServer with the specified width and height
+    /// </summary>
     public GameServer(int width, int height)
-      : base(width, height) { }
+      : base(width, height, new BallServer())
+    {
+      // This is here so the ball is of type BallServer..
+      Ball = (BallServer)base.Ball;
+
+      Start();
+    }
 
     /// <summary>
     /// Start the game (set IsRunning to true)
@@ -12,43 +26,25 @@
     {
       base.Start();
 
-      Heart.RandomlyStartMoving(600);
+      Ball.RandomlyStartMoving(600);
 
-      Heart.SetPosToMiddle(Width, Height);
+      Ball.SetPosToMiddle(Width, Height);
     }
 
     /// <summary>
     /// Updates the position of objects in the game
     /// </summary>
-    public new void Move(double deltaTime)
+    public override void Move(double deltaTime)
     {
       if (!IsRunning)
         return;
 
-      // Call the base Move method
-      base.Move(deltaTime);
+      // Paddles (these should be moved first so that the ball can bounce off them)
+      LeftPaddle.Move(deltaTime, Height);
 
-      // Add the bounce logic
-      Heart.Bounce(Width, Height, LeftPaddle);
-    }
-
-    /// <summary>
-    /// This is the method that gets called when a key is pressed
-    /// </summary>
-    public void KeyDown(Keys key)
-    {
-      if (key == Keys.W)
-        LeftPaddle.MoveUp();
-      else if (key == Keys.S)
-        LeftPaddle.MoveDown();
-    }
-
-    /// <summary>
-    /// This is the method that gets called when a key is released
-    /// </summary>
-    public void KeyUp(Keys key)
-    {
-      LeftPaddle.Stop();
+      // Ball
+      Ball.Move(deltaTime);
+      Ball.Bounce(Width, Height, LeftPaddle);
     }
   }
 }
