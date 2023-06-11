@@ -1,32 +1,39 @@
+import Start, { StartMessage } from "@/messages/start";
+
 import Ball from "@/sessions/ball";
 
-export interface UpdateMessage {
+/**
+ * A message that is sent when the ball is updated in a session
+ * Sent to both players in the session
+ *
+ * Note: This extends the StartMessage because they're quite similar. Only here we also send the position of the ball
+ */
+export interface UpdateMessage extends Omit<StartMessage, "type"> {
   type: "update";
 
   // Position
   posX: number;
   posY: number;
-
-  // Velocity
-  velX: number;
-  velY: number;
-
-  // Timestamp
-  timestamp: number;
 }
 
 /**
  * Notify that the velocity of the ball has changed
  * Sent to both players in the session
  * @param {Ball} ball The ball to send the update message for
+ * @param {boolean} reverse Whether to flip the game. This is what player 2 sees. (both are on the left side of the screen)
  * @returns {UpdateMessage} An Update message
  */
-function Update(ball: Ball): UpdateMessage {
-  // Get the x and y coordinates of the ball
-  const { x: posX, y: posY } = ball.position;
+function Update(ball: Ball, reverse: boolean): UpdateMessage {
+  // Get the base StartMessage
+  const { velX, velY, timestamp } = Start(ball, reverse);
 
-  // Get the x and y velocity of the ball in the axes
-  const { x: velX, y: velY } = ball.velocityInAxes;
+  // Get the x and y coordinates of the ball
+  let { x: posX, y: posY } = ball.position;
+
+  // Reverse the X axis if this is player 2's view
+  if (reverse) {
+    posX = 100 - posX;
+  }
 
   return {
     type: "update",
@@ -34,7 +41,7 @@ function Update(ball: Ball): UpdateMessage {
     posY,
     velX,
     velY,
-    timestamp: Date.now(),
+    timestamp,
   };
 }
 

@@ -1,5 +1,9 @@
 import Player from "@/players/player";
 
+/**
+ * A message that is sent when a new user registers
+ * Sent to all players who aren't in a session
+ */
 export interface RegisterMessage {
   type: "register";
   name: string;

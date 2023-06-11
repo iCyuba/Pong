@@ -1,5 +1,9 @@
 import Player from "@/players/player";
 
+/**
+ * A message that is sent when a player invites another player to a session
+ * Sent to both players who are in the invite
+ */
 export interface InviteMessage {
   type: "invite";
   by: string;

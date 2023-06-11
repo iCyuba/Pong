@@ -2,6 +2,10 @@ import { map, without } from "lodash-es";
 
 import Player from "@/players/player";
 
+/**
+ * A message that is sent when a player requests a list of players
+ * Sent on registration, on session end, and on request
+ */
 export interface ListMessage {
   type: "list";
   players: string[];

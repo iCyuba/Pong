@@ -1,5 +1,9 @@
 import Player from "@/players/player";
 
+/**
+ * A message that is sent when a session is created
+ * Sent to all players who are not in a session (but including the two players in the new session)
+ */
 export interface CreateMessage {
   type: "create";
   player1: string;
@@ -9,7 +13,6 @@ export interface CreateMessage {
 /**
  * Inform everyone that a session has been created between two players
  * Sent to all players who are not in a session (but including the two players in the new session)
- * Sent to both players who are in the Create
  * @param {Player} player1 The player who sent the Create
  * @param {Player} player2 The player who received the Create
  * @returns {CreateMessage} An Create message

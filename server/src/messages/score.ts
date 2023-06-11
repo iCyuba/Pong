@@ -1,5 +1,9 @@
 import { SessionPlayer } from "@/sessions/session";
 
+/**
+ * A message that is sent when a player scores
+ * Sent to the players in the session whenever a player scores
+ */
 export interface ScoreMessage {
   type: "score";
   you: number;

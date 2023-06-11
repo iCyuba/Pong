@@ -87,7 +87,8 @@ export default class Session {
       this.game.sessions.startGameLoop();
 
       // Send the start message
-      this.game.players.broadcast(Messages.Start(this.ball), [this.player1, this.player2]);
+      this.player1.send(Messages.Start(this.ball, false));
+      this.player2.send(Messages.Start(this.ball, true));
     }, 500);
   }
 
@@ -109,7 +110,8 @@ export default class Session {
    */
   private bounce() {
     // Send an update message to both players
-    this.game.players.broadcast(Messages.Update(this.ball), [this.player1, this.player2]);
+    this.player1.send(Messages.Update(this.ball, false));
+    this.player2.send(Messages.Update(this.ball, true));
   }
 
   /**
