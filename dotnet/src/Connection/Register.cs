@@ -2,6 +2,11 @@ namespace Pong
 {
   partial class Connection
   {
+    /// <summary>
+    /// A message that is sent when a new user registers
+    /// <br/>
+    /// Sent to all players who aren't in a session
+    /// </summary>
     public class RegisterEvent : GameEvent
     {
       public string Name { get; set; }

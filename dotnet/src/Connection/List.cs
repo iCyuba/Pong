@@ -2,6 +2,11 @@ namespace Pong
 {
   partial class Connection
   {
+    /// <summary>
+    /// A message that is sent when a player requests a list of players
+    /// <br/>
+    /// Sent on registration, on session end, and on request
+    /// </summary>
     public class ListEvent : GameEvent
     {
       public List<string> Players { get; set; }

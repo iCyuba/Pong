@@ -49,6 +49,11 @@ namespace Pong
     public EventHandler<CreateEvent>? OnCreateHandler { get; set; }
 
     /// <summary>
+    /// Event handler for when a session starts (this is a different event to OnCreateHandler)
+    /// </summary>
+    public EventHandler<StartEvent>? OnStartHandler { get; set; }
+
+    /// <summary>
     /// Event handler for when the ball position is updated
     /// </summary>
     public EventHandler<UpdateEvent>? OnUpdateHandler { get; set; }

@@ -20,15 +20,6 @@ namespace Pong
     }
 
     /// <summary>
-    /// Set the position of the ball to the middle of the screen
-    /// </summary>
-    public void SetPosToMiddle(int width, int height)
-    {
-      PosX = width / 2;
-      PosY = height / 2;
-    }
-
-    /// <summary>
     /// Randomly start moving the ball in a random direction
     /// </summary>
     public void RandomlyStartMoving(int vel)

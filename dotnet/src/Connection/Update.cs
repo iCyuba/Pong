@@ -2,6 +2,11 @@ namespace Pong
 {
   partial class Connection
   {
+    /// <summary>
+    /// A message that is sent when the ball is updated in a session
+    /// <br/>
+    /// Sent to both players in the session
+    /// </summary>
     public class UpdateEvent : GameEvent
     {
       public double PosX { get; set; }

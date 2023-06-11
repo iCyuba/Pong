@@ -9,6 +9,9 @@ namespace Pong
     static private JsonSerializerOptions JsonSerializerOptions =
       new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
+    /// <summary>
+    /// A base event. It is any message that is received from the server
+    /// </summary>
     public class GameEvent
     {
       public string Type { get; set; }
@@ -75,6 +78,9 @@ namespace Pong
           break;
         case "create":
           OnCreateHandler?.Invoke(this, CreateEvent.Deserialize(message));
+          break;
+        case "start":
+          OnStartHandler?.Invoke(this, StartEvent.Deserialize(message));
           break;
         case "update":
           OnUpdateHandler?.Invoke(this, UpdateEvent.Deserialize(message));

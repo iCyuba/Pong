@@ -83,6 +83,7 @@ export default class Sessions {
       // Stop the game loop
       clearInterval(this.interval!);
       this.interval = undefined;
+      this.lastTick = undefined;
 
       return;
     }

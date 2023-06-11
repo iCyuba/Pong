@@ -2,6 +2,11 @@ namespace Pong
 {
   partial class Connection
   {
+    /// <summary>
+    /// A message that is sent when a player invites another player to a session
+    /// <br/>
+    /// Sent to both players who are in the invite
+    /// </summary>
     public class InviteEvent : GameEvent
     {
       public string By { get; set; }

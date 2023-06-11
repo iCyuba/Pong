@@ -53,6 +53,8 @@ namespace Pong
     {
       Connection = connection;
 
+      // Register the event handlers
+      Connection.OnStartHandler += OnStart;
       Connection.OnUpdateHandler += OnUpdate;
     }
 
@@ -74,7 +76,27 @@ namespace Pong
     /// </summary>
     public void UnregisterEventHandlers()
     {
+      Connection.OnStartHandler -= OnStart;
       Connection.OnUpdateHandler -= OnUpdate;
+    }
+
+    /// <summary>
+    /// Event handler for the "start" event
+    /// <br/>
+    /// Starts the ball's movement
+    /// </summary>
+    private void OnStart(object? _, Connection.StartEvent startEvent)
+    {
+      // TODO: Change this to the timestamp the server sent the update event
+      LastServerTimestamp = DateTime.Now.Ticks;
+
+      // When this event is sent. The ball is in the middle of the screen
+      SetPosToMiddle(Game.Size, Game.Size);
+      ServerPosX = PosX;
+      ServerPosY = PosY;
+
+      VelX = startEvent.VelX * Game.Scale;
+      VelY = startEvent.VelY * Game.Scale;
     }
 
     /// <summary>

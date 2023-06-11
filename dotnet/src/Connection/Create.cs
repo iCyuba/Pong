@@ -2,6 +2,11 @@ namespace Pong
 {
   partial class Connection
   {
+    /// <summary>
+    /// A message that is sent when a session is created
+    /// <br/>
+    /// Sent to all players who are not in a session (but including the two players in the new session)
+    /// </summary>
     public class CreateEvent : GameEvent
     {
       public string Player1 { get; set; }

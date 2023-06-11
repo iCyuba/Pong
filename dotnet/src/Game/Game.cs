@@ -29,7 +29,7 @@ namespace Pong
     /// <br/>
     /// Required because the on the server the game is a square, but on the client it's a rectangle
     /// </summary>
-    public double Size
+    public int Size
     {
       get => Math.Min(Width, Height);
     }

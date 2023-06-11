@@ -60,8 +60,20 @@
     {
       Game = game;
 
+      // Set the position of the ball to the middle of the screen
+      SetPosToMiddle(game.Width, game.Height);
+
       VelX = 0;
       VelY = 0;
+    }
+
+    /// <summary>
+    /// Set the position of the ball to the middle of the screen
+    /// </summary>
+    public void SetPosToMiddle(int width, int height)
+    {
+      PosX = width / 2;
+      PosY = height / 2;
     }
 
     /// <summary>
