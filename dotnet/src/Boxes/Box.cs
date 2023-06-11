@@ -38,7 +38,7 @@ namespace Pong
     }
 
     /// <summary>
-    /// Check if the box collides with another box (i think the axis detection only works if the other box is bigger but idk)
+    /// Check if the box collides with another box
     /// </summary>
     public bool CollidesWith(Box other)
     {

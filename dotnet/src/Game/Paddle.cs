@@ -23,28 +23,11 @@
     public double VelY { get; set; }
 
     /// <summary>
-    /// The hitbox of the paddle
-    /// <br/>
-    /// I'm a fraud.. ik.. and I'm sorry. but it just looks better this way
-    /// </summary>
-    public RenderedBox Hitbox { get; set; }
-
-    /// <summary>
-    /// If this is a left or right paddle
-    /// </summary>
-    public enum Side
-    {
-      Left,
-      Right
-    }
-
-    /// <summary>
     /// Create a new instance of a Paddle in the middle of the screen and scale it to an appropriate size
     /// (It's created at X=0 intentionally.. I use the setters <see cref="Box.Left"/> and <see cref="Box.Right"/> to set the position)
     /// </summary>
     /// <param name="game">The game that the paddle is in</param>
-    /// <param name="side">The side of the paddle (left or right) [used for the hitbox]</param>
-    public Paddle(Game game, Side side)
+    public Paddle(Game game)
       : base(
         0, // The X position is set manually later with the setters of Left and Right
         game.Height / 2, // Place the paddle in the middle of the screen
@@ -54,13 +37,6 @@
       )
     {
       Game = game;
-
-      // Create the hitbox for the paddle
-      Hitbox = new(0, 0, Width / 2, Height, Brushes.SaddleBrown);
-      if (side == Side.Left)
-        Hitbox.Right = Right;
-      else
-        Hitbox.Left = Left;
     }
 
     /// <summary>
@@ -77,9 +53,6 @@
         Top = 0;
       else if (Bottom > height)
         Bottom = height;
-
-      // Update the hitbox
-      Hitbox.PosY = PosY;
     }
 
     /// <summary>
@@ -109,30 +82,6 @@
     public override void Draw(Graphics g)
     {
       base.Draw(g);
-
-      // Draw the hitbox
-      Hitbox.Draw(g);
-    }
-
-    // The setters for Left and Right are used to update the hitbox
-    public override double Left
-    {
-      get => base.Left;
-      set
-      {
-        base.Left = value;
-        Hitbox.Right = Right;
-      }
-    }
-
-    public override double Right
-    {
-      get => base.Right;
-      set
-      {
-        base.Right = value;
-        Hitbox.Left = Left;
-      }
     }
   }
 }

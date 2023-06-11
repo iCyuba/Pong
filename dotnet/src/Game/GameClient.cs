@@ -3,8 +3,6 @@ namespace Pong
   public class GameClient : Game
   {
     public override Ball Ball { get; set; }
-    public override Paddle LeftPaddle { get; set; }
-    public override Paddle RightPaddle { get; set; }
 
     /// <summary>
     /// The connection to the server
@@ -30,14 +28,6 @@ namespace Pong
       // Initialize the ball with the provided connection
       Ball = new BallClient(connection, this);
 
-      // Initialize the paddles
-      LeftPaddle = new(this, Paddle.Side.Left);
-      RightPaddle = new(this, Paddle.Side.Right);
-
-      // Position the paddles
-      LeftPaddle.Left = Offset.X;
-      RightPaddle.Right = Width - Offset.X;
-
       Start();
     }
 
@@ -59,10 +49,11 @@ namespace Pong
 
       // Paddles
       LeftPaddle.Move(deltaTime, Height);
-      // RightPaddle.Move(deltaTime, Height);
+      RightPaddle.Move(deltaTime, Height);
 
       // Ball
       BallInstance.Move();
+      BallInstance.Bounce();
     }
   }
 }

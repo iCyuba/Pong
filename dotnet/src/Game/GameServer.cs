@@ -3,8 +3,6 @@
   public class GameServer : Game
   {
     public override Ball Ball { get; set; }
-    public override Paddle LeftPaddle { get; set; }
-    public override Paddle RightPaddle { get; set; }
 
     /// <summary>
     /// The ball in the game (Server) [i don't like this but it works for now]
@@ -22,14 +20,6 @@
     {
       // This is here so the ball is of type BallServer..
       Ball = new BallServer(this);
-
-      // Initialize the paddles
-      LeftPaddle = new(this, Paddle.Side.Left);
-      RightPaddle = new(this, Paddle.Side.Right);
-
-      // Position the paddles
-      LeftPaddle.Left = Offset.X;
-      RightPaddle.Right = Width - Offset.X;
     }
 
     public override void Start()
@@ -52,7 +42,7 @@
 
       // Ball
       BallInstance.Move(deltaTime);
-      BallInstance.Bounce(new[] { LeftPaddle.Hitbox, RightPaddle.Hitbox });
+      BallInstance.Bounce();
     }
 
     // Add support for the right paddle

@@ -56,7 +56,7 @@
     /// <param name="game">The game that the ball is in</param>
     public Ball(Game game)
       // The width and height are multiplied by 2 it's a radius... It's kinda ugly ik
-      : base(0, 0, BaseRadius * 2 * game.Scale, BaseRadius * 2 * game.Scale, Brushes.Olive)
+      : base(0, 0, BaseRadius * 2 * game.Scale, BaseRadius * 2 * game.Scale, Brushes.HotPink)
     {
       Game = game;
 
@@ -73,21 +73,16 @@
       double x = PosX - Radius;
       double y = PosY - Radius;
 
-      Font f = new("Segoe MDL2 Assets", (float)Diameter);
+      g.FillEllipse(Brush, (float)x, (float)y, (float)Diameter, (float)Diameter);
 
-      g.FillRectangle(Brushes.Orange, (float)x, (float)y, (float)Diameter, (float)Diameter);
-      // g.DrawString("", f, Brushes.HotPink, (float)x, (float)y);
+      Font font = new("Segoe MDL2 Assets", (float)Diameter);
+      // g.DrawString("", font, Brush, (float)x, (float)y);
     }
 
     /// <summary>
     /// Whether the ball was colliding with the walls in the last frame
     /// </summary>
     private bool lastCollisionForWalls { get; set; } = false;
-
-    /// <summary>
-    /// Whether or not the ball was colliding with each box in the last frame
-    /// </summary>
-    private Dictionary<Box, bool> lastCollisionForBoxes { get; set; } = new();
 
     /// <summary>
     /// Checks if the ball is colliding with the top or bottom of the screen. If it is, it returns true
@@ -100,8 +95,7 @@
     /// <summary>
     /// Checks the collisions and acts accordingly
     /// </summary>
-    /// <param name="boxes">The boxes to check collisions with</param>
-    public virtual void Bounce(Box[]? boxes = null)
+    public virtual void Bounce()
     {
       // Even in the client, the ball is still checked for collisions with the walls
       // This is so if the client is lagging, the ball will still bounce off the walls
@@ -110,32 +104,11 @@
       {
         if (!lastCollisionForWalls)
           VelY *= -1;
+
         lastCollisionForWalls = true;
       }
       else
         lastCollisionForWalls = false;
-
-      // If there are no boxes, don't bother checking for collisions
-      if (boxes == null)
-        return;
-
-      // Check the collisions for each box
-      foreach (Box box in boxes)
-      {
-        bool collision = CollidesWith(box);
-
-        bool lastCollisionForBox = lastCollisionForBoxes.ContainsKey(box)
-          ? lastCollisionForBoxes[box]
-          : false;
-
-        // If the ball is colliding with the box, but it wasn't in the last frame
-        // Bounce the ball
-        if (collision && !lastCollisionForBox)
-          VelX *= -1;
-
-        // Remember te last collision for the box
-        lastCollisionForBoxes[box] = collision;
-      }
     }
   }
 }

@@ -92,5 +92,13 @@ namespace Pong
       VelX = updateEvent.VelX * Game.Scale;
       VelY = updateEvent.VelY * Game.Scale;
     }
+
+    public override void Bounce()
+    {
+      // If the ball is inside the playable area, don't do anything as that will be handled by the server
+      // We only want these bounces to happen when the ball is outside the playable area (cuz the game won't be running on the server)
+      if (Right < Game.Offset.X || Left > Game.Width - Game.Offset.X)
+        base.Bounce();
+    }
   }
 }

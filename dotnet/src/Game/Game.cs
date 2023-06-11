@@ -17,12 +17,12 @@ namespace Pong
     /// <summary>
     /// The left paddle (controlled with W and S)
     /// </summary>
-    abstract public Paddle LeftPaddle { get; set; }
+    virtual public Paddle LeftPaddle { get; set; }
 
     /// <summary>
     /// The right paddle (controlled by the remote player, or with the arrow keys when playing locally)
     /// </summary>
-    abstract public Paddle RightPaddle { get; set; }
+    virtual public Paddle RightPaddle { get; set; }
 
     /// <summary>
     /// The size of the playable area (a square)
@@ -62,6 +62,15 @@ namespace Pong
       Width = width;
       Height = height;
 
+      // Initialize the paddles
+      LeftPaddle = new(this);
+      RightPaddle = new(this);
+
+      // Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
+      LeftPaddle.Right = Offset.X;
+      RightPaddle.Left = Width - Offset.X;
+
+      // By default the game is stopped
       IsRunning = false;
     }
 
