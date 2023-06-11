@@ -41,8 +41,8 @@ export default class Sessions {
     // Add the session to the list of all sessions
     this.all.push(session);
 
-    // Start the game loop if it's not already running
-    this.startGameLoop();
+    // Start the session
+    session.start(); // TODO: REMOVE!!!
 
     // Inform all players who aren't in a session (excluding these two) that a new session has been created
     this.game.players.broadcast(
@@ -62,9 +62,9 @@ export default class Sessions {
   /**
    * Start the game loop
    *
-   * This should be called after a session is created
+   * This should be called whenever a session starts
    */
-  private startGameLoop() {
+  startGameLoop() {
     // If the game loop is already running, don't start it again
     if (this.interval) return;
 
@@ -89,7 +89,7 @@ export default class Sessions {
 
     // The delta time (time since last tick in ms) [0 on first tick]
     const delta = Date.now() - (this.lastTick ?? Date.now());
-    if (delta === 0) return;
+    if (delta === 0) return; // Don't continue if the delta is 0 cuz we're gonna just multiply everything by 0
 
     // Call the game loop for each session
     this.all.forEach(session => session.update(delta));

@@ -10,5 +10,7 @@ export { default as Create } from "@/messages/create";
 export { default as Invite } from "@/messages/invite";
 export { default as List } from "@/messages/list";
 export { default as Register } from "@/messages/register";
+export { default as Score } from "@/messages/score";
+export { default as Start } from "@/messages/start";
 export { default as Unregister } from "@/messages/unregister";
 export { default as Update } from "@/messages/update";

@@ -6,6 +6,14 @@ import Player from "@/players/player";
 import Ball from "@/sessions/ball";
 
 /**
+ * A helper type ig. for the scores
+ */
+export enum SessionPlayer {
+  Player1,
+  Player2,
+}
+
+/**
  * A game session between two players
  *
  * This should only be created by the Sessions class
@@ -23,10 +31,19 @@ export default class Session {
   readonly player2: Player;
 
   /** Whether the game is currently running */
-  running = true; // TODO: FALSE by default!!
+  running = false;
 
   /** The scores for each player */
-  scores: Record<Player["name"], number>;
+  scores: Record<SessionPlayer, number> = {
+    [SessionPlayer.Player1]: 0,
+    [SessionPlayer.Player2]: 0,
+  };
+
+  /** Whether the players have moved their paddles. Idk what to name this lmaoo */
+  consent: Record<SessionPlayer, boolean> = {
+    [SessionPlayer.Player1]: false,
+    [SessionPlayer.Player2]: false,
+  };
 
   /** The ball in the game */
   ball = new Ball();
@@ -45,14 +62,33 @@ export default class Session {
 
     this.game = game;
 
-    // Empty scores
-    this.scores = {
-      [this.player1.name]: 0,
-      [this.player2.name]: 0,
-    };
-
     // Event listeners for the ball
     this.ball.on("bounce", this.bounce.bind(this));
+    this.ball.on("outOfBounds", this.goal.bind(this));
+  }
+
+  /**
+   * Start the game
+   * (Called when both players have moved their paddles)
+   */
+  start() {
+    // Check if the game is already running
+    if (this.running) return;
+
+    // Check if both players have moved their paddles
+    // TODO: UNCOMMENT THIS!!
+    // if (!this.consent[SessionPlayer.Player1] || !this.consent[SessionPlayer.Player2]) return;
+
+    // Start the game loop in half a second
+    // This is intentional, so the players have some time to react? ig. idkkk
+    setTimeout(() => {
+      // Set the game to running and start the game loop
+      this.running = true;
+      this.game.sessions.startGameLoop();
+
+      // Send the start message
+      this.game.players.broadcast(Messages.Start(this.ball), [this.player1, this.player2]);
+    }, 500);
   }
 
   /**
@@ -74,5 +110,27 @@ export default class Session {
   private bounce() {
     // Send an update message to both players
     this.game.players.broadcast(Messages.Update(this.ball), [this.player1, this.player2]);
+  }
+
+  /**
+   * The ball went into a goal (is out of bounds)
+   * @param {SessionPlayer} player The player who lost
+   */
+  private goal(player: SessionPlayer) {
+    // Add a point to the other player
+    this.scores[player]++;
+
+    // Send a goal message to both players
+    this.player1.send(Messages.Score(this.scores, player));
+    this.player2.send(Messages.Score(this.scores, player));
+
+    // Reset the ball position and make it go towards the other player
+    this.ball.reset(player);
+
+    // Stop the game loop for half a second
+    this.running = false;
+
+    // And start again lmaoo
+    this.start(); // This gets called in half a second
   }
 }
