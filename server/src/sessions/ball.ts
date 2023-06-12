@@ -79,9 +79,9 @@ export default class Ball extends TypedEmitter<BallEvents> {
   /**
    * Reset the ball to the middle of the screen with a random angle and speed of 50.
    *
-   * Optionally a player can be specified, which makes the ball not go towards that player.
+   * Optionally a player can be specified, which makes the ball go towards that player.
    * This is used when a player scores a goal. The ball will go towards the other player.
-   * @param {SessionPlayer} player The player to not go towards
+   * @param {SessionPlayer} player The player togo towards
    */
   reset(player?: SessionPlayer) {
     // The starting position of the ball is 50, 50 (in the middle of the screen)
@@ -98,13 +98,13 @@ export default class Ball extends TypedEmitter<BallEvents> {
 
     // If a player is specified, make sure the ball doesn't go towards that player
     if (player === SessionPlayer.Player1) {
-      // If the player is player 1, make sure the ball doesn't go towards the left
-      min = -90;
-      max = 89; // In the chance 90 is chosen, the ball will go towards the left (which we don't want)
-    } else if (player === SessionPlayer.Player2) {
-      // If the player is player 2, make sure the ball doesn't go towards the right
+      // If the player is player 1, make sure the ball doesn't go towards the right
       min = 90;
       max = 269; // In the chance 270 is chosen, the ball will go towards the right (which we don't want)
+    } else if (player === SessionPlayer.Player2) {
+      // If the player is player 2, make sure the ball doesn't go towards the left
+      min = -90;
+      max = 89; // In the chance 90 is chosen, the ball will go towards the left (which we don't want)
     }
 
     // Set a random (but good) angle for the ball

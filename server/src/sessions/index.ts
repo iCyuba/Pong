@@ -1,7 +1,10 @@
+import { remove } from "lodash-es";
+
 import * as Messages from "@/messages";
 
 import Game from "@/game";
 import Invite from "@/invite";
+import Player from "@/players/player";
 import Session from "@/sessions/session";
 
 /**
@@ -24,7 +27,8 @@ export default class Sessions {
 
   /**
    * Create a new Sessions handler for a Game class
-   * Called by the Game constructor (don't call this yourself)
+   *
+   * Should be called by the Game constructor. Don't call this yourself!
    * @param {Game} game The Game to create the session manager for
    */
   constructor(game: Game) {
@@ -53,6 +57,20 @@ export default class Sessions {
     );
 
     return session;
+  }
+
+  /**
+   * Remove a session from the list of all sessions
+   * @param {Session} session The session to remove
+   */
+  remove(session: Session) {
+    // Remove the session from the list of all sessions
+    remove(this.all, session); // Note: this is lodash-es. not the method 2 lines above
+
+    // End the session
+    session.end();
+
+    // TODO: Inform the players that the session has been removed
   }
 
   /** Game loop interval */
@@ -98,5 +116,15 @@ export default class Sessions {
 
     // Call the game loop for each session
     this.all.forEach(session => session.update());
+  }
+
+  /**
+   * Find a session from a player
+   * @param {Player} player The player to find the session for
+   * @returns {Session | undefined} The session the player is in, or undefined if the player is not in a session
+   * @see {Session}
+   */
+  fromPlayer(player: Player): Session | undefined {
+    return this.all.find(session => session.hasPlayer(player));
   }
 }

@@ -39,8 +39,8 @@ export default class Session {
     [SessionPlayer.Player2]: 0,
   };
 
-  /** Whether the players have moved their paddles. Idk what to name this lmaoo */
-  consent: Record<SessionPlayer, boolean> = {
+  /** Whether the players have sent a "ready" message */
+  isReady: Record<SessionPlayer, boolean> = {
     [SessionPlayer.Player1]: false,
     [SessionPlayer.Player2]: false,
   };
@@ -67,21 +67,26 @@ export default class Session {
     this.ball.on("outOfBounds", this.goal.bind(this));
   }
 
+  /** An active timeout for the start of the game */
+  private startTimeout?: NodeJS.Timeout;
+
   /**
    * Start the game
-   * (Called when both players have moved their paddles)
+   *
+   * Called when a player sends a "ready" message or when a game ends
+   *
+   * Both players have to send a ready message to start the game
    */
   start() {
-    // Check if the game is already running
-    if (this.running) return;
+    // Check if the game is already running or already starting
+    if (this.running || this.startTimeout) return;
 
-    // Check if both players have moved their paddles
-    // TODO: UNCOMMENT THIS!!
-    // if (!this.consent[SessionPlayer.Player1] || !this.consent[SessionPlayer.Player2]) return;
+    // Check if both players are ready
+    if (!this.isReady[SessionPlayer.Player1] || !this.isReady[SessionPlayer.Player2]) return;
 
-    // Start the session in half a second
+    // Start the session in 3 seconds
     // This is intentional, so the players have some time to react? ig. idkkk
-    setTimeout(() => {
+    this.startTimeout = setTimeout(() => {
       // Set the game to running, set the last tick to the current time and start the game loop
       this.running = true;
       this.lastTick = Date.now();
@@ -90,7 +95,45 @@ export default class Session {
       // Send the start message
       this.player1.send(Messages.Start(this.ball, false));
       this.player2.send(Messages.Start(this.ball, true));
-    }, 500);
+
+      // Clear the start timeout
+      this.startTimeout = undefined;
+    }, 3000);
+  }
+
+  /**
+   * End the game
+   *
+   * Called when a player leaves the game or when a player sends a "leave" message.
+   *
+   * Note: This doesn't send any messages to the players, that's the responsibility of Sessions.remove()!
+   */
+  end() {
+    // If the game isn't running, don't continue
+    if (!this.running) return;
+
+    // Set the game to not running
+    this.running = false;
+
+    // If there's a start timeout, clear it
+    if (this.startTimeout) clearTimeout(this.startTimeout);
+  }
+
+  /**
+   * A player has sent a "ready" message
+   *
+   * This message is sent when a player presses any key (maybe I'll change this. idk)
+   * @param {Player} player The player who sent the message
+   */
+  ready(player: Player) {
+    // Check if the player is in this session
+    if (player !== this.player1 && player !== this.player2) return;
+
+    // Set the player to ready
+    this.isReady[player === this.player1 ? SessionPlayer.Player1 : SessionPlayer.Player2] = true;
+
+    // Try to start the game (this will not do anything if the other player is not ready)
+    this.start();
   }
 
   /** The timestamp of the last tick */
@@ -139,10 +182,19 @@ export default class Session {
     // Reset the ball position and make it go towards the other player
     this.ball.reset(player);
 
-    // Stop the session for half a second (if no session is running, this also stops the game loop)
+    // Stop the session for 3 seconds (if no session is running, this also stops the game loop)
     this.running = false;
 
     // And start again lmaoo
-    this.start(); // This gets called in half a second
+    this.start(); // This gets called in 3 seconds
+  }
+
+  /**
+   * Check if a player is in this session
+   * @param {Player} player The player to check
+   * @returns {boolean} Whether the player is in this session
+   */
+  hasPlayer(player: Player): boolean {
+    return player === this.player1 || player === this.player2;
   }
 }
