@@ -43,8 +43,10 @@ Literally just ws://localhost:3000. Nothing else.
 - `ready` - Tell the server that you're ready to start the game.
 
   - **Example**: `{"type": "ready"}`
-  - **Response**: `{"type": "ready", "player": "Player1"}`
+  - **Response 1**: _Nothing_
+  - **Response 2**: [start](#start---the-game-started)
   - You must be registered and in a session to use this event.
+  - The server will respond only when the other player is ready.
 
 #### Events you can receive
 
@@ -60,7 +62,7 @@ _**Please also see the responses above. I didn't include them twice**_
   - **Example**: `{"type": "create", "player1": "Player1", "player2": "Player2"}`
   - This is sent once player2 invites player1 after player1 sent an invite to player2.
 
-- `start` - The game started
+- ##### `start` - The game started
 
   - **Example**: `{"type": "start", "velX": 1234, "velY": 1234, "timestamp": 123456789}`
   - This is sent 3 seconds after both players are ready.
