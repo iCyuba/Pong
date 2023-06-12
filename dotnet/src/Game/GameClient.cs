@@ -48,8 +48,8 @@ namespace Pong
         return;
 
       // Paddles
-      LeftPaddle.Move(deltaTime, Height);
-      RightPaddle.Move(deltaTime, Height);
+      LeftPaddle.Move(deltaTime);
+      RightPaddle.Move(deltaTime);
 
       // Ball
       BallInstance.Move();

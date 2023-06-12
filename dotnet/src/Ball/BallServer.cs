@@ -22,7 +22,8 @@ namespace Pong
     /// <summary>
     /// Randomly start moving the ball in a random direction
     /// </summary>
-    public void RandomlyStartMoving(int vel)
+    /// <param name="vel">The velocity of the ball, defaults to BaseVelocity</param>
+    public void RandomlyStartMoving(double vel = Ball.BaseVelocity)
     {
       Random r = new();
 
@@ -44,8 +45,8 @@ namespace Pong
     /// </summary>
     public bool CheckGoalCollision()
     {
-      // return Right < Game.Offset.X || Left > Game.Width - Game.Offset.X;
-      return Right < 0 || Left > Game.Width;
+      // return Right < 0 || Left > 100;
+      return Right < -Game.Offset.X / Scale || Left > 100 + Game.Offset.X / Scale;
     }
 
     /// <summary>

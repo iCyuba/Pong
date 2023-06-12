@@ -4,9 +4,19 @@ namespace Pong
 {
   public abstract class Game
   {
+    /// <summary>
+    /// The width of the game, this is different from the size of the game!
+    /// </summary>
     public int Width { get; set; }
+
+    /// <summary>
+    /// The height of the game, this is different from the size of the game!
+    /// </summary>
     public int Height { get; set; }
 
+    /// <summary>
+    /// Whether or not the game is running
+    /// </summary>
     public bool IsRunning { get; set; }
 
     /// <summary>
@@ -51,7 +61,7 @@ namespace Pong
     /// </summary>
     public double Scale
     {
-      get => Size / 100;
+      get => (double)Size / 100;
     }
 
     /// <summary>
@@ -67,8 +77,8 @@ namespace Pong
       RightPaddle = new(this);
 
       // Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
-      LeftPaddle.Right = Offset.X;
-      RightPaddle.Left = Width - Offset.X;
+      LeftPaddle.Right = 0;
+      RightPaddle.Left = 100;
 
       // By default the game is stopped
       IsRunning = false;

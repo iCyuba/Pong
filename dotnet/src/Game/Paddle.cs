@@ -5,12 +5,17 @@
     /// <summary>
     /// The width used for all paddles in percentage of the screen width
     /// </summary>
-    public static int BaseWidth = 4;
+    public const double BaseWidth = 4;
 
     /// <summary>
     /// The height used for all paddles in percentage of the screen height
     /// </summary>
-    public static int BaseHeight = 20;
+    public const double BaseHeight = 20;
+
+    /// <summary>
+    /// The base speed of the paddle in percentage of the screen height per second
+    /// </summary>
+    public const double BaseSpeed = 80;
 
     /// <summary>
     /// The game the paddle belongs to
@@ -28,13 +33,7 @@
     /// </summary>
     /// <param name="game">The game that the paddle is in</param>
     public Paddle(Game game)
-      : base(
-        0, // The X position is set manually later with the setters of Left and Right
-        game.Height / 2, // Place the paddle in the middle of the screen
-        Paddle.BaseWidth * game.Scale, // Scale the width and height of the paddle because the base sizes are in percentages
-        Paddle.BaseHeight * game.Scale,
-        Brushes.DeepPink
-      )
+      : base(0, 50, BaseWidth, BaseHeight, Brushes.DeepPink, game.Scale, game.Offset)
     {
       Game = game;
     }
@@ -42,7 +41,7 @@
     /// <summary>
     /// Move the paddle by the specified amount of time
     /// </summary>
-    public void Move(double deltaTime, int height)
+    public void Move(double deltaTime)
     {
       // Update the position of the paddle
       PosY += VelY * deltaTime;
@@ -51,8 +50,8 @@
       // Yes, I could return (like I did before) but then I would have to manually calculate the Top and Bottom.. andddd I'm lazy
       if (Top < 0)
         Top = 0;
-      else if (Bottom > height)
-        Bottom = height;
+      else if (Bottom > 100)
+        Bottom = 100;
     }
 
     /// <summary>
@@ -64,7 +63,7 @@
       if (VelY < 0)
         return;
 
-      VelY -= 500;
+      VelY -= BaseSpeed;
     }
 
     /// <summary>
@@ -76,7 +75,7 @@
       if (VelY > 0)
         return;
 
-      VelY += 500;
+      VelY += BaseSpeed;
     }
 
     public override void Draw(Graphics g)

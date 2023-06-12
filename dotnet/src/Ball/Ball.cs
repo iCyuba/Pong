@@ -1,11 +1,17 @@
-﻿namespace Pong
+﻿// BEGIN: c8a9d1d5fj3w
+namespace Pong
 {
   public abstract class Ball : RenderedBox
   {
     /// <summary>
     /// The base radius of the ball. Scaled by the size of the game
     /// </summary>
-    public static double BaseRadius = 2;
+    public const double BaseRadius = 2;
+
+    /// <summary>
+    /// The base velocity of the ball in percent of the screen per second
+    /// </summary>
+    public const double BaseVelocity = 50;
 
     /// <summary>
     /// The game client that created this ball
@@ -55,13 +61,13 @@
     /// </summary>
     /// <param name="game">The game that the ball is in</param>
     public Ball(Game game)
-      // The width and height are multiplied by 2 it's a radius... It's kinda ugly ik
-      : base(0, 0, BaseRadius * 2 * game.Scale, BaseRadius * 2 * game.Scale, Brushes.HotPink)
+      // The width and height are multiplied by 2.. it's a radius... It's kinda ugly ik
+      : base(0, 0, BaseRadius * 2, BaseRadius * 2, Brushes.HotPink, game.Scale, game.Offset)
     {
       Game = game;
 
       // Set the position of the ball to the middle of the screen
-      SetPosToMiddle(game.Width, game.Height);
+      SetPosToMiddle();
 
       VelX = 0;
       VelY = 0;
@@ -70,10 +76,10 @@
     /// <summary>
     /// Set the position of the ball to the middle of the screen
     /// </summary>
-    public void SetPosToMiddle(int width, int height)
+    public virtual void SetPosToMiddle()
     {
-      PosX = width / 2;
-      PosY = height / 2;
+      PosX = 50;
+      PosY = 50;
     }
 
     /// <summary>
@@ -82,12 +88,17 @@
     /// <param name="g">The Graphics object to draw the ball on</param>
     public override void Draw(Graphics g)
     {
-      double x = PosX - Radius;
-      double y = PosY - Radius;
+      // I'm using the scaled values because the ball is scaled by the size of the game
+      // So if the game is bigger, the ball is bigger
+      g.FillEllipse(
+        Brush,
+        (float)RenderedLeft,
+        (float)RenderedTop,
+        (float)RenderedWidth,
+        (float)RenderedHeight
+      );
 
-      g.FillEllipse(Brush, (float)x, (float)y, (float)Diameter, (float)Diameter);
-
-      Font font = new("Segoe MDL2 Assets", (float)Diameter);
+      // Font font = new("Segoe MDL2 Assets", (float)Diameter);
       // g.DrawString("", font, Brush, (float)x, (float)y);
     }
 
@@ -101,7 +112,7 @@
     /// </summary>
     public bool CheckWallCollision()
     {
-      return Top < 0 || Bottom > Game.Height;
+      return Top < 0 || Bottom > 100;
     }
 
     /// <summary>

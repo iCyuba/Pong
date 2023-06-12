@@ -40,6 +40,8 @@ namespace Pong
     /// <summary>
     /// Check if the box collides with another box
     /// </summary>
+    /// <param name="other">The other box to check for collision</param>
+    /// <returns>True if the boxes collide, false otherwise</returns>
     public bool CollidesWith(Box other)
     {
       bool collidesX = Right > other.Left && Left < other.Right;
@@ -50,6 +52,9 @@ namespace Pong
       // If the box doesn't collide with the other box, return null
       return collides;
     }
+
+    // The following properties are used to make it easier to work with the box
+    // and to make the code more readable. They are not strictly necessary.
 
     /// <summary>
     /// The top side of the box

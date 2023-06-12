@@ -27,8 +27,8 @@
       base.Start();
 
       // Place the ball in the middle of the screen and start it moving
-      BallInstance.RandomlyStartMoving(600);
-      BallInstance.SetPosToMiddle(Width, Height);
+      BallInstance.RandomlyStartMoving(Ball.BaseVelocity);
+      BallInstance.SetPosToMiddle();
     }
 
     public override void Move(double deltaTime)
@@ -37,8 +37,8 @@
         return;
 
       // Paddles (these should be moved first so that the ball can bounce off them)
-      LeftPaddle.Move(deltaTime, Height);
-      RightPaddle.Move(deltaTime, Height);
+      LeftPaddle.Move(deltaTime);
+      RightPaddle.Move(deltaTime);
 
       // Ball
       BallInstance.Move(deltaTime);

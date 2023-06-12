@@ -58,6 +58,14 @@ namespace Pong
       Connection.OnUpdateHandler += OnUpdate;
     }
 
+    public override void SetPosToMiddle()
+    {
+      // This should only be called by the Start event handler!
+
+      ServerPosX = 50;
+      ServerPosY = 50;
+    }
+
     /// <summary>
     /// Moves the ball according to its velocity and the time passed
     /// <br/>
@@ -67,8 +75,8 @@ namespace Pong
     /// </summary>
     public void Move()
     {
-      PosX = (ServerPosX + Game.Offset.X) + VelX * DeltaTime;
-      PosY = (ServerPosY + Game.Offset.Y) + VelY * DeltaTime;
+      PosX = ServerPosX + VelX * DeltaTime;
+      PosY = ServerPosY + VelY * DeltaTime;
     }
 
     /// <summary>
@@ -91,12 +99,10 @@ namespace Pong
       LastServerTimestamp = DateTime.Now.Ticks;
 
       // When this event is sent. The ball is in the middle of the screen
-      SetPosToMiddle(Game.Size, Game.Size);
-      ServerPosX = PosX;
-      ServerPosY = PosY;
+      SetPosToMiddle();
 
-      VelX = startEvent.VelX * Game.Scale;
-      VelY = startEvent.VelY * Game.Scale;
+      VelX = startEvent.VelX;
+      VelY = startEvent.VelY;
     }
 
     /// <summary>
@@ -109,17 +115,17 @@ namespace Pong
       // TODO: Change this to the timestamp the server sent the update event
       LastServerTimestamp = DateTime.Now.Ticks;
 
-      ServerPosX = updateEvent.PosX * Game.Scale;
-      ServerPosY = updateEvent.PosY * Game.Scale;
-      VelX = updateEvent.VelX * Game.Scale;
-      VelY = updateEvent.VelY * Game.Scale;
+      ServerPosX = updateEvent.PosX;
+      ServerPosY = updateEvent.PosY;
+      VelX = updateEvent.VelX;
+      VelY = updateEvent.VelY;
     }
 
     public override void Bounce()
     {
       // If the ball is inside the playable area, don't do anything as that will be handled by the server
       // We only want these bounces to happen when the ball is outside the playable area (cuz the game won't be running on the server)
-      if (Right < Game.Offset.X || Left > Game.Width - Game.Offset.X)
+      if (Right < 0 || Left > 100)
         base.Bounce();
     }
   }
