@@ -3,7 +3,7 @@ import { IncomingMessage } from "http";
 import { ServerOptions, WebSocket, WebSocketServer } from "ws";
 
 import Game from "@/game";
-import MessageHandler from "@/handler";
+import MessageHandler from "@/handlers/message";
 
 /**
  * A WebSocket server for the game. This class is responsible for handling all connections

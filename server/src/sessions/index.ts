@@ -2,7 +2,7 @@ import { remove } from "lodash-es";
 
 import * as Messages from "@/messages";
 
-import Game from "@/game";
+import Handler from "@/handlers";
 import Invite from "@/invite";
 import Player from "@/players/player";
 import Session from "@/sessions/session";
@@ -14,25 +14,13 @@ import Session from "@/sessions/session";
  *
  * And also the leaving of players
  */
-export default class Sessions {
+export default class Sessions extends Handler {
   /** A list of all the sessions (please don't mutate this directly..) */
   readonly all: Session[] = [];
 
   /** Whether there's at least one active session */
   get active(): boolean {
     return this.all.length !== 0 && this.all.every(session => session.running);
-  }
-
-  private readonly game: Game;
-
-  /**
-   * Create a new Sessions handler for a Game class
-   *
-   * Should be called by the Game constructor. Don't call this yourself!
-   * @param {Game} game The Game to create the session manager for
-   */
-  constructor(game: Game) {
-    this.game = game;
   }
 
   /**

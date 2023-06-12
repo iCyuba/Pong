@@ -2,6 +2,7 @@ import { SessionPlayer } from "@/sessions/session";
 
 /**
  * A message that is sent when a player scores
+ *
  * Sent to the players in the session whenever a player scores
  */
 export interface ScoreMessage {
@@ -12,6 +13,7 @@ export interface ScoreMessage {
 
 /**
  * Update the scores
+ *
  * Sent to the players in the session whenever a player scores
  * @param {Record<SessionPlayer, number>} scores The scores for each player
  * @param {SessionPlayer} player The player who this score is for

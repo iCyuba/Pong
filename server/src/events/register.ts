@@ -2,14 +2,14 @@ import { WebSocket } from "ws";
 
 import * as Messages from "@/messages";
 
-import GameEventHandler, { GameEvent } from "@/event";
+import EventHandler, { Event } from "@/handlers/event";
 
-interface RegistrationEvent extends GameEvent {
+interface RegistrationEvent extends Event {
   type: "register";
   name: string;
 }
 
-export default class RegistrationHandler extends GameEventHandler<RegistrationEvent> {
+export default class RegistrationHandler extends EventHandler<RegistrationEvent> {
   static type = "register";
 
   handle(ws: WebSocket, event: RegistrationEvent) {

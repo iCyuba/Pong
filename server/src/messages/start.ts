@@ -18,7 +18,8 @@ export interface StartMessage {
 }
 
 /**
- * A session has started and the game should begin
+ * A session has started and ball is now moving
+ *
  * Sent to the players in the session
  * @param {Ball} ball The ball in the session
  * @param {boolean} reverse Whether to flip the game. This is what player 2 sees. (both are on the left side of the screen)

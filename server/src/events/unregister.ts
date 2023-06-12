@@ -1,7 +1,11 @@
-import { RegisteredGameEventHandler } from "@/event";
+import { Event, RegisteredEventHandler } from "@/handlers/event";
 import Player from "@/players/player";
 
-export default class UnregistrationHandler extends RegisteredGameEventHandler {
+interface UnregisterEvent extends Event {
+  type: "unregister";
+}
+
+export default class UnregistrationHandler extends RegisteredEventHandler<UnregisterEvent> {
   static type = "unregister";
 
   handleRegistered(player: Player) {
@@ -9,6 +13,6 @@ export default class UnregistrationHandler extends RegisteredGameEventHandler {
     this.game.players.removePlayer(player);
 
     // Log the unregistration
-    console.log(new Date(), "Unregistering", player?.name);
+    console.log(new Date(), "Unregistering", player.name);
   }
 }

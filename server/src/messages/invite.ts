@@ -2,6 +2,7 @@ import Player from "@/players/player";
 
 /**
  * A message that is sent when a player invites another player to a session
+ *
  * Sent to both players who are in the invite
  */
 export interface InviteMessage {
@@ -12,6 +13,7 @@ export interface InviteMessage {
 
 /**
  * Invite a player to a session
+ *
  * Sent to both players who are in the invite
  * @param {Player} by The player who sent the invite
  * @param {Player} to The player who received the invite

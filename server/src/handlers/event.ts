@@ -1,10 +1,10 @@
 import { WebSocket } from "ws";
 
-import Game from "@/game";
+import Handler from "@/handlers";
 import Player from "@/players/player";
 import Session from "@/sessions/session";
 
-export interface GameEvent {
+export interface Event {
   type: string;
 }
 
@@ -12,37 +12,30 @@ export interface GameEvent {
  * A base class for WebSocket game event handlers
  * @abstract
  */
-export default abstract class GameEventHandler<Event extends GameEvent = GameEvent> {
+export default abstract class EventHandler<T extends Event = Event> extends Handler {
   /** The type of event that this handler handles */
   static type: string;
-
-  /** The game instace, used inside the handle function */
-  game: Game;
 
   /**
    * A function that handles the game event
    * @param {WebSocket} ws The WebSocket connection that sent the event
-   * @param {GameEvent} event The event that was sent
+   * @param {T} event The event that was sent
    */
-  abstract handle(ws: WebSocket, event: Event): void | Promise<void>;
-
-  constructor(game: Game) {
-    this.game = game;
-  }
+  abstract handle(ws: WebSocket, event: T): void | Promise<void>;
 }
 
 /**
  * A base class for WebSocket game event handlers that require the player to be registered
  * @abstract
- * @extends GameEventHandler
+ * @extends EventHandler
  */
-export abstract class RegisteredGameEventHandler<
-  Event extends GameEvent = GameEvent
-> extends GameEventHandler<Event> {
+export abstract class RegisteredEventHandler<T extends Event> extends EventHandler<T> {
   /**
    * Checks if the player is registered and calls the handleRegistered function
+   * @param {WebSocket} ws The WebSocket connection that sent the event
+   * @param {T} event The event that was sent
    */
-  handle(ws: WebSocket, event: Event): void | Promise<void> {
+  handle(ws: WebSocket, event: T): void | Promise<void> {
     // Get the player that sent the event
     const player = this.game.players.fromWebSocket(ws);
 
@@ -56,23 +49,23 @@ export abstract class RegisteredGameEventHandler<
   /**
    * A function that handles the game event
    * @param {Player} player The player that sent the event
-   * @param {GameEvent} event The event that was sent
+   * @param {T} event The event that was sent
    */
-  abstract handleRegistered(player: Player, event: Event): void | Promise<void>;
+  abstract handleRegistered(player: Player, event: T): void | Promise<void>;
 }
 
 /**
  * A base class for WebSocket game event handlers that require the player to be in a session
  * @abstract
- * @extends RegisteredGameEventHandler
+ * @extends RegisteredEventHandler
  */
-export abstract class SessionGameEventHandler<
-  Event extends GameEvent = GameEvent
-> extends RegisteredGameEventHandler<Event> {
+export abstract class SessionEventHandler<T extends Event> extends RegisteredEventHandler<T> {
   /**
    * Checks if the player is in a session and calls the handleSession function
+   * @param {Player} player The player that sent the event
+   * @param {T} event The event that was sent
    */
-  handleRegistered(player: Player, event: Event): void | Promise<void> {
+  handleRegistered(player: Player, event: T): void | Promise<void> {
     // Find the session that the player is in
     const session = this.game.sessions.fromPlayer(player);
 
@@ -87,7 +80,7 @@ export abstract class SessionGameEventHandler<
    * A function that handles the game event
    * @param {Player} player The player that sent the event
    * @param {Session} session The session that the player is in
-   * @param {GameEvent} event The event that was sent
+   * @param {T} event The event that was sent
    */
-  abstract handleSession(player: Player, session: Session, event: Event): void | Promise<void>;
+  abstract handleSession(player: Player, session: Session, event: T): void | Promise<void>;
 }

@@ -54,7 +54,7 @@ function waitForResponse<T = any>(
  * @param {WebSocket} ws The WebSocket connection
  * @param {number} count The number of responses to wait for
  * @param {boolean} close Whether or not to close the connection after the response is received (defaults to true)
- * @param {number} timeout The timeout in milliseconds (defaults to 1s)
+ * @param {number} timeoutMs The timeout in milliseconds (defaults to 1s)
  * @returns {Promise<any>} A promise that resolves to an array of responses from the server
  */
 export function waitForResponses<T extends any[] = any[]>(

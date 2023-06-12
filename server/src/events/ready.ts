@@ -1,8 +1,12 @@
-import { SessionGameEventHandler } from "@/event";
+import { Event, SessionEventHandler } from "@/handlers/event";
 import Player from "@/players/player";
 import Session from "@/sessions/session";
 
-export default class ReadyHandler extends SessionGameEventHandler {
+interface ReadyEvent extends Event {
+  type: "ready";
+}
+
+export default class ReadyHandler extends SessionEventHandler<ReadyEvent> {
   static type = "ready";
 
   handleSession(player: Player, session: Session) {

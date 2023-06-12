@@ -34,6 +34,7 @@ export default class Player {
 
   /**
    * Send a message to the player
+   *
    * (Just a wrapper around WebSocket.send that stringifies the message)
    * @param {any} message A message to send to the player
    */

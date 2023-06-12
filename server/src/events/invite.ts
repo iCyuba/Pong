@@ -1,15 +1,15 @@
 import { find } from "lodash-es";
 
-import { GameEvent, RegisteredGameEventHandler } from "@/event";
+import { Event, RegisteredEventHandler } from "@/handlers/event";
 import Invite from "@/invite";
 import Player from "@/players/player";
 
-interface InviteEvent extends GameEvent {
+interface InviteEvent extends Event {
   type: "invite";
   name: string;
 }
 
-export default class InviteHandler extends RegisteredGameEventHandler<InviteEvent> {
+export default class InviteHandler extends RegisteredEventHandler<InviteEvent> {
   static type = "invite";
 
   handleRegistered(player: Player, event: InviteEvent) {

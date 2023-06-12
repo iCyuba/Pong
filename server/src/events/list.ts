@@ -1,9 +1,13 @@
 import * as Messages from "@/messages";
 
-import { RegisteredGameEventHandler } from "@/event";
+import { Event, RegisteredEventHandler } from "@/handlers/event";
 import Player from "@/players/player";
 
-export default class ListHandler extends RegisteredGameEventHandler {
+interface ListEvent extends Event {
+  type: "list";
+}
+
+export default class ListHandler extends RegisteredEventHandler<ListEvent> {
   static type = "list";
 
   handleRegistered(player: Player) {

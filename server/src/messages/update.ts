@@ -4,6 +4,7 @@ import Ball from "@/sessions/ball";
 
 /**
  * A message that is sent when the ball is updated in a session
+ *
  * Sent to both players in the session
  *
  * Note: This extends the StartMessage because they're quite similar. Only here we also send the position of the ball
@@ -18,6 +19,7 @@ export interface UpdateMessage extends Omit<StartMessage, "type"> {
 
 /**
  * Notify that the velocity of the ball has changed
+ *
  * Sent to both players in the session
  * @param {Ball} ball The ball to send the update message for
  * @param {boolean} reverse Whether to flip the game. This is what player 2 sees. (both are on the left side of the screen)

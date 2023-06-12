@@ -4,15 +4,16 @@ import { WebSocket } from "ws";
 
 import * as Messages from "@/messages";
 
-import Game from "@/game";
+import Handler from "@/handlers";
 import Invite from "@/invite";
 import Player from "@/players/player";
 
 /**
- * Manages players inside a game
- * Responsible for handling players joining / leaving
+ * Handles players inside a game
+ *
+ * Responsible for players joining / leaving and whatever else
  */
-export default class Players {
+export default class Players extends Handler {
   /** A list of all the players (please don't mutate this directly..) */
   readonly all: Player[] = [];
 
@@ -21,18 +22,6 @@ export default class Players {
     // TODO: This ain't implemented yet cuz there's no sessions
 
     return this.all;
-  }
-
-  private readonly game: Game;
-
-  /**
-   * Create a new Players handler for a Game class
-   *
-   * Should only be called by the Game constructor
-   * @param {Game} game The Game to create the player manager for
-   */
-  constructor(game: Game) {
-    this.game = game;
   }
 
   /**

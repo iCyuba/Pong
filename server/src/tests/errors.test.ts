@@ -5,7 +5,7 @@ import { WebSocket } from "ws";
 import createConnection, { closeConnection } from "@/tests/createConnection";
 import waitForResponse from "@/tests/waitForResponse";
 
-import { ErrorMessage } from "@/messages";
+import { ErrorMessage } from "@/messages/error";
 
 import Server from "@/server";
 
