@@ -82,8 +82,10 @@ export default class Session {
     // Start the session in half a second
     // This is intentional, so the players have some time to react? ig. idkkk
     setTimeout(() => {
-      // Set the game to running
+      // Set the game to running, set the last tick to the current time and start the game loop
       this.running = true;
+      this.lastTick = Date.now();
+      this.game.sessions.startGameLoop();
 
       // Send the start message
       this.player1.send(Messages.Start(this.ball, false));
@@ -91,14 +93,23 @@ export default class Session {
     }, 500);
   }
 
+  /** The timestamp of the last tick */
+  private lastTick: number = Date.now();
+
   /**
-   * Update the game state based on the delta time
-   * This gets called by the Sessions class every 20ms
-   * @param {number} delta The time since the last tick in ms
+   * Update the game state.
+   *
+   * This gets called by the Sessions class every tick
    */
-  update(delta: number) {
+  update() {
     // If the game is not running, don't continue updating the session
     if (!this.running) return;
+
+    // The delta time (time since last tick in ms) [0 on first tick]
+    const delta = Date.now() - this.lastTick;
+
+    // Set lastTick to the current time
+    this.lastTick = Date.now();
 
     // Update the ball position based on the velocity and delta time
     this.ball.move(delta);
@@ -128,7 +139,7 @@ export default class Session {
     // Reset the ball position and make it go towards the other player
     this.ball.reset(player);
 
-    // Stop the session for half a second
+    // Stop the session for half a second (if no session is running, this also stops the game loop)
     this.running = false;
 
     // And start again lmaoo

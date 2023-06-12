@@ -6,7 +6,9 @@ import Session from "@/sessions/session";
 
 /**
  * Manages the sessions of the users
+ *
  * Responsible for handling the creation of sessions and the joining of players
+ *
  * And also the leaving of players
  */
 export default class Sessions {
@@ -27,9 +29,6 @@ export default class Sessions {
    */
   constructor(game: Game) {
     this.game = game;
-
-    // Start the game loop
-    this.startGameLoop();
   }
 
   /**
@@ -56,26 +55,26 @@ export default class Sessions {
     return session;
   }
 
-  /** The timestamp of the last tick */
-  private lastTick?: number;
-
   /** Game loop interval */
   private interval?: NodeJS.Timeout;
 
   /**
    * Start the game loop
+   *
+   * Called every time a session is started
    */
   startGameLoop() {
     // If the game loop is already running, don't start it again
     if (this.interval) return;
 
-    // Start the game loop
+    // Start the game loop (every 10ms)
     this.interval = setInterval(this.gameLoop.bind(this), 10);
   }
 
   /**
    * Stop the game loop
-   * This should only be called when the server is shutting down!
+   *
+   * This is called when there are no active sessions
    */
   stopGameLoop() {
     // If the game loop is not running, don't stop it
@@ -84,28 +83,20 @@ export default class Sessions {
     // Stop the game loop
     clearInterval(this.interval);
     this.interval = undefined;
-    this.lastTick = undefined;
   }
 
   /**
    * The game loop. Calls the update method on each session
    *
-   * This method is meant to be called every 10ms (100 times a second)
+   * This method is meant to be called every 10ms (100 times a second) [but ig it doesn't really matter]
+   *
+   * Note: I'm not gonna calculate the delta time here because each session can start at a different time
    */
   private gameLoop() {
-    // If there's no active sessions, simply return
-    // Note: It's more effective to return instead of clearing the interval
-    //       I don't know why, but it is
-    if (!this.active) return;
-
-    // The delta time (time since last tick in ms) [0 on first tick]
-    const delta = Date.now() - (this.lastTick ?? Date.now());
-    if (delta === 0) return; // Don't continue if the delta is 0 cuz we're gonna just multiply everything by 0
+    // If there's no active sessions, stop the game loop
+    if (!this.active) return this.stopGameLoop();
 
     // Call the game loop for each session
-    this.all.forEach(session => session.update(delta));
-
-    // Set lastTick to the current time if it's not set
-    this.lastTick = Date.now();
+    this.all.forEach(session => session.update());
   }
 }
