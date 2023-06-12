@@ -61,7 +61,6 @@
       Name = "GameWindow";
       Text = "Pong";
       FormClosed += OnClose;
-      Load += OnLoad;
       KeyDown += OnKeyDown;
       KeyUp += OnKeyUp;
       ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();

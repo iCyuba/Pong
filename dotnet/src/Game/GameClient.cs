@@ -27,8 +27,21 @@ namespace Pong
 
       // Initialize the ball with the provided connection
       Ball = new BallClient(connection, this);
+    }
 
-      Start();
+    /// <summary>
+    /// This is called on keypress so it just sends a ready message to the server
+    /// <br/>
+    /// The game actually starts once the server sends a start message, however.. you can move freely during this period (so IsRunning = true here)
+    /// </summary>
+    public override void Start()
+    {
+      // Call the base method
+      base.Start();
+
+      // The game will start once the server sends a start message
+      // And if it doesn't.. well. not my problem
+      _ = Connection.Ready();
     }
 
     /// <summary>

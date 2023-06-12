@@ -62,12 +62,9 @@ namespace Pong
     /// <param name="game">The game that the ball is in</param>
     public Ball(Game game)
       // The width and height are multiplied by 2.. it's a radius... It's kinda ugly ik
-      : base(0, 0, BaseRadius * 2, BaseRadius * 2, Brushes.HotPink, game.Scale, game.Offset)
+      : base(50, 50, BaseRadius * 2, BaseRadius * 2, Brushes.HotPink, game.Scale, game.Offset)
     {
       Game = game;
-
-      // Set the position of the ball to the middle of the screen
-      SetPosToMiddle();
 
       VelX = 0;
       VelY = 0;

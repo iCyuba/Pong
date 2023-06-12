@@ -17,7 +17,7 @@ namespace Pong
     /// </summary>
     private int DeltaTimeTicks
     {
-      get => (int)(DateTime.Now.Ticks - LastServerTimestamp);
+      get => (int)(DateTime.UtcNow.Ticks - LastServerTimestamp);
     }
 
     /// <summary>
@@ -52,6 +52,9 @@ namespace Pong
       : base(game)
     {
       Connection = connection;
+
+      // Apparently this needs to be called again. I don't know why
+      SetPosToMiddle();
 
       // Register the event handlers
       Connection.OnStartHandler += OnStart;
@@ -95,8 +98,9 @@ namespace Pong
     /// </summary>
     private void OnStart(object? _, Connection.StartEvent startEvent)
     {
-      // TODO: Change this to the timestamp the server sent the update event
-      LastServerTimestamp = DateTime.Now.Ticks;
+      // Convert the timestamp to a DateTimeOffset so we can get the ticks from it
+      DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(startEvent.Timestamp);
+      LastServerTimestamp = dateTimeOffset.Ticks;
 
       // When this event is sent. The ball is in the middle of the screen
       SetPosToMiddle();
@@ -112,8 +116,11 @@ namespace Pong
     /// </summary>
     private void OnUpdate(object? _, Connection.UpdateEvent updateEvent)
     {
-      // TODO: Change this to the timestamp the server sent the update event
-      LastServerTimestamp = DateTime.Now.Ticks;
+      // Convert the timestamp to a DateTimeOffset so we can get the ticks from it
+      DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(
+        updateEvent.Timestamp
+      );
+      LastServerTimestamp = dateTimeOffset.Ticks;
 
       ServerPosX = updateEvent.PosX;
       ServerPosY = updateEvent.PosY;

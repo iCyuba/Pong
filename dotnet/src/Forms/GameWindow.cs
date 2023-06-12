@@ -23,16 +23,6 @@ namespace Pong
     }
 
     /// <summary>
-    /// This is the method that gets called when the game window is loaded
-    /// <br />
-    /// It probably shouldn't start the game. But it does...
-    /// </summary>
-    private void OnLoad(object sender, EventArgs e)
-    {
-      GameInstance.Start();
-    }
-
-    /// <summary>
     /// This is the that renders the game (notice that it isn't updating the game, just rendering it)
     /// </summary>
     private void OnPaint(object sender, PaintEventArgs e)
