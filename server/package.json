@@ -4,7 +4,8 @@
   "description": "A websocket server for my pong game written in C#",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "NODE_ENV=development webpack --watch",
+    "dev:build": "NODE_ENV=development webpack",
+    "dev": "npm run dev:build -- --watch",
     "build": "webpack",
     "start": "node dist/main.js",
     "test": "jest",

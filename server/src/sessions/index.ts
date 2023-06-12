@@ -15,7 +15,7 @@ export default class Sessions {
 
   /** Whether there's at least one active session */
   get active(): boolean {
-    return this.all.every(session => session.running);
+    return this.all.length !== 0 && this.all.every(session => session.running);
   }
 
   private readonly game: Game;
@@ -27,6 +27,9 @@ export default class Sessions {
    */
   constructor(game: Game) {
     this.game = game;
+
+    // Start the game loop
+    this.startGameLoop();
   }
 
   /**
@@ -61,15 +64,27 @@ export default class Sessions {
 
   /**
    * Start the game loop
-   *
-   * This should be called whenever a session starts
    */
   startGameLoop() {
     // If the game loop is already running, don't start it again
     if (this.interval) return;
 
     // Start the game loop
-    this.interval = setInterval(() => this.gameLoop(), 10);
+    this.interval = setInterval(this.gameLoop.bind(this), 10);
+  }
+
+  /**
+   * Stop the game loop
+   * This should only be called when the server is shutting down!
+   */
+  stopGameLoop() {
+    // If the game loop is not running, don't stop it
+    if (!this.interval) return;
+
+    // Stop the game loop
+    clearInterval(this.interval);
+    this.interval = undefined;
+    this.lastTick = undefined;
   }
 
   /**
@@ -78,15 +93,10 @@ export default class Sessions {
    * This method is meant to be called every 10ms (100 times a second)
    */
   private gameLoop() {
-    // If there's no active sessions, don't continue the game loop
-    if (!this.active) {
-      // Stop the game loop
-      clearInterval(this.interval!);
-      this.interval = undefined;
-      this.lastTick = undefined;
-
-      return;
-    }
+    // If there's no active sessions, simply return
+    // Note: It's more effective to return instead of clearing the interval
+    //       I don't know why, but it is
+    if (!this.active) return;
 
     // The delta time (time since last tick in ms) [0 on first tick]
     const delta = Date.now() - (this.lastTick ?? Date.now());

@@ -79,12 +79,11 @@ export default class Session {
     // TODO: UNCOMMENT THIS!!
     // if (!this.consent[SessionPlayer.Player1] || !this.consent[SessionPlayer.Player2]) return;
 
-    // Start the game loop in half a second
+    // Start the session in half a second
     // This is intentional, so the players have some time to react? ig. idkkk
     setTimeout(() => {
-      // Set the game to running and start the game loop
+      // Set the game to running
       this.running = true;
-      this.game.sessions.startGameLoop();
 
       // Send the start message
       this.player1.send(Messages.Start(this.ball, false));
@@ -98,7 +97,7 @@ export default class Session {
    * @param {number} delta The time since the last tick in ms
    */
   update(delta: number) {
-    // If the game is not running, don't continue the game loop
+    // If the game is not running, don't continue updating the session
     if (!this.running) return;
 
     // Update the ball position based on the velocity and delta time
@@ -123,13 +122,13 @@ export default class Session {
     this.scores[player]++;
 
     // Send a goal message to both players
-    this.player1.send(Messages.Score(this.scores, player));
-    this.player2.send(Messages.Score(this.scores, player));
+    this.player1.send(Messages.Score(this.scores, SessionPlayer.Player1));
+    this.player2.send(Messages.Score(this.scores, SessionPlayer.Player2));
 
     // Reset the ball position and make it go towards the other player
     this.ball.reset(player);
 
-    // Stop the game loop for half a second
+    // Stop the session for half a second
     this.running = false;
 
     // And start again lmaoo

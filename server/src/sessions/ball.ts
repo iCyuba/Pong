@@ -64,9 +64,9 @@ export default class Ball extends TypedEmitter<BallEvents> {
    *
    * The ball is created in the middle of the screen with a random angle and speed of 100
    *
-   * @param {number} radius The radius of the ball (defaults to 1) [percentages of the screen]
+   * @param {number} radius The radius of the ball (defaults to 2) [percentages of the screen]
    */
-  constructor(radius: number = 1) {
+  constructor(radius: number = 2) {
     // Call the EventEmitter constructor (so we can emit events)
     super();
 
