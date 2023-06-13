@@ -20,8 +20,7 @@ function createConnection(server: Server): Promise<WebSocket> {
     }, 1000);
 
     // Get the port from the server (this is the random port we generated)
-    const address = server.address()!;
-    const port = typeof address === "string" ? parseInt(address.split(":")[1]) : address.port;
+    const port = server.port;
 
     // Create a new websocket connection to the server on the random port
     const ws = new WebSocket(`ws://localhost:${port}`);

@@ -16,8 +16,10 @@
   "license": "MIT",
   "sideEffects": false,
   "dependencies": {
+    "@types/ws": "^8.5.5",
     "lodash-es": "^4.17.21",
     "tiny-typed-emitter": "^2.1.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.30.0",
     "ws": "^8.13.0"
   },
   "devDependencies": {
@@ -28,12 +30,12 @@
     "@types/lodash-es": "^4.17.7",
     "@types/node": "^20.2.5",
     "@types/webpack-env": "^1.18.1",
-    "@types/ws": "^8.5.4",
     "babel-jest": "^29.5.0",
     "babel-loader": "^9.1.2",
     "babel-plugin-require-context-hook": "^1.0.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
     "jest": "^29.5.0",
+    "node-loader": "^2.0.0",
     "nodemon-webpack-plugin": "^4.8.1",
     "prettier": "^2.8.8",
     "tsconfig-paths-webpack-plugin": "^4.0.1",

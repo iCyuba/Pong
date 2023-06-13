@@ -1,12 +1,13 @@
 // Start a new server instance. This is the entry point for the server.
 import { WebSocket } from "ws";
 
+import Server from "@/server";
+
 import { ErrorMessage } from "@/messages/error";
 
 // The test helper functions
 import createConnection, { closeConnection } from "@/helpers/createConnection";
 import waitForResponse from "@/helpers/waitForResponse";
-import Server from "@/server";
 
 // Some basic tests related to errors
 // Each message should receive a response with type "error" and a message
@@ -18,11 +19,11 @@ describe("Try sending invalid messages to the server", () => {
 
   // Create a new server instance before all tests with a random port
   beforeAll(done => {
-    server = new Server({ port: 0 }, done);
+    server = new Server(0, done);
   });
 
   // Once all tests are done, close the server instance
-  afterAll(done => server.close(done));
+  afterAll(() => server.close());
 
   // Create a new connection to the server before each test
   beforeEach(async () => {

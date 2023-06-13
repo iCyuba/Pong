@@ -10,7 +10,15 @@ export default {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
   },
   module: {
-    rules: [{ test: /\.(js|jsx|tsx|ts)$/, exclude: /node_modules/, loader: "babel-loader" }],
+    rules: [
+      // JavaScript and TypeScript is handled by babel-loader
+      { test: /\.(js|jsx|tsx|ts)$/, exclude: /node_modules/, loader: "babel-loader" },
+      // .node files are handled by node-loader
+      {
+        test: /\.node$/,
+        loader: "node-loader",
+      },
+    ],
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin({

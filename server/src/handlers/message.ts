@@ -1,4 +1,4 @@
-import { RawData, WebSocket } from "ws";
+import { WebSocket } from "@/server";
 
 import * as Messages from "@/messages";
 
@@ -13,8 +13,14 @@ export default class MessageHandler extends Handler {
   /** All of the loaded game event handlers */
   handlers: Record<string, EventHandler> = {};
 
-  constructor(game: Game) {
+  /** Text decoder for decoding ArrayBuffer messages */
+  decoder: TextDecoder;
+
+  constructor(game: Game, decoder: TextDecoder = new TextDecoder()) {
     super(game);
+
+    // Set the decoder (passed by the server. doesn't have to be ig)
+    this.decoder = decoder;
 
     // Register all game event handlers
     this.registerAllHandlers();
@@ -23,20 +29,22 @@ export default class MessageHandler extends Handler {
   /**
    * Handle a message
    * @param {WebSocket} ws The WebSocket connection
-   * @param {RawData} data The message data
+   * @param {ArrayBuffer} data The message data
    */
-  async handle(ws: WebSocket, data: RawData): Promise<void> {
+  async handle(ws: WebSocket, data: ArrayBuffer): Promise<void> {
     // Parse the message as JSON
     let message: Event;
     try {
-      message = JSON.parse(data.toString());
+      message = JSON.parse(this.decoder.decode(data));
 
       // Check if the message type is valid
       if (typeof message.type !== "string" || !Object.keys(this.handlers).includes(message.type))
         throw new Error("Invalid message type");
     } catch (err) {
       // If an error occurs, send an error message to the client
-      return ws.send(JSON.stringify(Messages.Error(err as any)));
+      ws.send(JSON.stringify(Messages.Error(err as any)));
+
+      return;
     }
 
     // Call the handler for the message type

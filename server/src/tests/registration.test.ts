@@ -1,7 +1,8 @@
 // Start a new server instance. This is the entry point for the server.
 import { without } from "lodash-es";
-
 import { WebSocket } from "ws";
+
+import Server from "@/server";
 
 import { ErrorMessage } from "@/messages/error";
 import { ListMessage } from "@/messages/list";
@@ -11,7 +12,6 @@ import { UnregisterMessage } from "@/messages/unregister";
 // The test helper functions
 import createConnection, { closeConnection } from "@/helpers/createConnection";
 import waitForResponse, { waitForResponses } from "@/helpers/waitForResponse";
-import Server from "@/server";
 
 // Tests regarding registration / unregistration
 
@@ -19,11 +19,11 @@ describe("Registrations / Unregistrations", () => {
   let server: Server;
   // Create a new server instance before all tests with a random port
   beforeAll(done => {
-    server = new Server({ port: 0 }, done);
+    server = new Server(0, done);
   });
 
   // Once all tests are done, close the server instance
-  afterAll(done => server.close(done));
+  afterAll(() => server.close());
 
   describe("With 1 player", () => {
     let ws: WebSocket;

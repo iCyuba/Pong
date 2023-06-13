@@ -1,9 +1,10 @@
 import { WebSocket } from "ws";
 
+import Server from "@/server";
+
 import createConnection, { closeConnection } from "@/helpers/createConnection";
 import waitForResponse, { waitForResponses } from "@/helpers/waitForResponse";
 import Player from "@/players/player";
-import Server from "@/server";
 
 /** Don't ask. Just use them */
 export const usernames = [
@@ -64,13 +65,11 @@ describe("Online tests", () => {
 
   // Create a new server instance before all tests with a random port
   beforeAll(done => {
-    server = new Server({ port: 0 }, done);
+    server = new Server(0, done);
   });
 
   // Close the server after all tests
-  afterAll(done => {
-    server.close(done);
-  });
+  afterAll(() => server.close());
 
   describe("Register with names", () => {
     let ws: WebSocket;

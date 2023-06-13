@@ -1,10 +1,10 @@
-// Start a new server instance. This is the entry point for the server.
 import { WebSocket } from "ws";
+
+import Server from "@/server";
 
 // The test helper functions
 import createConnection, { closeConnection } from "@/helpers/createConnection";
 import waitForResponse, { waitForResponses } from "@/helpers/waitForResponse";
-import Server from "@/server";
 
 // These tests are all about sending invites (and receiving them)
 describe("Sending invitations from player to player", () => {
@@ -12,11 +12,11 @@ describe("Sending invitations from player to player", () => {
 
   // Create a new server instance before all tests with a random port
   beforeAll(done => {
-    server = new Server({ port: 0 }, done);
+    server = new Server(0, done);
   });
 
   // Once all tests are done, close the server instance
-  afterAll(done => server.close(done));
+  afterAll(() => server.close());
 
   describe("With 2 players", () => {
     let websockets: [WebSocket, WebSocket];

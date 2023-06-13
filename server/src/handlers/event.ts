@@ -1,4 +1,4 @@
-import { WebSocket } from "ws";
+import { WebSocket } from "@/server";
 
 import Handler from "@/handlers";
 import Player from "@/players/player";

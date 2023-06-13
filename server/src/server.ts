@@ -1,45 +1,84 @@
-import { IncomingMessage } from "http";
-
-import { ServerOptions, WebSocket, WebSocketServer } from "ws";
+import {
+  App,
+  TemplatedApp,
+  us_listen_socket,
+  us_listen_socket_close,
+  us_socket_local_port,
+  WebSocket as uWebSocket,
+} from "uWebSockets.js";
 
 import Game from "@/game";
 import MessageHandler from "@/handlers/message";
 
+/** A WebSocket connection with some extra data ig */
+export type WebSocket<UserData = any> = uWebSocket<UserData>;
+
 /**
  * A WebSocket server for the game. This class is responsible for handling all connections
- * @extends WebSocketServer
  */
-export default class Server extends WebSocketServer {
+export default class Server {
   /** An instance of the Game class. This is what contains the info about the players, sessions, ... */
   readonly game: Game = new Game();
 
-  /** A handler for the messages. It's a separate class because it loads all of the GameEventHandlers */
+  /** A handler for the messages. It's a separate class because it loads all of the EventHandlers */
   readonly messageHandler: MessageHandler = new MessageHandler(this.game);
 
+  /** An instance of the uWebSockets.js app */
+  readonly app: TemplatedApp = App();
+
+  /** The listen socket, given to us by uWebSockets.js in the listen callback */
+  listenSocket?: us_listen_socket;
+
+  /** The port the server is listening on */
+  get port(): number {
+    return this.listenSocket ? us_socket_local_port(this.listenSocket) : -1;
+  }
+
   /**
-   * Create a new WSServer
-   * @param {ServerOptions} options The options to pass to the WebSocket server
+   * Create a new server
+   * @param {number} port The port to listen on (defaults to a random port => 0)
    * @param {() => void} callback An optional callback to run when the server is ready
    */
-  constructor(options: ServerOptions, callback?: () => void) {
-    // Create a new WebSocketServer
-    super(options, callback);
+  constructor(port: number = 0, callback?: () => void) {
+    // Handle all WebSocket connections on any path
+    this.app.ws("/*", {
+      /* Handlers */
+      open: this.onConnection.bind(this),
+      message: this.messageHandler.handle.bind(this.messageHandler),
+      close: this.onClose.bind(this),
+    });
 
-    // Bind the connection event handler to the class
-    this.on("connection", this.onConnection);
+    // Listen on the given port, defaults to a random port (0)
+    this.app.listen(port, listenSocket => {
+      // Save the listen socket
+      this.listenSocket = listenSocket;
+
+      // Try to run the callback if there is one
+      callback?.();
+    });
   }
+
+  /** Gracefully close the server */
+  close(): void {
+    // Close the listen socket (if it exists)
+    if (this.listenSocket) us_listen_socket_close(this.listenSocket);
+    this.listenSocket = undefined;
+
+    // TODO: Close the game
+    // this.game.close();
+    this.game.sessions.stopGameLoop();
+  }
+
+  /** Text decoder for decoding ArrayBuffer addresses */
+  decoder = new TextDecoder();
 
   /**
    * An event handler for when a new WebSocket connection is made
    * @param {WebSocket} ws A WebSocket connection
    */
-  private onConnection(ws: WebSocket, req: IncomingMessage): void {
+  private onConnection(ws: WebSocket): void {
     // Log the connection
-    console.log(new Date(), "Connect", req.socket.remoteAddress);
-
-    // Attach the event handlers to the websocket
-    ws.on("message", data => this.messageHandler.handle(ws, data));
-    ws.on("close", () => this.onClose(ws));
+    console.log(new Date(), "Connect", this.decoder.decode(ws.getRemoteAddressAsText()));
   }
 
   /**

@@ -1,7 +1,13 @@
 {
   "printWidth": 100,
   "arrowParens": "avoid",
-  "importOrder": ["^ws$", "^@/tests/(.*?)$", "^@/messages/?(.*?)$", "^@/(.*?)$", "^[./]"],
+  "importOrder": [
+    "^uWebSockets.js|@/server$",
+    "^@/tests/(.*?)$",
+    "^@/messages/?(.*?)$",
+    "^@/(.*?)$",
+    "^[./]"
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "importOrderCaseInsensitive": true

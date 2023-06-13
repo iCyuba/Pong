@@ -1,4 +1,4 @@
-import { WebSocket } from "ws";
+import { WebSocket } from "@/server";
 
 /**
  * A player in the game
