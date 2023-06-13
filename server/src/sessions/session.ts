@@ -67,9 +67,6 @@ export default class Session {
     this.ball.on("outOfBounds", this.goal.bind(this));
   }
 
-  /** An active timeout for the start of the game */
-  private startTimeout?: NodeJS.Timeout;
-
   /**
    * Start the game
    *
@@ -79,26 +76,15 @@ export default class Session {
    */
   start() {
     // Check if the game is already running or already starting
-    if (this.running || this.startTimeout) return;
+    if (this.running || this.startTimestamp !== undefined) return;
 
     // Check if both players are ready
     if (!this.isReady[SessionPlayer.Player1] || !this.isReady[SessionPlayer.Player2]) return;
 
-    // Start the session in 3 seconds
-    // This is intentional, so the players have some time to react? ig. idkkk
-    this.startTimeout = setTimeout(() => {
-      // Set the game to running, set the last tick to the current time and start the game loop
-      this.running = true;
-      this.lastTick = Date.now();
-      this.game.sessions.startGameLoop();
-
-      // Send the start message
-      this.player1.send(Messages.Start(this.ball, false));
-      this.player2.send(Messages.Start(this.ball, true));
-
-      // Clear the start timeout
-      this.startTimeout = undefined;
-    }, 3000);
+    // Set the start timestamp (this is used by the real startGame() method)
+    // This is an alternative to using setTimeout() to start the game after a delay
+    // I'm doing this because I already have setInterval() for the game loop
+    this.startTimestamp = Date.now();
   }
 
   /**
@@ -109,14 +95,11 @@ export default class Session {
    * Note: This doesn't send any messages to the players, that's the responsibility of Sessions.remove()!
    */
   end() {
-    // If the game isn't running, don't continue
-    if (!this.running) return;
-
     // Set the game to not running
     this.running = false;
 
-    // If there's a start timeout, clear it
-    if (this.startTimeout) clearTimeout(this.startTimeout);
+    // If there's a start timestamp, remove it
+    this.startTimestamp = undefined;
   }
 
   /**
@@ -136,26 +119,37 @@ export default class Session {
     this.start();
   }
 
-  /** The timestamp of the last tick */
-  private lastTick: number = Date.now();
-
   /**
    * Update the game state.
    *
    * This gets called by the Sessions class every tick
+   * @param {number} delta The time since the last tick in milliseconds
    */
-  update() {
-    // If the game is not running, don't continue updating the session
-    if (!this.running) return;
-
-    // The delta time (time since last tick in ms) [0 on first tick]
-    const delta = Date.now() - this.lastTick;
-
-    // Set lastTick to the current time
-    this.lastTick = Date.now();
+  update(delta: number) {
+    // If the game is not running, try checking in with the startGame() method
+    if (!this.running) return this.startGame();
 
     // Update the ball position based on the velocity and delta time
     this.ball.move(delta);
+  }
+
+  /** The timestamp of when start() was called */
+  private startTimestamp?: number;
+
+  /**
+   * Called when the game should actually start (about 3 seconds after the public start() method is called)
+   */
+  private startGame() {
+    // Check if 1. start() was called and 2. the game is not already running and 3. the game was not started less than 3 seconds ago
+    if (!this.startTimestamp || this.running || this.startTimestamp + 3000 > Date.now()) return;
+
+    // Set the game to running and remove the start timestamp
+    this.running = true;
+    this.startTimestamp = undefined;
+
+    // Send the start message
+    this.player1.send(Messages.Start(this.ball, false));
+    this.player2.send(Messages.Start(this.ball, true));
   }
 
   /**
@@ -182,8 +176,8 @@ export default class Session {
     // Reset the ball position and make it go towards the other player
     this.ball.reset(player);
 
-    // Stop the session for 3 seconds (if no session is running, this also stops the game loop)
-    this.running = false;
+    // Stop the session for 3 seconds
+    this.end(); // This gets called immediately
 
     // And start again lmaoo
     this.start(); // This gets called in 3 seconds
