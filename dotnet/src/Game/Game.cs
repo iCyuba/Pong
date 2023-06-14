@@ -77,9 +77,14 @@ namespace Pong
     // Events <3
 
     /// <summary>
-    /// Called when the game starts
+    /// Called when a message should be shown
     /// </summary>
-    public EventHandler? OnStart { get; set; }
+    public EventHandler<string>? OnShowMessage { get; set; }
+
+    /// <summary>
+    /// Called when a message should be hidden
+    /// </summary>
+    public EventHandler? OnHideMessage { get; set; }
 
     /// <summary>
     /// Called when the game will start in some time
@@ -118,21 +123,10 @@ namespace Pong
     {
       IsRunning = true;
       StartAt = null;
-      OnStart?.Invoke(this, EventArgs.Empty);
-    }
 
-    /// <summary>
-    /// Start the game after 3 seconds (or more) pass
-    /// </summary>
-    public virtual void StartIn3Seconds()
-    {
-      // If there's already a start time, don't do anything
-      if (StartAt != null)
-        return;
+      Ball.SetPosToMiddle();
 
-      StartAt = DateTime.Now.AddSeconds(3);
-
-      OnStartIn?.Invoke(this, StartAt.Value);
+      OnHideMessage?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -172,10 +166,6 @@ namespace Pong
     /// </summary>
     public virtual void KeyDown(Keys key)
     {
-      // Start the game when a key is pressed
-      if (!IsRunning)
-        StartIn3Seconds();
-
       // They both intentioanlly control the same paddle.
       // This is because out of 4 game types. 3 of them can be controlled by both keys
       // In local multiplayer, simply a return will be called before reaching this point

@@ -17,7 +17,7 @@ export interface CreateMessage {
  * Sent to all players who are not in a session (but including the two players in the new session)
  * @param {Player} player1 The player who sent the Create
  * @param {Player} player2 The player who received the Create
- * @returns {CreateMessage} An Create message
+ * @returns {CreateMessage} A Create message
  */
 function Create(player1: Player, player2: Player): CreateMessage {
   return {

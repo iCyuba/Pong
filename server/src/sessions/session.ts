@@ -85,6 +85,10 @@ export default class Session {
     // This is an alternative to using setTimeout() to start the game after a delay
     // I'm doing this because I already have setInterval() for the game loop
     this.startTimestamp = Date.now();
+
+    // Send the start message with the timestamp when the game should start
+    this.player1.send(Messages.Start(this.ball, false));
+    this.player2.send(Messages.Start(this.ball, true));
   }
 
   /**
@@ -111,6 +115,10 @@ export default class Session {
   ready(player: Player) {
     // Check if the player is in this session
     if (player !== this.player1 && player !== this.player2) return;
+
+    // Send the ready message to both players
+    this.player1.send(Messages.Ready(player));
+    this.player2.send(Messages.Ready(player));
 
     // Set the player to ready
     this.isReady[player === this.player1 ? SessionPlayer.Player1 : SessionPlayer.Player2] = true;
@@ -146,10 +154,6 @@ export default class Session {
     // Set the game to running and remove the start timestamp
     this.running = true;
     this.startTimestamp = undefined;
-
-    // Send the start message
-    this.player1.send(Messages.Start(this.ball, false));
-    this.player2.send(Messages.Start(this.ball, true));
   }
 
   /**

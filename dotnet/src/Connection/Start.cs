@@ -13,14 +13,12 @@ namespace Pong
     {
       public double VelX { get; set; }
       public double VelY { get; set; }
-      public long Timestamp { get; set; }
 
-      public StartEvent(double velX, double velY, long timestamp)
+      public StartEvent(double velX, double velY)
         : base("start")
       {
         VelX = velX;
         VelY = velY;
-        Timestamp = timestamp;
       }
 
       /// <summary>

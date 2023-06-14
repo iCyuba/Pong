@@ -27,21 +27,85 @@ namespace Pong
 
       // Initialize the ball with the provided connection
       Ball = new BallClient(connection, this);
+
+      // Custom event handlers
+      Connection.OnReadyHandler += OnReady;
+      Connection.OnStartHandler += OnStart;
+      Connection.OnScoreHandler += OnScoreHandler;
+    }
+
+    public override void Start()
+    {
+      base.Start();
+
+      if (LastStartEvent == null)
+        throw new InvalidOperationException("LastStartEvent is null");
+
+      // Start the ball
+      BallInstance.Start(LastStartEvent.VelX, LastStartEvent.VelY);
+
+      // Set last start event to null
+      LastStartEvent = null;
     }
 
     /// <summary>
-    /// This is called on keypress so it just sends a ready message to the server
-    /// <br/>
-    /// The game actually starts once the server sends a start message, however.. you can move freely during this period (so IsRunning = true here)
+    /// Shows a message "waiting for the other player" when the we already sent a ready event
     /// </summary>
-    public override void Start()
+    private void OnReady(object? _, Connection.ReadyEvent e)
     {
-      // Call the base method
-      base.Start();
+      // If the game is already running, don't do anything
+      if (IsRunning)
+        return;
 
-      // The game will start once the server sends a start message
-      // And if it doesn't.. well. not my problem
-      _ = Connection.Ready();
+      // Check if the ready event was sent by us
+      if (e.Name == Connection.Name)
+      {
+        OnShowMessage?.Invoke(this, "Waiting for the other player...");
+      }
+      else
+      {
+        OnShowMessage?.Invoke(this, "The other player is ready!\nPress any key to start");
+      }
+    }
+
+    /// <summary>
+    /// This is the event message for the last "start" event
+    /// <br/>
+    /// I literally just need to store it somewhere so I can use it in the Start method
+    /// </summary>
+    private Connection.StartEvent? LastStartEvent { get; set; } = null;
+
+    /// <summary>
+    /// This is called when a server sends us when the game will start
+    /// <br/>
+    /// This is the equivalent of <see cref="GameServer.StartIn3Seconds"/> but for the client. It can only be called by the server
+    /// </summary>
+    private void OnStart(object? _, Connection.StartEvent e)
+    {
+      // Game will start at now + 3 seconds
+      StartAt = DateTime.Now.AddSeconds(3);
+
+      // Invoke the event
+      OnStartIn?.Invoke(this, StartAt.Value);
+
+      // Store the event
+      LastStartEvent = e;
+    }
+
+    /// <summary>
+    /// This is called when the ball goes out of bounds and the server sends us the new scores
+    /// </summary>
+    private void OnScoreHandler(object? _, Connection.ScoreEvent e)
+    {
+      // Update the score stored locally
+      LeftScore = e.You;
+      RightScore = e.Opponent;
+
+      // Invoke the event
+      OnScore?.Invoke(this, EventArgs.Empty);
+
+      // Also stop the game
+      IsRunning = false;
     }
 
     /// <summary>
@@ -53,6 +117,9 @@ namespace Pong
     {
       // Unregister event handlers for the connection
       BallInstance.UnregisterEventHandlers();
+
+      Connection.OnReadyHandler -= OnReady;
+      Connection.OnStartHandler -= OnStart;
     }
 
     public override void Update(double deltaTime)
@@ -60,8 +127,7 @@ namespace Pong
       // Run the base method
       base.Update(deltaTime);
 
-      if (!IsRunning)
-        return;
+      // Note: this can happen even with isRunning = false
 
       // Paddles
       LeftPaddle.Move(deltaTime);
@@ -70,6 +136,15 @@ namespace Pong
       // Ball
       BallInstance.Move();
       BallInstance.Bounce();
+    }
+
+    public override void KeyDown(Keys key)
+    {
+      // Send a ready event if the game is not running or about to start
+      if (!IsRunning && StartAt == null)
+        _ = Connection.Ready();
+
+      base.KeyDown(key);
     }
   }
 }

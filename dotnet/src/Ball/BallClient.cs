@@ -15,9 +15,9 @@ namespace Pong
     /// <summary>
     /// Delta time between the last time the server sent the ball's position and the current time (in ticks)
     /// </summary>
-    private int DeltaTimeTicks
+    private long DeltaTimeTicks
     {
-      get => (int)(DateTime.UtcNow.Ticks - LastServerTimestamp);
+      get => DateTime.UtcNow.Ticks - LastServerTimestamp;
     }
 
     /// <summary>
@@ -57,7 +57,6 @@ namespace Pong
       SetPosToMiddle();
 
       // Register the event handlers
-      Connection.OnStartHandler += OnStart;
       Connection.OnUpdateHandler += OnUpdate;
     }
 
@@ -78,6 +77,10 @@ namespace Pong
     /// </summary>
     public void Move()
     {
+      // If delta time is negative, the game probably hasn't started yet
+      if (DeltaTime < 0)
+        return;
+
       PosX = ServerPosX + VelX * DeltaTime;
       PosY = ServerPosY + VelY * DeltaTime;
     }
@@ -87,26 +90,22 @@ namespace Pong
     /// </summary>
     public void UnregisterEventHandlers()
     {
-      Connection.OnStartHandler -= OnStart;
       Connection.OnUpdateHandler -= OnUpdate;
     }
 
     /// <summary>
-    /// Event handler for the "start" event
+    /// Unlike OnUpdate. this isn't called by the connection
     /// <br/>
-    /// Starts the ball's movement
+    /// It's called by game 3 seconds after it receives the "start" event
     /// </summary>
-    private void OnStart(object? _, Connection.StartEvent startEvent)
+    public void Start(double velX, double velY)
     {
-      // Convert the timestamp to a DateTimeOffset so we can get the ticks from it
-      DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(startEvent.Timestamp);
-      LastServerTimestamp = dateTimeOffset.Ticks;
+      // Set the timestamp to the current time
+      // This is so the ball doesn't start moving before the game starts
+      LastServerTimestamp = DateTime.UtcNow.Ticks;
 
-      // When this event is sent. The ball is in the middle of the screen
-      SetPosToMiddle();
-
-      VelX = startEvent.VelX;
-      VelY = startEvent.VelY;
+      VelX = velX;
+      VelY = velY;
     }
 
     /// <summary>
@@ -116,11 +115,8 @@ namespace Pong
     /// </summary>
     private void OnUpdate(object? _, Connection.UpdateEvent updateEvent)
     {
-      // Convert the timestamp to a DateTimeOffset so we can get the ticks from it
-      DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(
-        updateEvent.Timestamp
-      );
-      LastServerTimestamp = dateTimeOffset.Ticks;
+      // Set the timestamp to the current time
+      LastServerTimestamp = DateTime.UtcNow.Ticks;
 
       ServerPosX = updateEvent.PosX;
       ServerPosY = updateEvent.PosY;

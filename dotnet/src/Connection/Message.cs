@@ -82,6 +82,9 @@ namespace Pong
         case "create":
           OnCreateHandler?.Invoke(this, CreateEvent.Deserialize(message));
           break;
+        case "ready":
+          OnReadyHandler?.Invoke(this, ReadyEvent.Deserialize(message));
+          break;
         case "start":
           OnStartHandler?.Invoke(this, StartEvent.Deserialize(message));
           break;

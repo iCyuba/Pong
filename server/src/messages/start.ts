@@ -12,18 +12,15 @@ export interface StartMessage {
   // Velocity
   velX: number;
   velY: number;
-
-  // Timestamp
-  timestamp: number;
 }
 
 /**
- * A session has started and ball is now moving
+ * A session will start in 3 seconds
  *
  * Sent to the players in the session
  * @param {Ball} ball The ball in the session
  * @param {boolean} reverse Whether to flip the game. This is what player 2 sees. (both are on the left side of the screen)
- * @returns {StartMessage} A Register message
+ * @returns {StartMessage} A Start message
  */
 export function Start(ball: Ball, reverse: boolean): StartMessage {
   // Get the x and y velocity of the ball in the axes
@@ -38,7 +35,6 @@ export function Start(ball: Ball, reverse: boolean): StartMessage {
     type: "start",
     velX,
     velY,
-    timestamp: Date.now(),
   };
 }
 

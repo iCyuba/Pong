@@ -54,6 +54,11 @@ namespace Pong
     public EventHandler<CreateEvent>? OnCreateHandler { get; set; }
 
     /// <summary>
+    /// Event handler for when a player is ready. This can be you or the other player. Only sent while the other player is not ready
+    /// </summary>
+    public EventHandler<ReadyEvent>? OnReadyHandler { get; set; }
+
+    /// <summary>
     /// Event handler for when a session starts (this is a different event to OnCreateHandler)
     /// </summary>
     public EventHandler<StartEvent>? OnStartHandler { get; set; }

@@ -39,15 +39,25 @@ namespace Pong
       message.Text = "Press any key to start!";
 
       // Register event handlers
-      GameInstance.OnStart += OnStart;
+      GameInstance.OnShowMessage += OnShowMessage;
+      GameInstance.OnHideMessage += OnMessageHide;
       GameInstance.OnStartIn += OnStartIn;
       GameInstance.OnScore += OnScore;
     }
 
     /// <summary>
-    /// This is called when the game starts. It just hides the message
+    /// This is called to show some message
     /// </summary>
-    private void OnStart(object? sender, EventArgs e)
+    private void OnShowMessage(object? sender, string message)
+    {
+      this.message.Text = message;
+      this.message.Visible = true;
+    }
+
+    /// <summary>
+    /// This is called to hide the message
+    /// </summary>
+    private void OnMessageHide(object? sender, EventArgs e)
     {
       message.Visible = false;
     }

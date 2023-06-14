@@ -17,7 +17,7 @@ export interface ScoreMessage {
  * Sent to the players in the session whenever a player scores
  * @param {Record<SessionPlayer, number>} scores The scores for each player
  * @param {SessionPlayer} player The player who this score is for
- * @returns {ScoreMessage} A Register message
+ * @returns {ScoreMessage} A Score message
  */
 export function Score(scores: Record<SessionPlayer, number>, player: SessionPlayer): ScoreMessage {
   const you = scores[player];

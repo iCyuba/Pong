@@ -13,16 +13,14 @@ namespace Pong
       public double PosY { get; set; }
       public double VelX { get; set; }
       public double VelY { get; set; }
-      public long Timestamp { get; set; }
 
-      public UpdateEvent(double posX, double posY, double velX, double velY, long timestamp)
+      public UpdateEvent(double posX, double posY, double velX, double velY)
         : base("update")
       {
         PosX = posX;
         PosY = posY;
         VelX = velX;
         VelY = velY;
-        Timestamp = timestamp;
       }
 
       /// <summary>

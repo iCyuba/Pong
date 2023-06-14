@@ -73,7 +73,20 @@
 
       // Place the ball in the middle of the screen and start it moving
       BallInstance.RandomlyStartMoving(Ball.BaseVelocity);
-      BallInstance.SetPosToMiddle();
+    }
+
+    /// <summary>
+    /// Start the game after 3 seconds (or more) pass
+    /// </summary>
+    public virtual void StartIn3Seconds()
+    {
+      // If there's already a start time, don't do anything
+      if (StartAt != null)
+        return;
+
+      StartAt = DateTime.Now.AddSeconds(3);
+
+      OnStartIn?.Invoke(this, StartAt.Value);
     }
 
     public override void Update(double deltaTime)

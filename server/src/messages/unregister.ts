@@ -15,7 +15,7 @@ export interface UnregisterMessage {
  *
  * Sent to all players who aren't in a session
  * @param {Player} player The player who registered
- * @returns {UnregisterMessage} A Register message
+ * @returns {UnregisterMessage} An Unregister message
  */
 export function Unregister(player: Player): UnregisterMessage {
   return {
