@@ -62,6 +62,9 @@
 
       // Set the game type
       Type = type;
+
+      // Add event handlers for the ball
+      BallInstance.OnOutOfBounds += OnOutOfBounds;
     }
 
     public override void Start()
@@ -73,13 +76,13 @@
       BallInstance.SetPosToMiddle();
     }
 
-    public override void Move(double deltaTime)
+    public override void Update(double deltaTime)
     {
-      if (!IsRunning)
-        return;
+      // Run the base method
+      base.Update(deltaTime);
 
-      // Call the bot movement method if the type is a bot
-      if (Type != GameType.Local)
+      // Call the bot movement method if the type is a bot and the game is running
+      if (IsRunning && Type != GameType.Local)
         RightPaddle.BotMovement(Ball, Type);
 
       // Paddles (these should be moved first so that the ball can bounce off them)
@@ -88,7 +91,32 @@
 
       // Ball
       BallInstance.Move(deltaTime);
-      BallInstance.Bounce();
+      // Only update collisions if the game is running
+      if (IsRunning)
+        BallInstance.Bounce();
+    }
+
+    /// <summary>
+    /// This is called when the ball goes out of bounds
+    /// </summary>
+    /// <param name="side">The side that the ball went out of bounds on</param>
+    private void OnOutOfBounds(object? _, BallServer.Side side)
+    {
+      // Stop the game
+      IsRunning = false;
+
+      // If the ball went out of bounds on the left side, the right paddle scored
+      if (side == BallServer.Side.Left)
+        RightScore++;
+      // If the ball went out of bounds on the right side, the left paddle scored
+      else if (side == BallServer.Side.Right)
+        LeftScore++;
+
+      // Invoke the OnScore event
+      OnScore?.Invoke(this, EventArgs.Empty);
+
+      // Start the game again in 3 seconds
+      StartIn3Seconds();
     }
 
     // Add support for the right paddle
@@ -96,7 +124,7 @@
     {
       // Start the game if it isn't running
       if (!IsRunning)
-        Start();
+        StartIn3Seconds();
 
       // When the type isn't local, the right paddle can be controlled by the arrow keys so just call the base method and return
       if (Type != GameType.Local)

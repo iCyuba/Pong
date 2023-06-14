@@ -55,8 +55,11 @@ namespace Pong
       BallInstance.UnregisterEventHandlers();
     }
 
-    public override void Move(double deltaTime)
+    public override void Update(double deltaTime)
     {
+      // Run the base method
+      base.Update(deltaTime);
+
       if (!IsRunning)
         return;
 

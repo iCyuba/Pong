@@ -152,7 +152,7 @@
     private void BackgroundGameTick(object sender, EventArgs e)
     {
       // Update the game
-      BackgroundGame.Move(backgroundGameTimer.Interval / 1000.0);
+      BackgroundGame.Update(backgroundGameTimer.Interval / 1000.0);
 
       // Render the game
       backgroundGame.Refresh();

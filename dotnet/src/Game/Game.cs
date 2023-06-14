@@ -35,6 +35,16 @@ namespace Pong
     virtual public Paddle RightPaddle { get; set; }
 
     /// <summary>
+    /// The score of the left player
+    /// </summary>
+    public int LeftScore { get; set; }
+
+    /// <summary>
+    /// The score of the right player
+    /// </summary>
+    public int RightScore { get; set; }
+
+    /// <summary>
     /// The size of the playable area (a square)
     /// <br/>
     /// Required because the on the server the game is a square, but on the client it's a rectangle
@@ -64,6 +74,23 @@ namespace Pong
       get => (double)Size / 100;
     }
 
+    // Events <3
+
+    /// <summary>
+    /// Called when the game starts
+    /// </summary>
+    public EventHandler? OnStart { get; set; }
+
+    /// <summary>
+    /// Called when the game will start in some time
+    /// </summary>
+    public EventHandler<DateTime>? OnStartIn { get; set; }
+
+    /// <summary>
+    /// Called when the score changes
+    /// </summary>
+    public EventHandler? OnScore { get; set; }
+
     /// <summary>
     /// Create a new instance of a Game with the specified width and height
     /// </summary>
@@ -90,13 +117,44 @@ namespace Pong
     public virtual void Start()
     {
       IsRunning = true;
+      StartAt = null;
+      OnStart?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <summary>
+    /// Start the game after 3 seconds (or more) pass
+    /// </summary>
+    public virtual void StartIn3Seconds()
+    {
+      // If there's already a start time, don't do anything
+      if (StartAt != null)
+        return;
+
+      StartAt = DateTime.Now.AddSeconds(3);
+
+      OnStartIn?.Invoke(this, StartAt.Value);
+    }
+
+    /// <summary>
+    /// The time to start the game at
+    /// </summary>
+    protected DateTime? StartAt = null;
 
     /// <summary>
     /// Updates the position of objects in the game
     /// </summary>
     /// <param name="deltaTime">The time since the last update</param>
-    public abstract void Move(double deltaTime);
+    public virtual void Update(double deltaTime)
+    {
+      // If we're not running and past the start time, start the game
+      if (!IsRunning && StartAt.HasValue && StartAt.Value.Ticks < DateTime.Now.Ticks)
+      {
+        Start();
+
+        // Reset the start time
+        StartAt = null;
+      }
+    }
 
     /// <summary>
     /// Draw the game. This is called every tick
@@ -116,7 +174,7 @@ namespace Pong
     {
       // Start the game when a key is pressed
       if (!IsRunning)
-        Start();
+        StartIn3Seconds();
 
       // They both intentioanlly control the same paddle.
       // This is because out of 4 game types. 3 of them can be controlled by both keys

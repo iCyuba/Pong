@@ -2,7 +2,15 @@ namespace Pong
 {
   public partial class GameWindow : Form
   {
+    /// <summary>
+    /// The game that is being played
+    /// </summary>
     public Game GameInstance { get; set; }
+
+    /// <summary>
+    /// A timeout to show on screen
+    /// </summary>
+    private DateTime? Timeout { get; set; }
 
     /// <summary>
     /// Create a new game window
@@ -26,6 +34,62 @@ namespace Pong
         );
       else
         GameInstance = new GameClient(pictureBox.Width, pictureBox.Height, connection);
+
+      // The text that is visible when the game isn't running
+      message.Text = "Press any key to start!";
+
+      // Register event handlers
+      GameInstance.OnStart += OnStart;
+      GameInstance.OnStartIn += OnStartIn;
+      GameInstance.OnScore += OnScore;
+    }
+
+    /// <summary>
+    /// This is called when the game starts. It just hides the message
+    /// </summary>
+    private void OnStart(object? sender, EventArgs e)
+    {
+      message.Visible = false;
+    }
+
+    /// <summary>
+    /// This is called when the game will start in some time
+    /// </summary>
+    private void OnStartIn(object? sender, DateTime time)
+    {
+      message.Visible = true;
+
+      // Set the timeout
+      Timeout = time;
+
+      // Update the message
+      UpdateTimeoutMessage();
+    }
+
+    /// <summary>
+    /// Update the timeout message every second
+    /// </summary>
+    private void UpdateTimeoutMessage()
+    {
+      // Return if the timeout is null
+      if (Timeout == null)
+        return;
+
+      // Update the message
+      message.Text =
+        $"Starting in {Math.Ceiling((Timeout.Value - DateTime.Now).TotalSeconds)} seconds!";
+    }
+
+    /// <summary>
+    /// Update the scores text when the score changes
+    /// </summary>
+    private void OnScore(object? sender, EventArgs e)
+    {
+      // Left score
+      scoreLeft.Text = GameInstance.LeftScore.ToString();
+
+      // Right score
+      scoreRight.Text = GameInstance.RightScore.ToString();
     }
 
     /// <summary>
@@ -43,8 +107,11 @@ namespace Pong
     /// </summary>
     private void OnTick(object sender, EventArgs e)
     {
+      // Update the timeout message
+      UpdateTimeoutMessage();
+
       // Update the game
-      GameInstance.Move(timer1.Interval / 1000.0);
+      GameInstance.Update(timer1.Interval / 1000.0);
 
       // Render the game
       pictureBox.Refresh();

@@ -20,10 +20,10 @@ namespace Pong
       Ball.VelY = 15;
     }
 
-    public override void Move(double deltaTime)
+    public override void Update(double deltaTime)
     {
       // Call the base method
-      base.Move(deltaTime);
+      base.Update(deltaTime);
 
       // Run the bot method on the left paddle (right is called in the base method)
       LeftPaddle.BotMovement(Ball, GameType.BotImpossible);

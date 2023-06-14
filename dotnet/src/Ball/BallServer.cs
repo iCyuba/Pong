@@ -3,6 +3,20 @@ namespace Pong
   public class BallServer : Ball
   {
     /// <summary>
+    /// The side in which the ball went out of bounds
+    /// </summary>
+    public enum Side
+    {
+      Left,
+      Right,
+    }
+
+    /// <summary>
+    /// Event for when a player scores a goal
+    /// </summary>
+    public EventHandler<Side>? OnOutOfBounds { get; set; }
+
+    /// <summary>
     /// Create a new instance of a BallServer
     /// </summary>
     /// <param name="game">The game that the ball is in</param>
@@ -43,10 +57,14 @@ namespace Pong
     /// <summary>
     /// Checks if the ball is behind the goal of the paddles
     /// </summary>
-    public bool CheckGoalCollision()
+    public Side? CheckGoalCollision()
     {
-      // return Right < 0 || Left > 100;
-      return Right < -Game.Offset.X / Scale || Left > 100 + Game.Offset.X / Scale;
+      if (Right < 0)
+        return Side.Left;
+      else if (Left > 100)
+        return Side.Right;
+      else
+        return null;
     }
 
     /// <summary>
@@ -93,14 +111,15 @@ namespace Pong
       if (CheckPaddleCollision(new[] { Game.LeftPaddle, Game.RightPaddle }))
       {
         VelX *= -1;
-
         return;
       }
 
+      Side? goalCollision = CheckGoalCollision();
+
       // If the ball didn't collide with a paddle, check if it is behind the goal
-      if (CheckGoalCollision())
-        // TODO: Change this to a score system
-        VelX *= -1;
+      // and invoke the OnOutOfBounds event if it is
+      if (goalCollision != null)
+        OnOutOfBounds?.Invoke(this, goalCollision.Value);
     }
   }
 }
