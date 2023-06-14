@@ -2,11 +2,22 @@
 {
   public partial class Menu : Form
   {
+    /// <summary>
+    /// The connection to the server
+    /// </summary>
     private Connection Connection { get; set; }
+
+    /// <summary>
+    /// The game that is shown in the background
+    /// </summary>
+    private Game BackgroundGame { get; set; }
 
     public Menu()
     {
       InitializeComponent();
+
+      // Create a new game
+      BackgroundGame = new GameFake(backgroundGame.Width, backgroundGame.Height);
 
       // Disable the multiplayer button until the connection is established
       multiplayerOnline.Enabled = false;
@@ -88,6 +99,9 @@
     private void LocalMultiplayerClick(object sender, EventArgs e) =>
       CreateGameServer(GameServer.GameType.Local);
 
+    /// <summary>
+    /// Called when the Online Multiplayer button is clicked. Creates a new GameServer with the type Online
+    /// </summary>
     private void OnlineMultiplayerClick(object sender, EventArgs e)
     {
       // Ask for the player's name
@@ -100,6 +114,9 @@
       Connection.OnRegisterHandler += OnRegister;
     }
 
+    /// <summary>
+    /// Called when the server throws an error
+    /// </summary>
     private void OnError(object? _, Connection.ErrorEvent e)
     {
       MessageBox.Show(e.Message, "Server error");
@@ -108,6 +125,9 @@
       Connection.OnRegisterHandler -= OnRegister;
     }
 
+    /// <summary>
+    /// Called when the player is registered, used for opening the players window
+    /// </summary>
     private void OnRegister(object? _, Connection.RegisterEvent registerEvent)
     {
       if (registerEvent.Name == Connection.Name)
@@ -118,6 +138,32 @@
         // Unregister the event handler
         Connection.OnRegisterHandler -= OnRegister;
       }
+    }
+
+    /// <summary>
+    /// Called when the backgroundGame should be painted
+    /// </summary>
+    private void BackgroundGamePaint(object sender, PaintEventArgs e) =>
+      BackgroundGame.Draw(e.Graphics);
+
+    /// <summary>
+    /// Called when the backgroundGame ticks
+    /// </summary>
+    private void BackgroundGameTick(object sender, EventArgs e)
+    {
+      // Update the game
+      BackgroundGame.Move(backgroundGameTimer.Interval / 1000.0);
+
+      // Render the game
+      backgroundGame.Refresh();
+    }
+
+    /// <summary>
+    /// Activates / deactivates the background game updates. To save resources...
+    /// </summary>
+    private void MenuVisibilityChanged(object sender, EventArgs e)
+    {
+      backgroundGameTimer.Enabled = Visible;
     }
   }
 }
