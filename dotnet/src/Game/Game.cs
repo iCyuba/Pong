@@ -118,9 +118,16 @@ namespace Pong
       if (!IsRunning)
         Start();
 
+      // They both intentioanlly control the same paddle.
+      // This is because out of 4 game types. 3 of them can be controlled by both keys
+      // In local multiplayer, simply a return will be called before reaching this point
       if (key == Keys.W)
         LeftPaddle.MoveUp();
       else if (key == Keys.S)
+        LeftPaddle.MoveDown();
+      else if (key == Keys.Up)
+        LeftPaddle.MoveUp();
+      else if (key == Keys.Down)
         LeftPaddle.MoveDown();
     }
 
@@ -134,6 +141,10 @@ namespace Pong
       if (key == Keys.W)
         LeftPaddle.MoveDown();
       else if (key == Keys.S)
+        LeftPaddle.MoveUp();
+      else if (key == Keys.Up)
+        LeftPaddle.MoveDown();
+      else if (key == Keys.Down)
         LeftPaddle.MoveUp();
     }
   }

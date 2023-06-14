@@ -10,14 +10,20 @@ namespace Pong
     /// If connection is null, then the game is a server. Otherwise, it's a client
     /// </summary>
     /// <param name="connection">The connection to use if the game is multiplayer</param>
-    public GameWindow(Connection? connection = null)
+    /// <param name="type">The game type to use, note: This is ignored if connection is provided</param>
+    public GameWindow(Connection? connection = null, GameServer.GameType? type = null)
     {
       InitializeComponent();
 
       // Create a new game
       // If the connection is null, then the game is a server. Otherwise, it's a client
       if (connection == null)
-        GameInstance = new GameServer(pictureBox.Width, pictureBox.Height);
+        GameInstance = new GameServer(
+          pictureBox.Width,
+          pictureBox.Height,
+          // If the type is null, then use the default type (Local)
+          type ?? GameServer.GameType.Local
+        );
       else
         GameInstance = new GameClient(pictureBox.Width, pictureBox.Height, connection);
     }
