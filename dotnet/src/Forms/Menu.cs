@@ -9,7 +9,7 @@
       InitializeComponent();
 
       // Disable the multiplayer button until the connection is established
-      button3.Enabled = false;
+      multiplayerOnline.Enabled = false;
 
       // Create the connection and connect to the server (idk why I made the autoConnect a thing, i'm not using it lmao)
       Connection = new("ws://localhost:3000", false);
@@ -20,9 +20,12 @@
           {
             // Enable the multiplayer button if the connection is successful
             if (t.Status == TaskStatus.RanToCompletion)
-              Invoke(new Action(() => button3.Enabled = true));
+              Invoke(new Action(() => multiplayerOnline.Enabled = true));
           }
         );
+
+      // Register the error event handler
+      Connection.OnErrorHandler += OnError;
     }
 
     /// <summary>
@@ -85,28 +88,36 @@
     private void LocalMultiplayerClick(object sender, EventArgs e) =>
       CreateGameServer(GameServer.GameType.Local);
 
-    private void button3_Click(object sender, EventArgs e)
+    private void OnlineMultiplayerClick(object sender, EventArgs e)
     {
       // Ask for the player's name
       string name = Microsoft.VisualBasic.Interaction.InputBox("What is your name?", "Name");
 
       // Register the player
-      Connection
-        .Register(name)
-        .ContinueWith(
-          (t) =>
-          {
-            // Hide the menu window and show the players window
-            Invoke(
-              new Action(() =>
-              {
-                // Show the players window
-                Players Players = new(Connection);
-                ShowForm(this, Players);
-              })
-            );
-          }
-        );
+      var _ = Connection.Register(name);
+
+      // Once the registration is complete, open the players window
+      Connection.OnRegisterHandler += OnRegister;
+    }
+
+    private void OnError(object? _, Connection.ErrorEvent e)
+    {
+      MessageBox.Show(e.Message, "Server error");
+
+      // Unregister the registration event handler if it was registered before
+      Connection.OnRegisterHandler -= OnRegister;
+    }
+
+    private void OnRegister(object? _, Connection.RegisterEvent registerEvent)
+    {
+      if (registerEvent.Name == Connection.Name)
+      {
+        Players Players = new(Connection);
+        ShowForm(this, Players);
+
+        // Unregister the event handler
+        Connection.OnRegisterHandler -= OnRegister;
+      }
     }
   }
 }

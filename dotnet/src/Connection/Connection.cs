@@ -24,6 +24,11 @@ namespace Pong
     public EventHandler<string>? OnMessageHandler { get; set; }
 
     /// <summary>
+    /// Event handler when an error occurs (sent by the server obv. not a real exception)
+    /// </summary>
+    public EventHandler<ErrorEvent>? OnErrorHandler { get; set; }
+
+    /// <summary>
     /// Event handler for when the a player registers (including this player)
     /// </summary>
     public EventHandler<RegisterEvent>? OnRegisterHandler { get; set; }

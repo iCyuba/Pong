@@ -64,6 +64,9 @@ namespace Pong
       // I'm fairly certain I have to deserialize the event again because only the base class is deserialized (but idk. shouldn't be too much of a performance hit)
       switch (gameEvent.Type)
       {
+        case "error":
+          OnErrorHandler?.Invoke(this, ErrorEvent.Deserialize(message));
+          break;
         case "register":
           OnRegisterHandler?.Invoke(this, RegisterEvent.Deserialize(message));
           break;

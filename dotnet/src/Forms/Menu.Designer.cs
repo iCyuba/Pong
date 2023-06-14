@@ -31,7 +31,7 @@
       nameLabel = new Label();
       tableLayoutPanel1 = new TableLayoutPanel();
       multiplayerLocal = new Button();
-      button3 = new Button();
+      multiplayerOnline = new Button();
       tableLayoutPanel2 = new TableLayoutPanel();
       botEasy = new Button();
       botMedium = new Button();
@@ -85,16 +85,16 @@
       multiplayerLocal.UseVisualStyleBackColor = true;
       multiplayerLocal.Click += LocalMultiplayerClick;
       // 
-      // button3
+      // multiplayerOnline
       // 
-      button3.Anchor = AnchorStyles.None;
-      button3.Location = new Point(458, 25);
-      button3.Name = "button3";
-      button3.Size = new Size(130, 24);
-      button3.TabIndex = 3;
-      button3.Text = "Online multiplayer";
-      button3.UseVisualStyleBackColor = true;
-      button3.Click += button3_Click;
+      multiplayerOnline.Anchor = AnchorStyles.None;
+      multiplayerOnline.Location = new Point(458, 25);
+      multiplayerOnline.Name = "multiplayerOnline";
+      multiplayerOnline.Size = new Size(130, 24);
+      multiplayerOnline.TabIndex = 3;
+      multiplayerOnline.Text = "Online multiplayer";
+      multiplayerOnline.UseVisualStyleBackColor = true;
+      multiplayerOnline.Click += OnlineMultiplayerClick;
       // 
       // tableLayoutPanel2
       // 
@@ -152,7 +152,7 @@
       tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
       tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
       tableLayoutPanel3.Controls.Add(multiplayerLocal, 0, 0);
-      tableLayoutPanel3.Controls.Add(button3, 1, 0);
+      tableLayoutPanel3.Controls.Add(multiplayerOnline, 1, 0);
       tableLayoutPanel3.Dock = DockStyle.Fill;
       tableLayoutPanel3.Location = new Point(43, 404);
       tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -184,7 +184,7 @@
     private TableLayoutPanel tableLayoutPanel1;
     private Button botEasy;
     private Button multiplayerLocal;
-    private Button button3;
+    private Button multiplayerOnline;
     private TableLayoutPanel tableLayoutPanel2;
     private Button botMedium;
     private Button botHard;
