@@ -3,7 +3,7 @@ import * as Messages from "@/messages";
 import Invite from "@/invite";
 import Player from "@/players/player";
 import Ball from "@/sessions/ball";
-import Paddle, { Speed } from "@/sessions/paddle";
+import Paddle, { Velocity } from "@/sessions/paddle";
 
 /**
  * A helper type ig. for the scores
@@ -140,19 +140,24 @@ export default class Session {
    *
    * This message is sent when a player starts moving their paddle
    * @param {Player} player The player who sent the message
-   * @param {Speed} speed The new speed of the paddle
+   * @param {number} position The position of the paddle
+   * @param {Velocity} velocity The new speed of the paddle
    */
-  move(player: Player, speed: Speed) {
+  move(player: Player, position: number, velocity: Velocity) {
     // Check if the player is in this session
     if (!this.hasPlayer(player)) return;
 
-    // Update the paddle speed
+    // Find the paddle of the player
     const sessionPlayer = this.getSessionPlayer(player);
     const paddle = this.paddles[sessionPlayer];
-    paddle.setSpeed(speed);
 
-    // Send the move message to both players
-    this.player1.send(Messages.Move(paddle));
+    // Update the paddle position and velocity
+    paddle.position = position;
+    paddle.velocity = velocity;
+
+    // Send the move message to the other player
+    const otherPlayer = sessionPlayer === SessionPlayer.Player1 ? this.player2 : this.player1;
+    otherPlayer.send(Messages.Move(paddle));
   }
 
   /**

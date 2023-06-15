@@ -1,11 +1,12 @@
 import { Event, SessionEventHandler } from "@/handlers/event";
 import Player from "@/players/player";
-import { Speed } from "@/sessions/paddle";
+import { Velocity } from "@/sessions/paddle";
 import Session from "@/sessions/session";
 
 interface MoveEvent extends Event {
   type: "Move";
-  speed: Speed;
+  position: number;
+  velocity: Velocity;
 }
 
 export default class MoveHandler extends SessionEventHandler<MoveEvent> {
@@ -13,6 +14,6 @@ export default class MoveHandler extends SessionEventHandler<MoveEvent> {
 
   handleSession(player: Player, session: Session, event: MoveEvent) {
     // Move the player
-    session.move(player, event.speed);
+    session.move(player, event.position, event.velocity);
   }
 }

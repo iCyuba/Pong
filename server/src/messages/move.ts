@@ -1,4 +1,4 @@
-import Paddle, { Speed } from "@/sessions/paddle";
+import Paddle, { Velocity } from "@/sessions/paddle";
 
 /**
  * A message about a move event.
@@ -8,7 +8,7 @@ import Paddle, { Speed } from "@/sessions/paddle";
 export interface MoveMessage {
   type: "move";
   position: number;
-  speed: Speed;
+  velocity: Velocity;
 }
 
 /**
@@ -20,7 +20,7 @@ export function Move(paddle: Paddle): MoveMessage {
   return {
     type: "move",
     position: paddle.position,
-    speed: paddle.speed,
+    velocity: paddle.velocity,
   };
 }
 

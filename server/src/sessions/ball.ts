@@ -180,8 +180,6 @@ export default class Ball extends TypedEmitter<BallEvents> {
     // Set the flag
     this.wasCollidingWithPadddle[player] = collides;
 
-    console.log(collidesX, collidesY, collides, this.position);
-
     // If the ball is colliding with the paddle (and wasn't before), flip the angle of the ball
     if (collides && !wasColliding) {
       this.angle = 180 - this.angle;

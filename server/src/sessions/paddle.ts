@@ -1,4 +1,4 @@
-export enum Speed {
+export enum Velocity {
   Up = 50,
   Stop = 0,
   Down = -50,
@@ -15,14 +15,14 @@ export default class Paddle {
   position = 50;
 
   /** The speed of the paddle */
-  speed = Speed.Stop;
+  velocity = Velocity.Stop;
 
   /**
    * Move the paddle based on the velocity and delta time
    * @param {number} delta The time since the last tick in ms
    */
   move(delta: number) {
-    this.position += this.speed * (delta / 1000);
+    this.position += this.velocity * (delta / 1000);
 
     // Make sure the paddle doesn't go out of bounds
     if (this.top < 0) {
@@ -30,14 +30,6 @@ export default class Paddle {
     } else if (this.bottom > 100) {
       this.bottom = 100;
     }
-  }
-
-  /**
-   * Set the speed of the paddle
-   * @param {Speed} speed The speed of the paddle
-   */
-  setSpeed(speed: Speed) {
-    this.speed = speed;
   }
 
   /** Get the top position of the paddle */

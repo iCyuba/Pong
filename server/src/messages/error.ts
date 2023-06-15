@@ -16,7 +16,7 @@ export default function NewError(err: string | Error): ErrorMessage {
   const message = err instanceof Error ? err.message : err.toString();
 
   // Also log the error (this isn't console.error because the test fails if it is)
-  console.log(new Date(), err);
+  console.log(new Date(), message);
 
   // Generate the message
   return {
