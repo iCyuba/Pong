@@ -66,9 +66,9 @@ describe("Sending invitations from player to player", () => {
       );
 
       // Expect the server to have only one invite from player 1 to player 2
-      expect(server.game.invites.length).toBe(1);
-      expect(server.game.invites[0].player1.name).toBe("Player_1");
-      expect(server.game.invites[0].player2.name).toBe("Player_2");
+      expect(server.game.invites.all.length).toBe(1);
+      expect(server.game.invites.all[0].player1.name).toBe("Player_1");
+      expect(server.game.invites.all[0].player2.name).toBe("Player_2");
     });
 
     test("Player 1 invites player 2 and player 2 accepts", async () => {
@@ -103,7 +103,7 @@ describe("Sending invitations from player to player", () => {
       );
 
       // Expect the server to have no invites
-      expect(server.game.invites.length).toBe(0);
+      expect(server.game.invites.all.length).toBe(0);
     });
   });
 
@@ -150,9 +150,9 @@ describe("Sending invitations from player to player", () => {
       );
 
       // Expect game.invites to have 1 invitation (p1 -> p2)
-      expect(server.game.invites.length).toBe(1);
-      expect(server.game.invites[0].player1.name).toBe("p: 1");
-      expect(server.game.invites[0].player2.name).toBe("p: 2");
+      expect(server.game.invites.all.length).toBe(1);
+      expect(server.game.invites.all[0].player1.name).toBe("p: 1");
+      expect(server.game.invites.all[0].player2.name).toBe("p: 2");
 
       // Expect all 3 players to be still in the game
       expect(server.game.players.all).toHaveLength(3);
@@ -189,7 +189,7 @@ describe("Sending invitations from player to player", () => {
       );
 
       // Expect the server to have no invites
-      expect(server.game.invites.length).toBe(0);
+      expect(server.game.invites.all.length).toBe(0);
     });
   });
 });

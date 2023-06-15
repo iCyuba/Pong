@@ -5,7 +5,6 @@ import { WebSocket } from "ws";
 import * as Messages from "@/messages";
 
 import Handler from "@/handlers";
-import Invite from "@/invite";
 import Player from "@/players/player";
 
 /**
@@ -105,7 +104,7 @@ export default class Players extends Handler {
     this.broadcastNotInSession(Messages.Unregister(player));
 
     // Delete any invites the player sent or received
-    Invite.deleteForPlayer(this.game, player);
+    this.game.invites.removePlayer(player);
 
     // Remove any sessions the player is in
     this.game.sessions.removePlayer(player);

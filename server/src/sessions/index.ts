@@ -4,7 +4,7 @@ import * as Messages from "@/messages";
 
 import Game from "@/game";
 import Handler from "@/handlers";
-import Invite from "@/invite";
+import Invite from "@/invites/invite";
 import Player from "@/players/player";
 import Session from "@/sessions/session";
 
@@ -42,6 +42,10 @@ export default class Sessions extends Handler {
 
     // Inform all players who aren't in a session (excluding these two) that a new session has been created
     this.game.players.broadcastNotInSession(Messages.Create(invite.player1, invite.player2));
+
+    // Delete all invites that involve either player
+    this.game.invites.removePlayer(invite.player1);
+    this.game.invites.removePlayer(invite.player2);
 
     // Add the session to the list of all sessions
     this.all.push(session);

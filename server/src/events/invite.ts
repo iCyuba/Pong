@@ -1,7 +1,4 @@
-import { find } from "lodash-es";
-
 import { Event, RegisteredEventHandler } from "@/handlers/event";
-import Invite from "@/invite";
 import Player from "@/players/player";
 
 interface InviteEvent extends Event {
@@ -21,10 +18,10 @@ export default class InviteHandler extends RegisteredEventHandler<InviteEvent> {
     console.log(new Date(), player.name, "Inviting", player2.name);
 
     // Check if this is a response to an invite, and if so, accept the invite and create a session
-    const responseTo = find(this.game.invites, { player1: player2, player2: player });
-    if (responseTo) return responseTo.accept();
+    const responseTo = this.game.invites.findExact(player2, player);
+    if (responseTo) return this.game.invites.accept(responseTo);
 
     // Create the invite
-    new Invite(this.game, player, player2);
+    this.game.invites.create(player, player2);
   }
 }

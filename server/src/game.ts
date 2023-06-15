@@ -1,4 +1,4 @@
-import Invite from "@/invite";
+import Invites from "@/invites";
 import Players from "@/players";
 import Sessions from "@/sessions";
 
@@ -9,13 +9,14 @@ export default class Game {
   /** A list of all the players in the game */
   players: Players;
   /** A list of all the invites */
-  invites: Invite[] = [];
+  invites: Invites;
   /** A list of all the active sessions */
   sessions: Sessions;
 
   /** Create a new game and all the required handlers */
   constructor() {
     this.players = new Players(this);
+    this.invites = new Invites(this);
     this.sessions = new Sessions(this);
   }
 

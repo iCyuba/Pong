@@ -1,6 +1,6 @@
 import * as Messages from "@/messages";
 
-import Invite from "@/invite";
+import Invite from "@/invites/invite";
 import Player from "@/players/player";
 import Ball from "@/sessions/ball";
 import Paddle, { Velocity } from "@/sessions/paddle";
