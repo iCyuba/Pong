@@ -4,84 +4,132 @@ This is the code for the backend server used by the [C# client](https://github.c
 
 ## Usage
 
-The server isn't hosted anywhere as of writing. Self host it (if you want), idc.
+Right now a public server can be accessed here: `pong (dot) icy (dot) cx` on port `3000`
 
 ### API
 
-Literally just ws://localhost:3000. Nothing else.
+Open a websocket to `/`. (eg. `ws://localhost:3000/`)
+
+When you open a connection you won't receive anything until you send the `register` event. (see below)
 
 #### Events you can send
 
-- `register` - Registers the current connection as a player. The server will respond with a `register` event.
+- ##### `register` - Registers the current connection as a player
 
   - **Example**: `{"type": "register", "name": "Player1"}`
-  - **Response**: `{"type": "register", "name": "Player1"}`
-  - The response will be sent to all players who aren't in a session.
+  - Params:
+    - name: Any string that is not already taken and 16 or less characters long. (can't be empty tho)
+  - **Response**: [register](#register---a-player-registered)
 
-- `unregister` - Unregisters the connection. The server doesn't respond but the connection stays open.
+- ##### `unregister` - Unregisters the connection
 
   - **Example**: `{"type": "unregister"}`
   - **Response (you)**: _None_
-  - **Response (others)**: `{"type": "unregister", "player": "Player1"}`
+  - **Response (others)**: [unregister](#unregister---a-player-unregistered)
   - All players (who aren't in a session) will receive the `unregister` event.
 
-- `list` - Lists all players who aren't in any session. The server will respond with a `list` event.
+- ##### `list` - Lists all players who aren't in any session
 
   - **Example**: `{"type": "list"}`
-  - **Response**: `{"type": "list", "players": ["Player1", "Player2"]}`
+  - **Response**: [list](#list---sends-a-list-of-all-players-who-arent-in-any-session)
   - You must be registered to use this event.
 
-- `invite` - Invite another player to a new session
+- ##### `invite` - Invite another player to a new session
 
   - **Example**: `{"type": "invite", "player": "Player2"}`
-  - **Response 1**: `{"type": "invite", "by": "Player1", "to": "Player2"}`
-  - **Response 2**: `{"type": "create", "player1": "Player1", "player2": "Player2"}`
+  - Params:
+    - player: The name of the player you want to invite.
+  - **Response 1**: [invite](#invite---a-player-or-you-invited-invited-another-player-or-you)
+  - **Response 2**: [create](#create---this-is-the-2nd-response-to-an-invite)
   - The player you invite will receive the same event.
   - You must be registered and the other player must also be registered and not in a session.
-  - For the send response look here: [create](#create---this-is-the-2nd-response-to-an-invite)
 
-- `ready` - Tell the server that you're ready to start the game.
+- ##### `move` - Notify the server that you're moving
+
+  - **Example**: `{"type": "move", "position": 50, "velocity": 80}`
+  - Params:
+    - position: The position of your paddle. (0-100)
+    - velocity: The velocity of your paddle. usually -80, 0 or 80
+  - **Response (you)**: _None_
+  - **Response (other player)**: [move](#move---the-other-player-moved-their-paddle)
+
+- ##### `ready` - Tell the server that you're ready to start the game.
 
   - **Example**: `{"type": "ready"}`
-  - **Response 1**: _Nothing_
+  - **Response 1**: [ready](#ready---a-player-is-ready-to-start)
   - **Response 2**: [start](#start---the-game-started)
   - You must be registered and in a session to use this event.
-  - The server will respond only when the other player is ready.
 
 #### Events you can receive
 
-_**Please also see the responses above. I didn't include them twice**_
-
-- `error` - You did something you weren't supposed to do.. Good job.
+- ##### `error` - You did something you weren't supposed to do.. Good job.
 
   - **Example**: `{"type": "error", "message": "You're not registered"}`
   - You'll receive this event if you try to do something you're not supposed to do. Read the "documentation" above to see what you can and can't do.
+
+- ##### `register` - A player registered
+
+  - **Example**: `{"type": "register", "name": "Player1"}`
+  - Note: this is also sent back to the player that just registered
+  - This won't be sent to you if you're in a session
+
+- ##### `unregister` - A player unregistered
+
+  - **Example**: `{"type": "unregister", "player": "Player1"}`
+  - This is sent to all players (who aren't in a session) when a player unregisters.
+  - The player who unregisterd will not receive this event.
+
+- ##### `list` - Sends a list of all players who aren't in any session
+
+  - **Example**: `{"type": "list", "players": ["Player1", "Player2"]}`
+  - You'll receive this event as a response to the `list` event.
+  - It is also sent to you on registration and game end.
+
+- ##### `invite` - A player (or you) invited invited another player (or you)
+
+  - **Example**: `{"type": "invite", "by": "Player1", "to": "Player2"}`
+  - Sent only to the 2 players involved.
 
 - ##### `create` - This is the 2nd response to an invite
 
   - **Example**: `{"type": "create", "player1": "Player1", "player2": "Player2"}`
   - This is sent once player2 invites player1 after player1 sent an invite to player2.
 
+- ##### `ready` - A player is ready to start
+
+  - **Example**: `{"type": "ready", "player": "Player1"}`
+  - Sent in response to the `ready` event.
+
+- ##### `move` - The other player moved their paddle
+
+  - **Example**: `{"type": "move", "position": 50, "velocity": 80}`
+  - Sent when the other player moves their paddle..
+
 - ##### `start` - The game started
 
-  - **Example**: `{"type": "start", "velX": 1234, "velY": 1234, "timestamp": 123456789}`
-  - This is sent 3 seconds after both players are ready.
-  - It is also sent 3 seconds after a player scores a point.
+  - **Example**: `{"type": "start", "velX": 1234, "velY": 1234}`
+  - This is sent once both players are ready.
+  - It is also sent every time a player scores a point.
   - `velX` and `velY` are the initial velocity of the ball. (Which are randomized)
-  - `timestamp` is the timestamp when the game started. (Used for calculating the ball position)
 
-- `update` - The ball position was updated
+- ##### `update` - The ball position was updated
 
-  - **Example**: `{"type": "update", "posX": 1234, "posY": 1234, "velX": 1234, "velY": 1234, "timestamp": 123456789}`
+  - **Example**: `{"type": "update", "posX": 1234, "posY": 1234, "velX": 1234, "velY": 1234}`
   - This is sent every time the ball bounces off a wall or a paddle.
   - `posX` and `posY` are the current position of the ball.
   - `velX` and `velY` are the current velocity of the ball.
-  - `timestamp` is the timestamp when the ball position was updated. (Used for calculating the ball position)
 
-- `score` - A player scored a point
+- ##### `score` - A player scored a point
+
   - **Example**: `{"type": "score", "you": 1234, "opponent": 1234}`
   - Sent whenever the ball goes out of bounds.
   - The message is sent to both players. (you is the player who received the message. opponent is the other player)
+
+- ##### `end` - A game session was closed by a player
+
+  - **Example**: `{"type": "end", "player1": "Player1", "player2": "Player2"}`
+  - Sent to all players who aren't in a session when a session is closed.
+  - This can be caused by either one of the players in the session sending a "end" event or by the server when a player disconnects.
 
 ## How to run
 
@@ -94,7 +142,7 @@ For both variants you’ll first need to clone the repo and cd into the server f
 Literally just run this command:
 
 ```sh
-$ docker compose up
+$ docker compose up --build -d
 ```
 
 For development you can use this command instead which runs the server in watch mode with nodemon:
@@ -113,23 +161,21 @@ Note: The dev scripts don't work on Windows. Use Docker or WSL. Or just run them
 $ npm ci
 ```
 
-3. Build the server:
+2. Build the server:
 
-#### Production build
-
-2. A) Production build:
+> Production build:
 
 ```sh
 $ npm run build
 ```
 
-2. B) Development build
+> Development build:
 
 ```sh
 $ npm run dev:build
 ```
 
-If you want to run the server in watch mode you can use this command instead:
+> If you want to run the server in watch mode with nodemon you can use this command instead and skip step 3:
 
 ```sh
 $ npm run dev
