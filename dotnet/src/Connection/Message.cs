@@ -91,6 +91,9 @@ namespace Pong
         case "update":
           OnUpdateHandler?.Invoke(this, UpdateEvent.Deserialize(message));
           break;
+        case "move":
+          OnMoveHandler?.Invoke(this, MoveEvent.Deserialize(message));
+          break;
         case "score":
           OnScoreHandler?.Invoke(this, ScoreEvent.Deserialize(message));
           break;

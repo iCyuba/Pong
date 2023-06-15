@@ -2,6 +2,11 @@ namespace Pong
 {
   public class PaddleServer : Paddle
   {
+    /// <summary>
+    /// Create a new instance of a PaddleServer in the middle of the screen and scale it to an appropriate size
+    /// (It's created at X=0 intentionally.. I use the setters <see cref="Box.Left"/> and <see cref="Box.Right"/> to set the position)
+    /// </summary>
+    /// <param name="game">The game that the paddle is in</param>
     public PaddleServer(GameServer game)
       : base(game.Scale, game.Offset) { }
 

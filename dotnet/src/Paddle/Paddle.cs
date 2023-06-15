@@ -52,7 +52,7 @@ namespace Pong
     /// <summary>
     /// Start moving the paddle up / stop moving the paddle down
     /// </summary>
-    public void MoveUp()
+    public virtual void MoveUp()
     {
       // Return if the paddle is already moving up
       if (VelY < 0)
@@ -64,7 +64,7 @@ namespace Pong
     /// <summary>
     /// Start moving the paddle down / stop moving the paddle up
     /// </summary>
-    public void MoveDown()
+    public virtual void MoveDown()
     {
       // Return if the paddle is already moving down
       if (VelY > 0)

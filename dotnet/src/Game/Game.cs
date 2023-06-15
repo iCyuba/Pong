@@ -111,6 +111,15 @@ namespace Pong
     }
 
     /// <summary>
+    /// Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
+    /// </summary>
+    protected void PositionPaddles()
+    {
+      LeftPaddle.Right = 0;
+      RightPaddle.Left = 100;
+    }
+
+    /// <summary>
     /// Start the game when a key is pressed
     /// </summary>
     public virtual void Start()

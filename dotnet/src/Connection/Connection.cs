@@ -69,6 +69,11 @@ namespace Pong
     public EventHandler<UpdateEvent>? OnUpdateHandler { get; set; }
 
     /// <summary>
+    /// Event handler for when a player moves their paddle
+    /// </summary>
+    public EventHandler<MoveEvent>? OnMoveHandler { get; set; }
+
+    /// <summary>
     /// Event handler for when a player scores
     /// </summary>
     public EventHandler<ScoreEvent>? OnScoreHandler { get; set; }

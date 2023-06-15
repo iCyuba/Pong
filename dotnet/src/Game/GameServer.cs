@@ -57,10 +57,7 @@
       // Create the paddles
       LeftPaddle = new(this);
       RightPaddle = new(this);
-
-      // Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
-      LeftPaddle.Right = 0;
-      RightPaddle.Left = 100;
+      PositionPaddles();
 
       // Set the game type
       Type = type;

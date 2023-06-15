@@ -23,12 +23,9 @@ namespace Pong
       BallInstance = new BallClient(connection, this);
 
       // Create the paddles
-      LeftPaddle = new(this);
-      RightPaddle = new(this);
-
-      // Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
-      LeftPaddle.Right = 0;
-      RightPaddle.Left = 100;
+      LeftPaddle = new PaddleClientLocal(this, connection);
+      RightPaddle = new PaddleClientRemote(this, connection);
+      PositionPaddles();
 
       // Custom event handlers
       Connection.OnReadyHandler += OnReady;
@@ -78,7 +75,7 @@ namespace Pong
     private Connection.StartEvent? LastStartEvent { get; set; } = null;
 
     /// <summary>
-    /// This is called when a server sends us when the game will start
+    /// This is called when a server sends us a game start event
     /// <br/>
     /// This is the equivalent of <see cref="GameServer.StartIn3Seconds"/> but for the client. It can only be called by the server
     /// </summary>
@@ -119,6 +116,9 @@ namespace Pong
     {
       // Unregister event handlers for the connection
       BallInstance.UnregisterEventHandlers();
+
+      LeftPaddle.UnregisterEventHandlers(); // this does nothing. but whatever. it looks better
+      RightPaddle.UnregisterEventHandlers();
 
       Connection.OnReadyHandler -= OnReady;
       Connection.OnStartHandler -= OnStart;
