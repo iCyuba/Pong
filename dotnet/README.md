@@ -26,7 +26,15 @@ You gonna have to build it because I said so
   - (Impossible is technically in the code but it's only used by the main menu background)
 - Play against a friend
   - Local
-  - Online (WIP)
+  - Online
+
+## Note: Do not send any identifiable information to the server!!!
+
+The server isn't using SSL!
+
+Using the WSS protocol isn't planned as of rn!
+
+So once again, do not send any identifiable information (such as your name in the game) to the server!
 
 ## Naming scheme
 
@@ -40,6 +48,20 @@ Apparently my class names aren't clear soo..
   - `GameFake` is used for the main menu screen. Key presses are ignored and the paddles move on their own
 
 - Ball
+
   - `Ball` is the abstract base class for them
   - `BallServer` is used for local games. It has bounce and game logic. Used by `GameServer` and `GameFake`
   - `BallClient` is used for online games. It uses data from the server to move. Used by `GameClient`
+
+- Paddle
+
+  - `Paddle` is the abstract base class for them
+  - `PaddleServer` is used for local games. It has bounce and game logic. Used by `GameServer` and `GameFake`. It also has the bot logic
+  - `PaddleClient` is used for online games. This is also an abstract base class.
+  - `PaddleClientLocal` this is the paddle on the left side of the screen. Used by `GameClient`. It sends updates about position and velocity to the server
+  - `PaddleClientRemote` this is the right one. It listens for the move updates from the server and moves accordingly. Used by `GameClient`
+
+- GameWindow
+
+  - Look, I'm sure you get the gist of it by now
+  - Re-read the text above if you don't...
