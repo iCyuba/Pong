@@ -48,8 +48,8 @@ namespace Pong
     /// </summary>
     /// <param name="connection">The connection to the server</param>
     /// <param name="game">The game that created this ball</param>
-    public BallClient(Connection connection, Game game)
-      : base(game)
+    public BallClient(Connection connection, GameClient game)
+      : base(game.Scale, game.Offset)
     {
       Connection = connection;
 

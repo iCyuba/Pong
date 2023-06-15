@@ -1,6 +1,6 @@
 ﻿namespace Pong
 {
-  partial class GameWindow
+  partial class GameWindow<GameType, BallType, PaddleType> 
   {
     /// <summary>
     ///  Required designer variable.
@@ -137,11 +137,11 @@
 
     #endregion
 
-    private PictureBox pictureBox;
-    private System.Windows.Forms.Timer timer1;
-    private TableLayoutPanel tableLayoutPanel1;
-    private Label scoreLeft;
-    private Label scoreRight;
-    private Label message;
+    protected PictureBox pictureBox;
+    protected System.Windows.Forms.Timer timer1;
+    protected TableLayoutPanel tableLayoutPanel1;
+    protected Label scoreLeft;
+    protected Label scoreRight;
+    protected Label message;
   }
 }

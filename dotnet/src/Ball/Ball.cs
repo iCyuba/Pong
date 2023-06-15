@@ -1,4 +1,5 @@
-﻿// BEGIN: c8a9d1d5fj3w
+﻿using System.Numerics;
+
 namespace Pong
 {
   public abstract class Ball : RenderedBox
@@ -12,11 +13,6 @@ namespace Pong
     /// The base velocity of the ball in percent of the screen per second
     /// </summary>
     public const double BaseVelocity = 50;
-
-    /// <summary>
-    /// The game client that created this ball
-    /// </summary>
-    protected Game Game { get; set; }
 
     // Basically just make the height and width the same thing
     // I know this isn't a good thing to do. I also however do not care
@@ -59,13 +55,12 @@ namespace Pong
     /// <br/>
     /// Should be initialized by a Game class (e.g. GameServer or GameClient)
     /// </summary>
-    /// <param name="game">The game that the ball is in</param>
-    public Ball(Game game)
+    /// <param name="scale">The scale of the game</param>
+    /// <param name="offset">The offset of the game</param>
+    public Ball(double scale, Vector2 offset)
       // The width and height are multiplied by 2.. it's a radius... It's kinda ugly ik
-      : base(50, 50, BaseRadius * 2, BaseRadius * 2, Brushes.HotPink, game.Scale, game.Offset)
+      : base(50, 50, BaseRadius * 2, BaseRadius * 2, Brushes.HotPink, scale, offset)
     {
-      Game = game;
-
       VelX = 0;
       VelY = 0;
     }

@@ -10,7 +10,7 @@
     /// <summary>
     /// The game that is shown in the background
     /// </summary>
-    private Game BackgroundGame { get; set; }
+    private GameFake BackgroundGame { get; set; }
 
     public Menu()
     {
@@ -71,7 +71,7 @@
     private void CreateGameServer(GameServer.GameType type)
     {
       // Create a new game window and show it
-      GameWindow GameWindow = new(null, type);
+      GameServerWindow GameWindow = new(type);
       ShowForm(this, GameWindow);
     }
 

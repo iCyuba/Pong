@@ -1,21 +1,15 @@
 namespace Pong
 {
-  public class GameClient : Game
+  public class GameClient : Game<BallClient, PaddleClient>
   {
-    public override Ball Ball { get; set; }
+    public override BallClient BallInstance { get; set; }
+    public override PaddleClient LeftPaddle { get; set; }
+    public override PaddleClient RightPaddle { get; set; }
 
     /// <summary>
     /// The connection to the server
     /// </summary>
     private Connection Connection { get; set; }
-
-    /// <summary>
-    /// The ball in the game (Client) [i don't like this but it works for now]
-    /// </summary>
-    private BallClient BallInstance
-    {
-      get => (BallClient)Ball;
-    }
 
     /// <summary>
     /// Create a new instance of a GameClient with the specified width, height and connection
@@ -26,7 +20,15 @@ namespace Pong
       Connection = connection;
 
       // Initialize the ball with the provided connection
-      Ball = new BallClient(connection, this);
+      BallInstance = new BallClient(connection, this);
+
+      // Create the paddles
+      LeftPaddle = new(this);
+      RightPaddle = new(this);
+
+      // Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
+      LeftPaddle.Right = 0;
+      RightPaddle.Left = 100;
 
       // Custom event handlers
       Connection.OnReadyHandler += OnReady;

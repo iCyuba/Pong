@@ -1,11 +1,15 @@
 namespace Pong
 {
-  public partial class GameWindow : Form
+  public abstract partial class GameWindow<GameType, BallType, PaddleType> : Form
+    // Look, i don't know what this is. I give up the generics. Typescript is better with this. Why can't I do <T extends Game = Game>?????
+    where GameType : Game<BallType, PaddleType>
+    where BallType : Ball
+    where PaddleType : Paddle
   {
     /// <summary>
     /// The game that is being played
     /// </summary>
-    public Game GameInstance { get; set; }
+    public abstract GameType GameInstance { get; set; }
 
     /// <summary>
     /// A timeout to show on screen
@@ -13,31 +17,21 @@ namespace Pong
     private DateTime? Timeout { get; set; }
 
     /// <summary>
-    /// Create a new game window
-    /// <br/>
-    /// If connection is null, then the game is a server. Otherwise, it's a client
+    /// Create a new game window (abstract)
     /// </summary>
-    /// <param name="connection">The connection to use if the game is multiplayer</param>
-    /// <param name="type">The game type to use, note: This is ignored if connection is provided</param>
-    public GameWindow(Connection? connection = null, GameServer.GameType? type = null)
+    public GameWindow()
     {
       InitializeComponent();
-
-      // Create a new game
-      // If the connection is null, then the game is a server. Otherwise, it's a client
-      if (connection == null)
-        GameInstance = new GameServer(
-          pictureBox.Width,
-          pictureBox.Height,
-          // If the type is null, then use the default type (Local)
-          type ?? GameServer.GameType.Local
-        );
-      else
-        GameInstance = new GameClient(pictureBox.Width, pictureBox.Height, connection);
 
       // The text that is visible when the game isn't running
       message.Text = "Press any key to start!";
 
+      // Don't forget to register events in the constructor in the extended classes
+      // Can't do it here cuz GameInstance is null here
+    }
+
+    protected void RegisterEvents()
+    {
       // Register event handlers
       GameInstance.OnShowMessage += OnShowMessage;
       GameInstance.OnHideMessage += OnMessageHide;

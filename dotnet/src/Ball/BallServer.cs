@@ -17,11 +17,21 @@ namespace Pong
     public EventHandler<Side>? OnOutOfBounds { get; set; }
 
     /// <summary>
+    /// The GameServer this instance of BallServer is in
+    /// <br/>
+    /// Used for collision detection with the paddles
+    /// </summary>
+    private GameServer Game { get; set; }
+
+    /// <summary>
     /// Create a new instance of a BallServer
     /// </summary>
     /// <param name="game">The game that the ball is in</param>
-    public BallServer(Game game)
-      : base(game) { }
+    public BallServer(GameServer game)
+      : base(game.Scale, game.Offset)
+    {
+      Game = game;
+    }
 
     /// <summary>
     /// Move the ball according to its velocity and the time passed
@@ -52,7 +62,7 @@ namespace Pong
     /// <summary>
     /// Whether or not the ball was colliding with a paddle in the last frame
     /// </summary>
-    private Dictionary<Paddle, bool> lastCollisionForPaddles { get; set; } = new();
+    private Dictionary<PaddleServer, bool> lastCollisionForPaddles { get; set; } = new();
 
     /// <summary>
     /// Checks if the ball is behind the goal of the paddles
@@ -73,7 +83,7 @@ namespace Pong
     /// Note: In my pong game the paddles are actually behind the playable area. Do with that what you will
     /// </summary>
     /// <param name="paddles">The paddles to check the collisions for</param>
-    public bool CheckPaddleCollision(Paddle[] paddles)
+    public bool CheckPaddleCollision(PaddleServer[] paddles)
     {
       // Check the collisions for each paddle
       foreach (var paddle in paddles)

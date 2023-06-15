@@ -1,4 +1,6 @@
-﻿namespace Pong
+﻿using System.Numerics;
+
+namespace Pong
 {
   public class Paddle : RenderedBox
   {
@@ -18,11 +20,6 @@
     public const double BaseSpeed = 80;
 
     /// <summary>
-    /// The game the paddle belongs to
-    /// </summary>
-    private Game Game { get; set; }
-
-    /// <summary>
     /// The velocity of the paddle on the Y axis.
     /// </summary>
     public double VelY { get; set; }
@@ -31,12 +28,10 @@
     /// Create a new instance of a Paddle in the middle of the screen and scale it to an appropriate size
     /// (It's created at X=0 intentionally.. I use the setters <see cref="Box.Left"/> and <see cref="Box.Right"/> to set the position)
     /// </summary>
-    /// <param name="game">The game that the paddle is in</param>
-    public Paddle(Game game)
-      : base(0, 50, BaseWidth, BaseHeight, Brushes.DeepPink, game.Scale, game.Offset)
-    {
-      Game = game;
-    }
+    /// <param name="scale">The scale of the game</param>
+    /// <param name="offset">The offset of the game</param>
+    public Paddle(double scale, Vector2 offset)
+      : base(0, 50, BaseWidth, BaseHeight, Brushes.DeepPink, scale, offset) { }
 
     /// <summary>
     /// Move the paddle by the specified amount of time
@@ -76,25 +71,6 @@
         return;
 
       VelY += BaseSpeed;
-    }
-
-    /// <summary>
-    /// Handle the movement for a bot player
-    /// </summary>
-    /// <param name="ball">The ball to copy the velocity from</param>
-    /// <param name="type">The type of game that is being played</param>
-    public void BotMovement(Ball ball, GameServer.GameType type)
-    {
-      // Copy the velocity of the ball onto the right paddle and apply the multiplier
-      // The multiplier is taken from the GameType enum. It's in percentages so it needs to be divided by 100
-      VelY = ball.VelY * ((int)type / 100.0);
-
-      // If the the ball is moving down and the top position of the paddle is below the top position of the ball, move the paddle up
-      if (ball.VelY > 0 && Top > ball.Top)
-        VelY *= -1;
-      // If the the ball is moving up and the bottom position of the paddle is above the bottom position of the ball, move the paddle down
-      else if (ball.VelY < 0 && Bottom < ball.Bottom)
-        VelY *= -1;
     }
   }
 }

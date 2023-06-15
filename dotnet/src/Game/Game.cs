@@ -2,7 +2,9 @@ using System.Numerics;
 
 namespace Pong
 {
-  public abstract class Game
+  public abstract class Game<BallType, PaddleType>
+    where BallType : Ball
+    where PaddleType : Paddle
   {
     /// <summary>
     /// The width of the game, this is different from the size of the game!
@@ -22,17 +24,17 @@ namespace Pong
     /// <summary>
     /// The ball in the game (abstract)
     /// </summary>
-    abstract public Ball Ball { get; set; }
+    abstract public BallType BallInstance { get; set; }
 
     /// <summary>
     /// The left paddle (controlled with W and S)
     /// </summary>
-    virtual public Paddle LeftPaddle { get; set; }
+    abstract public PaddleType LeftPaddle { get; set; }
 
     /// <summary>
     /// The right paddle (controlled by the remote player, or with the arrow keys when playing locally)
     /// </summary>
-    virtual public Paddle RightPaddle { get; set; }
+    abstract public PaddleType RightPaddle { get; set; }
 
     /// <summary>
     /// The score of the left player
@@ -104,14 +106,6 @@ namespace Pong
       Width = width;
       Height = height;
 
-      // Initialize the paddles
-      LeftPaddle = new(this);
-      RightPaddle = new(this);
-
-      // Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
-      LeftPaddle.Right = 0;
-      RightPaddle.Left = 100;
-
       // By default the game is stopped
       IsRunning = false;
     }
@@ -124,7 +118,7 @@ namespace Pong
       IsRunning = true;
       StartAt = null;
 
-      Ball.SetPosToMiddle();
+      BallInstance!.SetPosToMiddle();
 
       OnHideMessage?.Invoke(this, EventArgs.Empty);
     }
@@ -156,9 +150,9 @@ namespace Pong
     /// <param name="g">The graphics object to draw with</param>
     public void Draw(Graphics g)
     {
-      Ball.Draw(g);
-      LeftPaddle.Draw(g);
-      RightPaddle.Draw(g);
+      BallInstance!.Draw(g);
+      LeftPaddle!.Draw(g);
+      RightPaddle!.Draw(g);
     }
 
     /// <summary>
@@ -170,13 +164,13 @@ namespace Pong
       // This is because out of 4 game types. 3 of them can be controlled by both keys
       // In local multiplayer, simply a return will be called before reaching this point
       if (key == Keys.W)
-        LeftPaddle.MoveUp();
+        LeftPaddle!.MoveUp();
       else if (key == Keys.S)
-        LeftPaddle.MoveDown();
+        LeftPaddle!.MoveDown();
       else if (key == Keys.Up)
-        LeftPaddle.MoveUp();
+        LeftPaddle!.MoveUp();
       else if (key == Keys.Down)
-        LeftPaddle.MoveDown();
+        LeftPaddle!.MoveDown();
     }
 
     /// <summary>
@@ -187,13 +181,13 @@ namespace Pong
     public virtual void KeyUp(Keys key)
     {
       if (key == Keys.W)
-        LeftPaddle.MoveDown();
+        LeftPaddle!.MoveDown();
       else if (key == Keys.S)
-        LeftPaddle.MoveUp();
+        LeftPaddle!.MoveUp();
       else if (key == Keys.Up)
-        LeftPaddle.MoveDown();
+        LeftPaddle!.MoveDown();
       else if (key == Keys.Down)
-        LeftPaddle.MoveUp();
+        LeftPaddle!.MoveUp();
     }
   }
 }

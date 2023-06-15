@@ -1,6 +1,6 @@
 ﻿namespace Pong
 {
-  public class GameServer : Game
+  public class GameServer : Game<BallServer, PaddleServer>
   {
     /// <summary>
     /// The type of game that is being played
@@ -33,15 +33,9 @@
       Local = 0,
     }
 
-    public override Ball Ball { get; set; }
-
-    /// <summary>
-    /// The ball in the game (Server) [i don't like this but it works for now]
-    /// </summary>
-    private BallServer BallInstance
-    {
-      get => (BallServer)Ball;
-    }
+    public override BallServer BallInstance { get; set; }
+    public override PaddleServer LeftPaddle { get; set; }
+    public override PaddleServer RightPaddle { get; set; }
 
     /// <summary>
     /// The game type used in this "session", by default it is Local
@@ -58,7 +52,15 @@
       : base(width, height)
     {
       // This is here so the ball is of type BallServer..
-      Ball = new BallServer(this);
+      BallInstance = new BallServer(this);
+
+      // Create the paddles
+      LeftPaddle = new(this);
+      RightPaddle = new(this);
+
+      // Position the paddles (they are placed OUTSIDE of the game area. this is intentional)
+      LeftPaddle.Right = 0;
+      RightPaddle.Left = 100;
 
       // Set the game type
       Type = type;
@@ -96,7 +98,7 @@
 
       // Call the bot movement method if the type is a bot and the game is running
       if (IsRunning && Type != GameType.Local)
-        RightPaddle.BotMovement(Ball, Type);
+        RightPaddle.BotMovement(BallInstance, Type);
 
       // Paddles (these should be moved first so that the ball can bounce off them)
       LeftPaddle.Move(deltaTime);

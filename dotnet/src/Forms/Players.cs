@@ -55,7 +55,7 @@ namespace Pong
       if (createEvent.Player1 == Connection.Name || createEvent.Player2 == Connection.Name)
       {
         // Create a new game client window and show it
-        GameWindow gameWindow = new(Connection);
+        GameClientWindow gameWindow = new(Connection);
 
         Menu.ShowForm(this, gameWindow);
       }

@@ -16,8 +16,8 @@ namespace Pong
       Start();
 
       // Set the velocity of the ball to a static value (idk it just looks nice)
-      Ball.VelX = 35;
-      Ball.VelY = 15;
+      BallInstance.VelX = 35;
+      BallInstance.VelY = 15;
     }
 
     public override void Update(double deltaTime)
@@ -26,7 +26,7 @@ namespace Pong
       base.Update(deltaTime);
 
       // Run the bot method on the left paddle (right is called in the base method)
-      LeftPaddle.BotMovement(Ball, GameType.BotImpossible);
+      LeftPaddle.BotMovement(BallInstance, GameType.BotImpossible);
     }
 
     /// <summary>
