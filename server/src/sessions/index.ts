@@ -38,13 +38,13 @@ export default class Sessions extends Handler {
    */
   create(invite: Invite): Session {
     // Create a new session
-    const session = new Session(this.game, invite);
-
-    // Add the session to the list of all sessions
-    this.all.push(session);
+    const session = new Session(invite);
 
     // Inform all players who aren't in a session (excluding these two) that a new session has been created
     this.game.players.broadcastNotInSession(Messages.Create(invite.player1, invite.player2));
+
+    // Add the session to the list of all sessions
+    this.all.push(session);
 
     return session;
   }

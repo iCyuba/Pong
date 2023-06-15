@@ -1,9 +1,9 @@
 import * as Messages from "@/messages";
 
-import Game from "@/game";
 import Invite from "@/invite";
 import Player from "@/players/player";
 import Ball from "@/sessions/ball";
+import Paddle, { Speed } from "@/sessions/paddle";
 
 /**
  * A helper type ig. for the scores
@@ -39,6 +39,12 @@ export default class Session {
     [SessionPlayer.Player2]: 0,
   };
 
+  /** The paddles of each player */
+  paddles: Record<SessionPlayer, Paddle> = {
+    [SessionPlayer.Player1]: new Paddle(),
+    [SessionPlayer.Player2]: new Paddle(),
+  };
+
   /** Whether the players have sent a "ready" message */
   isReady: Record<SessionPlayer, boolean> = {
     [SessionPlayer.Player1]: false,
@@ -46,25 +52,27 @@ export default class Session {
   };
 
   /** The ball in the game */
-  ball = new Ball();
-
-  private readonly game: Game;
+  ball = new Ball(this);
 
   /**
    * Create a new session
    * Anddd once again, this should only be called by the Sessions class
-   * @param {Game} game The game to create the session for
    * @param {Invite} invite The invite that created this session
    */
-  constructor(game: Game, invite: Invite) {
+  constructor(invite: Invite) {
     this.player1 = invite.player1;
     this.player2 = invite.player2;
-
-    this.game = game;
 
     // Event listeners for the ball
     this.ball.on("bounce", this.bounce.bind(this));
     this.ball.on("outOfBounds", this.goal.bind(this));
+  }
+
+  /**
+   * Get a SessionPlayer from a player
+   */
+  getSessionPlayer(player: Player): SessionPlayer {
+    return player === this.player1 ? SessionPlayer.Player1 : SessionPlayer.Player2;
   }
 
   /**
@@ -114,17 +122,37 @@ export default class Session {
    */
   ready(player: Player) {
     // Check if the player is in this session
-    if (player !== this.player1 && player !== this.player2) return;
+    if (!this.hasPlayer(player)) return;
 
     // Send the ready message to both players
     this.player1.send(Messages.Ready(player));
     this.player2.send(Messages.Ready(player));
 
     // Set the player to ready
-    this.isReady[player === this.player1 ? SessionPlayer.Player1 : SessionPlayer.Player2] = true;
+    this.isReady[this.getSessionPlayer(player)] = true;
 
     // Try to start the game (this will not do anything if the other player is not ready)
     this.start();
+  }
+
+  /**
+   * The player sent a "move" message
+   *
+   * This message is sent when a player starts moving their paddle
+   * @param {Player} player The player who sent the message
+   * @param {Speed} speed The new speed of the paddle
+   */
+  move(player: Player, speed: Speed) {
+    // Check if the player is in this session
+    if (!this.hasPlayer(player)) return;
+
+    // Update the paddle speed
+    const sessionPlayer = this.getSessionPlayer(player);
+    const paddle = this.paddles[sessionPlayer];
+    paddle.setSpeed(speed);
+
+    // Send the move message to both players
+    this.player1.send(Messages.Move(paddle));
   }
 
   /**
@@ -136,6 +164,10 @@ export default class Session {
   update(delta: number) {
     // If the game is not running, try checking in with the startGame() method
     if (!this.running) return this.startGame();
+
+    // Update the paddle positions first
+    this.paddles[SessionPlayer.Player1].move(delta);
+    this.paddles[SessionPlayer.Player2].move(delta);
 
     // Update the ball position based on the velocity and delta time
     this.ball.move(delta);

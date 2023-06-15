@@ -108,7 +108,7 @@ export default class Players extends Handler {
     Invite.deleteForPlayer(this.game, player);
 
     // Remove any sessions the player is in
-    this.removePlayer(player);
+    this.game.sessions.removePlayer(player);
 
     // Return the player
     return player;

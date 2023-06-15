@@ -5,6 +5,7 @@ export { default as End } from "@/messages/end";
 export { default as Error } from "@/messages/error";
 export { default as Invite } from "@/messages/invite";
 export { default as List } from "@/messages/list";
+export { default as Move } from "@/messages/move";
 export { default as Ready } from "@/messages/ready";
 export { default as Register } from "@/messages/register";
 export { default as Score } from "@/messages/score";

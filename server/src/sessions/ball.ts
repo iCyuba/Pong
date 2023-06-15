@@ -2,7 +2,7 @@ import { memoize } from "lodash-es";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 import Angle from "@/helpers/angle";
-import { SessionPlayer } from "@/sessions/session";
+import Session, { SessionPlayer } from "@/sessions/session";
 
 /**
  * X and Y coordinates / velocity
@@ -31,6 +31,9 @@ interface BallEvents {
  * The server handles it as a square, but the client sees it as a circle lmao
  */
 export default class Ball extends TypedEmitter<BallEvents> {
+  /** The radius of the ball */
+  static readonly radius = 2;
+
   // Note: the following properties are initialized in the constructor with the reset method
   //       but typescript doesn't know that so I'm just gonna use ! to tell it that it's not undefined
 
@@ -57,21 +60,21 @@ export default class Ball extends TypedEmitter<BallEvents> {
     this._angle = angle % 360;
   }
 
-  /** The radius of the ball */
-  radius: number;
+  /** The session that the ball is in */
+  private readonly session: Session;
 
   /**
    * Create a new ball
    *
-   * The ball is created in the middle of the screen with a random angle and speed of 100
-   *
-   * @param {number} radius The radius of the ball (defaults to 2) [percentages of the screen]
+   * The ball is created in the middle of the screen with a random angle and speed of 50
+   * @param {Session} session The session that the ball is in
    */
-  constructor(radius: number = 2) {
+  constructor(session: Session) {
     // Call the EventEmitter constructor (so we can emit events)
     super();
 
-    this.radius = radius;
+    // Set the session
+    this.session = session;
 
     // Reset the ball to the base position and speed with a random angle (no player specified)
     this.reset();
@@ -123,6 +126,8 @@ export default class Ball extends TypedEmitter<BallEvents> {
 
     // Collision detection
     this.wallBounce();
+    this.paddleBounce(SessionPlayer.Player1);
+    this.paddleBounce(SessionPlayer.Player2);
     this.goal();
   }
 
@@ -151,6 +156,44 @@ export default class Ball extends TypedEmitter<BallEvents> {
     }
   }
 
+  /** Checks if the last time the ball was colliding with the left or right paddle */
+  private wasCollidingWithPadddle: Partial<Record<SessionPlayer, boolean>> = {};
+
+  /**
+   * Check if the ball is colliding with a paddle and bounce it if it is
+   * @param {SessionPlayer} player The player to check for
+   */
+  paddleBounce(player: SessionPlayer) {
+    // The paddle of the player
+    const paddle = this.session.paddles[player];
+
+    // Where the paddle is (0 or 100)
+    const wall = player === SessionPlayer.Player1 ? 0 : 100;
+
+    const collidesX = this.left < wall && this.right > wall;
+    const collidesY = this.top < paddle.bottom && this.bottom > paddle.top;
+    const collides = collidesX && collidesY;
+
+    // Get the flag for if the ball was colliding with the paddle last tick
+    const wasColliding = this.wasCollidingWithPadddle[player] ?? false;
+
+    // Set the flag
+    this.wasCollidingWithPadddle[player] = collides;
+
+    console.log(collidesX, collidesY, collides, this.position);
+
+    // If the ball is colliding with the paddle (and wasn't before), flip the angle of the ball
+    if (collides && !wasColliding) {
+      this.angle = 180 - this.angle;
+
+      // Update the velocity of the ball
+      this.velocity += 5;
+
+      // Emit the bounce event
+      this.emit("bounce");
+    }
+  }
+
   /**
    * Check if the ball is colliding with the left or right wall and stop the ball if it is
    */
@@ -172,22 +215,22 @@ export default class Ball extends TypedEmitter<BallEvents> {
 
   /** Get the top position of the ball */
   get top() {
-    return this.position.y - this.radius;
+    return this.position.y - Ball.radius;
   }
 
   /** Get the bottom position of the ball */
   get bottom() {
-    return this.position.y + this.radius;
+    return this.position.y + Ball.radius;
   }
 
   /** Get the left position of the ball */
   get left() {
-    return this.position.x - this.radius;
+    return this.position.x - Ball.radius;
   }
 
   /** Get the right position of the ball */
   get right() {
-    return this.position.x + this.radius;
+    return this.position.x + Ball.radius;
   }
 
   // A helper for the velocity
