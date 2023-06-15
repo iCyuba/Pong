@@ -1,7 +1,7 @@
 export enum Velocity {
-  Up = 50,
+  Up = 80,
   Stop = 0,
-  Down = -50,
+  Down = -80,
 }
 
 /**
