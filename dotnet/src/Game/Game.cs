@@ -127,7 +127,7 @@ namespace Pong
       IsRunning = true;
       StartAt = null;
 
-      BallInstance!.SetPosToMiddle();
+      BallInstance.SetPosToMiddle();
 
       OnHideMessage?.Invoke(this, EventArgs.Empty);
     }
@@ -159,9 +159,9 @@ namespace Pong
     /// <param name="g">The graphics object to draw with</param>
     public void Draw(Graphics g)
     {
-      BallInstance!.Draw(g);
-      LeftPaddle!.Draw(g);
-      RightPaddle!.Draw(g);
+      BallInstance.Draw(g);
+      LeftPaddle.Draw(g);
+      RightPaddle.Draw(g);
     }
 
     /// <summary>
@@ -173,13 +173,13 @@ namespace Pong
       // This is because out of 4 game types. 3 of them can be controlled by both keys
       // In local multiplayer, simply a return will be called before reaching this point
       if (key == Keys.W)
-        LeftPaddle!.MoveUp();
+        LeftPaddle.MoveUp();
       else if (key == Keys.S)
-        LeftPaddle!.MoveDown();
+        LeftPaddle.MoveDown();
       else if (key == Keys.Up)
-        LeftPaddle!.MoveUp();
+        LeftPaddle.MoveUp();
       else if (key == Keys.Down)
-        LeftPaddle!.MoveDown();
+        LeftPaddle.MoveDown();
     }
 
     /// <summary>
@@ -190,13 +190,13 @@ namespace Pong
     public virtual void KeyUp(Keys key)
     {
       if (key == Keys.W)
-        LeftPaddle!.MoveDown();
+        LeftPaddle.MoveDown();
       else if (key == Keys.S)
-        LeftPaddle!.MoveUp();
+        LeftPaddle.MoveUp();
       else if (key == Keys.Up)
-        LeftPaddle!.MoveDown();
+        LeftPaddle.MoveDown();
       else if (key == Keys.Down)
-        LeftPaddle!.MoveUp();
+        LeftPaddle.MoveUp();
     }
   }
 }

@@ -18,9 +18,13 @@ namespace Pong
     /// </summary>
     public override void MoveDown()
     {
+      double previousVelY = VelY;
+
       base.MoveDown();
 
-      // Send the event
+      // Send the event if the velocity changed
+      if (previousVelY == VelY)
+        return;
       var _ = Connection.Move(this);
     }
 
@@ -29,9 +33,13 @@ namespace Pong
     /// </summary>
     public override void MoveUp()
     {
+      double previousVelY = VelY;
+
       base.MoveUp();
 
-      // Send the event
+      // Send the event if the velocity changed
+      if (previousVelY == VelY)
+        return;
       var _ = Connection.Move(this);
     }
   }
