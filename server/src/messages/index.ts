@@ -1,6 +1,7 @@
 // This is just a barrel file. It re-exports all of the message generators in this folder.
 
 export { default as Create } from "@/messages/create";
+export { default as End } from "@/messages/end";
 export { default as Error } from "@/messages/error";
 export { default as Invite } from "@/messages/invite";
 export { default as List } from "@/messages/list";

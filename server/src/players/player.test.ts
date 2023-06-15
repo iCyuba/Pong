@@ -1,8 +1,7 @@
 import { WebSocket } from "ws";
 
-import createConnection, { closeConnection } from "@/tests/createConnection";
-import waitForResponse, { waitForResponses } from "@/tests/waitForResponse";
-
+import createConnection, { closeConnection } from "@/helpers/createConnection";
+import waitForResponse, { waitForResponses } from "@/helpers/waitForResponse";
 import Player from "@/players/player";
 import Server from "@/server";
 

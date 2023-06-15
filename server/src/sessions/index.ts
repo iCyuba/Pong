@@ -43,14 +43,8 @@ export default class Sessions extends Handler {
     // Add the session to the list of all sessions
     this.all.push(session);
 
-    // Start the session
-    session.start(); // TODO: REMOVE!!!
-
     // Inform all players who aren't in a session (excluding these two) that a new session has been created
-    this.game.players.broadcast(
-      Messages.Create(invite.player1, invite.player2),
-      this.game.players.notInSession
-    );
+    this.game.players.broadcastNotInSession(Messages.Create(invite.player1, invite.player2));
 
     return session;
   }
@@ -66,7 +60,23 @@ export default class Sessions extends Handler {
     // End the session
     session.end();
 
-    // TODO: Inform the players that the session has been removed
+    // Inform the players that the session has been removed
+    this.game.players.broadcastNotInSession(Messages.End(session.player1, session.player2));
+  }
+
+  /**
+   * Remove any session that the given player is in
+   * @param {Player} player The player to remove from any session
+   */
+  removePlayer(player: Player) {
+    // Find the session that the player is in
+    const session = this.fromPlayer(player);
+
+    // If the player is not in a session, don't do anything
+    if (!session) return;
+
+    // Remove the session
+    this.remove(session);
   }
 
   /** Game loop interval */
@@ -78,12 +88,8 @@ export default class Sessions extends Handler {
    * Called during initialization
    */
   startGameLoop() {
-    // console.log("Starting game loop", this.interval);
-
     // If the game loop is already running, don't start it again
     if (this.interval) return;
-
-    // console.log("Starting game loop");
 
     // Start the game loop (every 10ms)
     this.interval = setInterval(this.gameLoop.bind(this), 10);
@@ -92,7 +98,7 @@ export default class Sessions extends Handler {
   /**
    * Stop the game loop
    *
-   * TODO: This is called when the server is shutting down
+   * This is called when the server is shutting down
    */
   stopGameLoop() {
     // If the game loop is not running, don't stop it
@@ -111,7 +117,6 @@ export default class Sessions extends Handler {
    *
    * This method is meant to be called every 10ms but it won't be cuz it's called by setInterval.. anywayy
    */
-
   private gameLoop() {
     // The delta time (time since last tick in ms) [0 on first tick]
     const delta = Date.now() - this.lastTick;
@@ -119,14 +124,13 @@ export default class Sessions extends Handler {
     // Update the last tick timestamp
     this.lastTick = Date.now();
 
-    // console.log("Game loop", delta);
-
-    // console.time("Game loop");
-
     // Call the game loop for each session
-    this.all.forEach(session => session.update(delta));
-
-    // console.timeEnd("Game loop");
+    try {
+      this.all.forEach(session => session.update(delta));
+    } catch (err) {
+      // This is just to prevent the server from not continuing with the game loop if an error occurs
+      console.error(err);
+    }
   }
 
   /**

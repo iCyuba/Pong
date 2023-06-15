@@ -3,15 +3,14 @@ import { without } from "lodash-es";
 
 import { WebSocket } from "ws";
 
-// The test helper functions
-import createConnection, { closeConnection } from "@/tests/createConnection";
-import waitForResponse, { waitForResponses } from "@/tests/waitForResponse";
-
 import { ErrorMessage } from "@/messages/error";
 import { ListMessage } from "@/messages/list";
 import { RegisterMessage } from "@/messages/register";
 import { UnregisterMessage } from "@/messages/unregister";
 
+// The test helper functions
+import createConnection, { closeConnection } from "@/helpers/createConnection";
+import waitForResponse, { waitForResponses } from "@/helpers/waitForResponse";
 import Server from "@/server";
 
 // Tests regarding registration / unregistration

@@ -2,9 +2,8 @@
 import { WebSocket } from "ws";
 
 // The test helper functions
-import createConnection, { closeConnection } from "@/tests/createConnection";
-import waitForResponse, { waitForResponses } from "@/tests/waitForResponse";
-
+import createConnection, { closeConnection } from "@/helpers/createConnection";
+import waitForResponse, { waitForResponses } from "@/helpers/waitForResponse";
 import Server from "@/server";
 
 // These tests are all about sending invites (and receiving them)

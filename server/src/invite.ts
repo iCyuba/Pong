@@ -29,7 +29,9 @@ export default class Invite {
 
     this.game = game;
 
-    // TODO: Check if the players are already in a session
+    // Check if the players are already in a session
+    if (game.sessions.fromPlayer(player1) || game.sessions.fromPlayer(player2))
+      throw new Error("Player is already in a session");
 
     // Check if the invite already exists and throw an error if it does
     if (Invite.findExact(game, player1, player2)) throw new Error("Invite already exists");

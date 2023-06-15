@@ -10,12 +10,24 @@ export default class Game {
   players: Players;
   /** A list of all the invites */
   invites: Invite[] = [];
-  /** TODO: A list of all the active sessions */
+  /** A list of all the active sessions */
   sessions: Sessions;
 
   /** Create a new game and all the required handlers */
   constructor() {
     this.players = new Players(this);
     this.sessions = new Sessions(this);
+  }
+
+  /**
+   * End the game
+   *
+   * Called when the server is shutting down
+   */
+  stop() {
+    // Stop the game loop
+    this.sessions.stopGameLoop();
+
+    // TODO: Kick all players
   }
 }

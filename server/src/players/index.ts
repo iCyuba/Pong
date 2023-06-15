@@ -19,17 +19,31 @@ export default class Players extends Handler {
 
   /** A filtered list of all players who are currently not in any session */
   get notInSession(): Player[] {
-    // TODO: This ain't implemented yet cuz there's no sessions
-
-    return this.all;
+    return this.all.filter(player => !this.game.sessions.fromPlayer(player));
   }
 
   /**
    * Send a message to all players
    * @param {string} message A message to send to all players
+   */
+  broadcast(message: any) {
+    Players.broadcast(message, this.all);
+  }
+
+  /**
+   * Send a message to all players who aren't in a session
+   * @param {string} message A message to send to all players
+   */
+  broadcastNotInSession(message: any) {
+    Players.broadcast(message, this.notInSession);
+  }
+
+  /**
+   * Send a message to a list of players
+   * @param {string} message A message to send to all players
    * @param {Player[]} players A list of players to send the message to (defaults to all players)
    */
-  broadcast(message: any, players: Player[] = this.all) {
+  static broadcast(message: any, players: Player[]) {
     for (const player of players) {
       player.send(message);
     }
@@ -72,7 +86,7 @@ export default class Players extends Handler {
     this.all.push(player);
 
     // Send the player registered message to players who aren't in a session
-    this.broadcast(Messages.Register(player), this.notInSession);
+    this.broadcastNotInSession(Messages.Register(player));
 
     // Return the player that we just made
     return player;
@@ -88,12 +102,13 @@ export default class Players extends Handler {
     remove(this.all, player);
 
     // Send the player unregistered message to players who aren't in a session
-    this.broadcast(Messages.Unregister(player), this.notInSession);
+    this.broadcastNotInSession(Messages.Unregister(player));
 
     // Delete any invites the player sent or received
     Invite.deleteForPlayer(this.game, player);
 
-    // TODO: If they're in a session end it
+    // Remove any sessions the player is in
+    this.removePlayer(player);
 
     // Return the player
     return player;

@@ -56,4 +56,14 @@ export default class Server extends WebSocketServer {
     if (process.env.NODE_ENV !== "test")
       console.log(new Date(), "Closed connection", player?.name || "unregistered");
   }
+
+  /**
+   * Closes the server
+   */
+  override close(cb?: (err?: Error) => void): void {
+    super.close(cb);
+
+    // Stop the game
+    this.game.stop();
+  }
 }

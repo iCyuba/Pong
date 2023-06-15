@@ -1,12 +1,11 @@
 // Start a new server instance. This is the entry point for the server.
 import { WebSocket } from "ws";
 
-// The test helper functions
-import createConnection, { closeConnection } from "@/tests/createConnection";
-import waitForResponse from "@/tests/waitForResponse";
-
 import { ErrorMessage } from "@/messages/error";
 
+// The test helper functions
+import createConnection, { closeConnection } from "@/helpers/createConnection";
+import waitForResponse from "@/helpers/waitForResponse";
 import Server from "@/server";
 
 // Some basic tests related to errors
