@@ -24,7 +24,8 @@ namespace Pong
       InitializeComponent();
 
       // The text that is visible when the game isn't running
-      message.Text = "Press any key to start!";
+      topMessage.Text = "Press any key to start!";
+      bottomMessage.Visible = false;
 
       // Don't forget to register events in the constructor in the extended classes
       // Can't do it here cuz GameInstance is null here
@@ -33,41 +34,72 @@ namespace Pong
     protected void RegisterEvents()
     {
       // Register event handlers
-      GameInstance.OnShowMessage += OnShowMessage;
-      GameInstance.OnHideMessage += OnMessageHide;
+      GameInstance.OnShowTopMessage += OnShowTopMessage;
+      GameInstance.OnHideTopMessage += OnHideTopMessage;
+      GameInstance.OnShowBottomMessage += OnShowBottomMessage;
+      GameInstance.OnHideBottomMessage += OnHideBottomMessage;
       GameInstance.OnStartIn += OnStartIn;
+      GameInstance.OnStart += OnStart;
       GameInstance.OnScore += OnScore;
     }
 
     /// <summary>
-    /// This is called to show some message
+    /// This is called to show some message on the top
     /// </summary>
-    private void OnShowMessage(object? sender, string message)
+    private void OnShowTopMessage(object? sender, string message)
     {
-      this.message.Text = message;
-      this.message.Visible = true;
+      this.topMessage.Text = message;
+      this.topMessage.Visible = true;
     }
 
     /// <summary>
-    /// This is called to hide the message
+    /// This is called to hide the message on the bottom
     /// </summary>
-    private void OnMessageHide(object? sender, EventArgs e)
+    private void OnHideTopMessage(object? sender, EventArgs e)
     {
-      message.Visible = false;
+      topMessage.Visible = false;
+    }
+
+    /// <summary>
+    /// This is called to show some message on the top
+    /// </summary>
+    private void OnShowBottomMessage(object? sender, string message)
+    {
+      this.bottomMessage.Text = message;
+      this.bottomMessage.Visible = true;
+    }
+
+    /// <summary>
+    /// This is called to hide the message on the bottom
+    /// </summary>
+    private void OnHideBottomMessage(object? sender, EventArgs e)
+    {
+      bottomMessage.Visible = false;
     }
 
     /// <summary>
     /// This is called when the game will start in some time
     /// </summary>
-    private void OnStartIn(object? sender, DateTime time)
+    private void OnStartIn(object? sender, DateTime? time)
     {
-      message.Visible = true;
-
       // Set the timeout
       Timeout = time;
 
       // Update the message
       UpdateTimeoutMessage();
+    }
+
+    /// <summary>
+    /// This is called when the game will starts
+    /// </summary>
+    private void OnStart(object? sender, EventArgs e)
+    {
+      // Set the timeout to null
+      Timeout = null;
+
+      // Remove all messages
+      topMessage.Visible = false;
+      bottomMessage.Visible = false;
     }
 
     /// <summary>
@@ -79,8 +111,11 @@ namespace Pong
       if (Timeout == null)
         return;
 
+      topMessage.Visible = true;
+      bottomMessage.Visible = false;
+
       // Update the message
-      message.Text =
+      topMessage.Text =
         $"Starting in {Math.Ceiling((Timeout.Value - DateTime.Now).TotalSeconds)} seconds!";
     }
 

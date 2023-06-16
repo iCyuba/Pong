@@ -124,11 +124,48 @@
       else if (side == BallServer.Side.Right)
         LeftScore++;
 
+      // Check if the game is over
+      if (CheckWin())
+        return;
+
       // Invoke the OnScore event
       OnScore?.Invoke(this, EventArgs.Empty);
 
       // Start the game again in 3 seconds
       StartIn3Seconds();
+    }
+
+    /// <summary>
+    /// Check if a player has won
+    /// </summary>
+    /// <returns>True if a player has won, false otherwise</returns>
+    public bool CheckWin()
+    {
+      string? message;
+
+      // Check for player 1 first
+      if (LeftScore >= 10)
+        message = "Left player";
+      else if (RightScore >= 10)
+        message = "Right player";
+      else
+        return false;
+
+      // Update the message
+      OnShowTopMessage?.Invoke(this, $"{message} won!");
+      OnShowBottomMessage?.Invoke(this, "Press any key to start!");
+
+      // Set is running to false
+      IsRunning = false;
+
+      // Reset the scores
+      LeftScore = 0;
+      RightScore = 0;
+
+      // Update the scores on screen
+      OnScore?.Invoke(this, EventArgs.Empty);
+
+      return true;
     }
 
     // Add support for the right paddle

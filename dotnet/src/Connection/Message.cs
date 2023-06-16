@@ -97,6 +97,12 @@ namespace Pong
         case "score":
           OnScoreHandler?.Invoke(this, ScoreEvent.Deserialize(message));
           break;
+        case "win":
+          OnWinHandler?.Invoke(this, WinEvent.Deserialize(message));
+          break;
+        case "end":
+          OnEndHandler?.Invoke(this, EndEvent.Deserialize(message));
+          break;
         default:
           break;
       }

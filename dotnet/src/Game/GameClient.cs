@@ -12,6 +12,18 @@ namespace Pong
     private Connection Connection { get; set; }
 
     /// <summary>
+    /// Indicates whether a ready event has been sent already
+    /// <br/>
+    /// This is to prevent spamming the server with ready events (although it doesn't really matter)
+    /// </summary>
+    private bool IsReady { get; set; } = false;
+
+    /// <summary>
+    /// Whether the game is invalid (the other player left)
+    /// </summary>
+    public bool IsInvalid { get; set; } = false;
+
+    /// <summary>
     /// Create a new instance of a GameClient with the specified width, height and connection
     /// </summary>
     public GameClient(int width, int height, Connection connection)
@@ -28,9 +40,11 @@ namespace Pong
       PositionPaddles();
 
       // Custom event handlers
-      Connection.OnReadyHandler += OnReady;
-      Connection.OnStartHandler += OnStart;
+      Connection.OnReadyHandler += OnReadyHandler;
+      Connection.OnStartHandler += OnStartHandler;
       Connection.OnScoreHandler += OnScoreHandler;
+      Connection.OnWinHandler += OnWinHandler;
+      Connection.OnEndHandler += OnEndHandler;
     }
 
     public override void Start()
@@ -50,7 +64,7 @@ namespace Pong
     /// <summary>
     /// Shows a message "waiting for the other player" when the we already sent a ready event
     /// </summary>
-    private void OnReady(object? _, Connection.ReadyEvent e)
+    private void OnReadyHandler(object? _, Connection.ReadyEvent e)
     {
       // If the game is already running, don't do anything
       if (IsRunning)
@@ -59,11 +73,13 @@ namespace Pong
       // Check if the ready event was sent by us
       if (e.Name == Connection.Name)
       {
-        OnShowMessage?.Invoke(this, "Waiting for the other player...");
+        OnShowTopMessage?.Invoke(this, "Ready!");
+        OnShowBottomMessage?.Invoke(this, "Waiting for the other player...");
       }
-      else
+      else if (!IsReady)
       {
-        OnShowMessage?.Invoke(this, "The other player is ready!\nPress any key to start");
+        OnShowTopMessage?.Invoke(this, "The other player is ready!");
+        OnShowBottomMessage?.Invoke(this, "Press any key to start!");
       }
     }
 
@@ -79,7 +95,7 @@ namespace Pong
     /// <br/>
     /// This is the equivalent of <see cref="GameServer.StartIn3Seconds"/> but for the client. It can only be called by the server
     /// </summary>
-    private void OnStart(object? _, Connection.StartEvent e)
+    private void OnStartHandler(object? _, Connection.StartEvent e)
     {
       // Game will start at now + 3 seconds
       StartAt = DateTime.Now.AddSeconds(3);
@@ -108,6 +124,45 @@ namespace Pong
     }
 
     /// <summary>
+    /// Called when a player scores 10 points
+    /// </summary>
+    private void OnWinHandler(object? _, Connection.WinEvent winEvent)
+    {
+      // Stop the game and set ready to false
+      IsRunning = false;
+      IsReady = false;
+
+      // Set the messages
+      OnShowTopMessage?.Invoke(this, $"{winEvent.Player} won!");
+      OnShowBottomMessage?.Invoke(this, "Press any key to start!");
+
+      // Set the scores to 0
+      LeftScore = 0;
+      RightScore = 0;
+
+      // Invoke the event
+      OnScore?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Called when a player leaves the game
+    /// </summary>
+    private void OnEndHandler(object? _, Connection.EndEvent endEvent)
+    {
+      // Stop the game and set ready to false
+      IsRunning = false;
+      IsInvalid = true;
+
+      // Stop the timers
+      OnStartIn?.Invoke(this, null);
+      StartAt = null;
+
+      // Set the messages
+      OnShowTopMessage?.Invoke(this, $"The other player left the game!");
+      OnShowBottomMessage?.Invoke(this, "Close the window to go back to the menu");
+    }
+
+    /// <summary>
     /// Unregister event handlers for the connection
     /// <br/>
     /// This is called when the game is closed
@@ -120,8 +175,11 @@ namespace Pong
       LeftPaddle.UnregisterEventHandlers(); // this does nothing. but whatever. it looks better
       RightPaddle.UnregisterEventHandlers();
 
-      Connection.OnReadyHandler -= OnReady;
-      Connection.OnStartHandler -= OnStart;
+      Connection.OnReadyHandler -= OnReadyHandler;
+      Connection.OnStartHandler -= OnStartHandler;
+      Connection.OnScoreHandler -= OnScoreHandler;
+      Connection.OnWinHandler -= OnWinHandler;
+      Connection.OnEndHandler -= OnEndHandler;
     }
 
     public override void Update(double deltaTime)
@@ -142,11 +200,28 @@ namespace Pong
 
     public override void KeyDown(Keys key)
     {
+      // Return if the game is invalid
+      if (IsInvalid)
+        return;
+
       // Send a ready event if the game is not running or about to start
-      if (!IsRunning && StartAt == null)
+      // don't do this if one has been sent already tho
+      if (!IsRunning && StartAt == null && !IsReady)
+      {
         _ = Connection.Ready();
+        IsReady = true;
+      }
 
       base.KeyDown(key);
+    }
+
+    public override void KeyUp(Keys key)
+    {
+      // Return if the game is invalid
+      if (IsInvalid)
+        return;
+
+      base.KeyUp(key);
     }
   }
 }

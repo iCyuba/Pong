@@ -79,6 +79,16 @@ namespace Pong
     public EventHandler<ScoreEvent>? OnScoreHandler { get; set; }
 
     /// <summary>
+    /// Event handler for when a player wins
+    /// </summary>
+    public EventHandler<WinEvent>? OnWinHandler { get; set; }
+
+    /// <summary>
+    /// Event handler for when a player leaves a session
+    /// </summary>
+    public EventHandler<EndEvent>? OnEndHandler { get; set; }
+
+    /// <summary>
     /// Create a new connection to the server
     /// <br />
     /// By default, the connection will be automatically opened

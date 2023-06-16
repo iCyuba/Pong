@@ -79,19 +79,34 @@ namespace Pong
     // Events <3
 
     /// <summary>
-    /// Called when a message should be shown
+    /// Called when a top message should be shown
     /// </summary>
-    public EventHandler<string>? OnShowMessage { get; set; }
+    public EventHandler<string>? OnShowTopMessage { get; set; }
 
     /// <summary>
-    /// Called when a message should be hidden
+    /// Called when a top message should be hidden
     /// </summary>
-    public EventHandler? OnHideMessage { get; set; }
+    public EventHandler? OnHideTopMessage { get; set; }
+
+    /// <summary>
+    /// Called when a bottom message should be shown
+    /// </summary>
+    public EventHandler<string>? OnShowBottomMessage { get; set; }
+
+    /// <summary>
+    /// Called when a bottom message should be hidden
+    /// </summary>
+    public EventHandler? OnHideBottomMessage { get; set; }
 
     /// <summary>
     /// Called when the game will start in some time
     /// </summary>
-    public EventHandler<DateTime>? OnStartIn { get; set; }
+    public EventHandler<DateTime?>? OnStartIn { get; set; }
+
+    /// <summary>
+    /// Called when the game will starts
+    /// </summary>
+    public EventHandler? OnStart { get; set; }
 
     /// <summary>
     /// Called when the score changes
@@ -129,7 +144,7 @@ namespace Pong
 
       BallInstance.SetPosToMiddle();
 
-      OnHideMessage?.Invoke(this, EventArgs.Empty);
+      OnStart?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

@@ -31,7 +31,8 @@
       components = new System.ComponentModel.Container();
       pictureBox = new PictureBox();
       tableLayoutPanel1 = new TableLayoutPanel();
-      message = new Label();
+      topMessage = new Label();
+      bottomMessage = new Label();
       scoreLeft = new Label();
       scoreRight = new Label();
       timer1 = new System.Windows.Forms.Timer(components);
@@ -58,7 +59,8 @@
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80F));
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
       tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80F));
-      tableLayoutPanel1.Controls.Add(message, 1, 0);
+      tableLayoutPanel1.Controls.Add(topMessage, 1, 0);
+      tableLayoutPanel1.Controls.Add(bottomMessage, 1, 2);
       tableLayoutPanel1.Controls.Add(scoreLeft, 0, 1);
       tableLayoutPanel1.Controls.Add(scoreRight, 2, 1);
       tableLayoutPanel1.Dock = DockStyle.Fill;
@@ -73,17 +75,29 @@
       tableLayoutPanel1.Size = new Size(784, 561);
       tableLayoutPanel1.TabIndex = 1;
       // 
-      // message
+      // topMessage
       // 
-      message.Anchor = AnchorStyles.Bottom;
-      message.AutoSize = true;
-      message.Font = new Font("Cascadia Code", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
-      message.ForeColor = Color.DeepPink;
-      message.Location = new Point(284, 212);
-      message.Name = "message";
-      message.Size = new Size(216, 28);
-      message.TabIndex = 2;
-      message.Text = "Some message here";
+      topMessage.Anchor = AnchorStyles.Bottom;
+      topMessage.AutoSize = true;
+      topMessage.Font = new Font("Cascadia Code", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+      topMessage.ForeColor = Color.DeepPink;
+      topMessage.Location = new Point(284, 212);
+      topMessage.Name = "topMessage";
+      topMessage.Size = new Size(216, 28);
+      topMessage.TabIndex = 2;
+      topMessage.Text = "Some message here";
+      // 
+      // bottomMessage
+      // 
+      bottomMessage.Anchor = AnchorStyles.Top;
+      bottomMessage.AutoSize = true;
+      bottomMessage.Font = new Font("Cascadia Code", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+      bottomMessage.ForeColor = Color.DeepPink;
+      bottomMessage.Location = new Point(284, 212);
+      bottomMessage.Name = "bottomMessage";
+      bottomMessage.Size = new Size(216, 28);
+      bottomMessage.TabIndex = 3;
+      bottomMessage.Text = "Some message here";
       // 
       // scoreLeft
       // 
@@ -142,6 +156,7 @@
     protected TableLayoutPanel tableLayoutPanel1;
     protected Label scoreLeft;
     protected Label scoreRight;
-    protected Label message;
+    protected Label topMessage;
+    protected Label bottomMessage;
   }
 }
