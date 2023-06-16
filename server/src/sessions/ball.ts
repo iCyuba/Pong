@@ -1,4 +1,3 @@
-import { memoize } from "lodash-es";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 import Angle from "@/helpers/angle";
@@ -184,7 +183,7 @@ export default class Ball extends TypedEmitter<BallEvents> {
     if (collides && !wasColliding) {
       this.angle = 180 - this.angle;
 
-      // Update the velocity of the ball
+      // Update the velocity of the ball so it's not "too easy"
       this.velocity += 5;
 
       // Emit the bounce event
@@ -231,27 +230,14 @@ export default class Ball extends TypedEmitter<BallEvents> {
     return this.position.x + Ball.radius;
   }
 
-  // A helper for the velocity
-  // These are memoized so we don't have to calculate them every time
-
-  /**
-   * Calculate the velocity of the ball in the X and Y axes from the angle and velocity
-   * @param {number} angle The angle of the ball (in degrees)
-   * @param {number} velocity The velocity of the ball
-   * @returns {XandY} The velocity of the ball in the X and Y axes
-   */
-  private internalVelocityInAxes = memoize((angle: number, velocity: number): XandY => {
-    return {
-      x: Math.cos(Angle.degreesToRadians(angle)) * velocity,
-      y: Math.sin(Angle.degreesToRadians(angle)) * velocity,
-    };
-  });
-
   /**
    * The velocity of the ball in the X and Y axes
    * Calculated from the angle and velocity
    */
   get velocityInAxes(): XandY {
-    return this.internalVelocityInAxes(this.angle, this.velocity);
+    return {
+      x: Math.cos(Angle.degreesToRadians(this.angle)) * this.velocity,
+      y: Math.sin(Angle.degreesToRadians(this.angle)) * this.velocity,
+    };
   }
 }
