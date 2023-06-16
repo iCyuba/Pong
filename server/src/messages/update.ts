@@ -12,6 +12,8 @@ import Ball from "@/sessions/ball";
 export interface UpdateMessage extends Omit<StartMessage, "type"> {
   type: "update";
 
+  velocity: number;
+
   // Position
   posX: number;
   posY: number;
@@ -27,7 +29,7 @@ export interface UpdateMessage extends Omit<StartMessage, "type"> {
  */
 function Update(ball: Ball, reverse: boolean): UpdateMessage {
   // Get the base StartMessage
-  const { velX, velY } = Start(ball, reverse);
+  const { angle } = Start(ball, reverse);
 
   // Get the x and y coordinates of the ball
   let { x: posX, y: posY } = ball.position;
@@ -41,8 +43,8 @@ function Update(ball: Ball, reverse: boolean): UpdateMessage {
     type: "update",
     posX,
     posY,
-    velX,
-    velY,
+    angle,
+    velocity: ball.velocity,
   };
 }
 

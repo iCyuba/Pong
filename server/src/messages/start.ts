@@ -4,14 +4,12 @@ import Ball from "@/sessions/ball";
  * A message that is sent when the session starts
  *
  * Note: A session doesn't start when it's created, it starts when both players are ready (moved for the first time).
- *       It also starts 0.5 seconds after the ball goes out of bounds (to give the players time to move their paddles)
+ *       It also starts 3 seconds after the ball goes out of bounds (to give the players time to move their paddles)
  */
 export interface StartMessage {
   type: "start";
 
-  // Velocity
-  velX: number;
-  velY: number;
+  angle: number;
 }
 
 /**
@@ -24,17 +22,16 @@ export interface StartMessage {
  */
 export function Start(ball: Ball, reverse: boolean): StartMessage {
   // Get the x and y velocity of the ball in the axes
-  let { x: velX, y: velY } = ball.velocityInAxes;
+  let angle = ball.angle;
 
-  // Reverse the X axis if this is player 2's view
+  // Reverse the angle if the game is flipped
   if (reverse) {
-    velX *= -1;
+    angle = 180 - angle;
   }
 
   return {
     type: "start",
-    velX,
-    velY,
+    angle,
   };
 }
 
