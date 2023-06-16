@@ -58,6 +58,7 @@ namespace Pong
       Connection.OnInviteHandler += Invited;
       Connection.OnCreateHandler += SessionCreated;
       Connection.OnEndHandler += SessionEnded;
+      Connection.OnCloseHandler += OnClose;
 
       // Set the label to the player's name
       username.Text = $"Registered as: {Connection.Name}";
@@ -252,9 +253,32 @@ namespace Pong
     }
 
     /// <summary>
+    /// Close the game if the server disconnects
+    /// </summary>
+    private void OnClose(object? _, EventArgs e)
+    {
+      // Unregister the event listeners
+      // NOTE: Unlike ListClosed, this doesn't send an unregister event
+      Connection.OnListHandler -= SetPlayers;
+      Connection.OnRegisterHandler -= AddPlayerRegistration;
+      Connection.OnUnregisterHandler -= RemovePlayer;
+      Connection.OnInviteHandler -= Invited;
+      Connection.OnCreateHandler -= SessionCreated;
+
+      FormClosed -= ListClosed;
+
+      // Close the GameWindow if it's open (but unregister the event listeners first)
+      GameWindow?.UnregisterEventHandlers();
+      GameWindow?.Close();
+
+      // Close the form
+      Close();
+    }
+
+    /// <summary>
     /// Unregisters the player when the form is closed (also unregisters the event listeners)
     /// </summary>
-    private void ListClosed(object sender, FormClosedEventArgs e)
+    private void ListClosed(object? sender, FormClosedEventArgs e)
     {
       // Unregister the event listeners
       Connection.OnListHandler -= SetPlayers;

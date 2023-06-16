@@ -67,6 +67,9 @@ namespace Pong
         case "error":
           OnErrorHandler?.Invoke(this, ErrorEvent.Deserialize(message));
           break;
+        case "message":
+          OnServerMessageHandler?.Invoke(this, ServerMessageEvent.Deserialize(message));
+          break;
         case "register":
           OnRegisterHandler?.Invoke(this, RegisterEvent.Deserialize(message));
           break;
@@ -117,7 +120,20 @@ namespace Pong
       {
         // Wait for a message
         byte[] response = new byte[1024];
-        WebSocketReceiveResult result = await WS.ReceiveAsync(response, CancellationToken.None);
+        WebSocketReceiveResult result;
+
+        // Try to receive a message
+        try
+        {
+          result = await WS.ReceiveAsync(response, CancellationToken.None);
+        }
+        catch (WebSocketException)
+        {
+          // Server closed the connection so we can return
+          // Also call the close handler if it exists
+          OnCloseHandler?.Invoke(this, EventArgs.Empty);
+          return;
+        }
 
         // Convert the response to a string
         string encoded = Encoding.UTF8.GetString(response, 0, result.Count);

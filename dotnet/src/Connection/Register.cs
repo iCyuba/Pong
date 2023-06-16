@@ -51,7 +51,8 @@ namespace Pong
       var registerEvent = new Dictionary<string, string>
       {
         { "type", "register" },
-        { "name", name }
+        { "name", name },
+        { "version", "1.0.0" } // The server doesn't use this rn. But maybe in the future it can be used for compatibility.. idkk
       };
 
       await Send(registerEvent);

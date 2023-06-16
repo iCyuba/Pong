@@ -24,6 +24,13 @@ namespace Pong
     public EventHandler<string>? OnMessageHandler { get; set; }
 
     /// <summary>
+    /// Event handler for when a server message is received
+    /// <br/>
+    /// Note: this is different. This is like a message from the server that is not a game event.. It's unused as of rn
+    /// </summary>
+    public EventHandler<ServerMessageEvent>? OnServerMessageHandler { get; set; }
+
+    /// <summary>
     /// Event handler when an error occurs (sent by the server obv. not a real exception)
     /// </summary>
     public EventHandler<ErrorEvent>? OnErrorHandler { get; set; }
@@ -119,9 +126,6 @@ namespace Pong
 
       // On register
       OnRegisterHandler += OnRegister;
-
-      // On close
-      // OnCloseHandler += OnClose;
     }
 
     /// <summary>
