@@ -4,7 +4,9 @@ This is the code for the backend server used by the [C# client](https://github.c
 
 ## Usage
 
-Right now a public server can be accessed here: `pong (dot) icy (dot) cx` on port `3000`
+A public server is available here: `wss://pong.icy.cx`
+
+- Protected by Cloudflare <3
 
 ### API
 
@@ -20,6 +22,8 @@ When you open a connection you won't receive anything until you send the `regist
   - Params:
     - name: Any string that is not already taken and 16 or less characters long. (can't be empty tho)
   - **Response**: [register](#register---a-player-registered)
+  - In my .NET client, I am sending a version tag as well. (eg. `{"type": "register", "name": "Player1", "version": "1.0.0"}`)
+  - This is not required and the server doesn't handle it. But it could be used in the future to notify the client that it needs to update.
 
 - ##### `unregister` - Unregisters the connection
 
@@ -60,7 +64,18 @@ When you open a connection you won't receive anything until you send the `regist
   - **Response 2**: [start](#start---the-game-started)
   - You must be registered and in a session to use this event.
 
+- ##### `end` - Close the session you're currently in
+
+  - **Example**: `{"type": "end"}`
+  - **Response**: [end](#end---a-game-session-was-closed-by-a-player)
+  - Send this event to close the session you're currently in.
+
 #### Events you can receive
+
+- ##### `message` - A message from the server
+
+  - **Example**: `{"type": "message", "message": "Hello World!"}`
+  - Currently this ain't implemented yet. Could be useful for something in the future.
 
 - ##### `error` - You did something you weren't supposed to do.. Good job.
 
@@ -107,23 +122,28 @@ When you open a connection you won't receive anything until you send the `regist
 
 - ##### `start` - The game started
 
-  - **Example**: `{"type": "start", "velX": 1234, "velY": 1234}`
+  - **Example**: `{"type": "start", "angle": 180}`
   - This is sent once both players are ready.
   - It is also sent every time a player scores a point.
-  - `velX` and `velY` are the initial velocity of the ball. (Which are randomized)
+  - The angle is random and is in degrees.
 
 - ##### `update` - The ball position was updated
 
-  - **Example**: `{"type": "update", "posX": 1234, "posY": 1234, "velX": 1234, "velY": 1234}`
+  - **Example**: `{"type": "update", "posX": 1234, "posY": 1234, "angle": 180, "velocity": 55}`
   - This is sent every time the ball bounces off a wall or a paddle.
   - `posX` and `posY` are the current position of the ball.
-  - `velX` and `velY` are the current velocity of the ball.
 
 - ##### `score` - A player scored a point
 
   - **Example**: `{"type": "score", "you": 1234, "opponent": 1234}`
   - Sent whenever the ball goes out of bounds.
   - The message is sent to both players. (you is the player who received the message. opponent is the other player)
+
+- ##### `win` - A player won the game
+
+  - **Example**: `{"type": "win", "player": "Player1"}`
+  - Sent to both players when a player wins the game.
+  - Note: a ready event must be sent by both players again to start.
 
 - ##### `end` - A game session was closed by a player
 

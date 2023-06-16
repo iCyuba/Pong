@@ -1,6 +1,6 @@
 # A pong game written in C#
 
-The full project can be found on [GitHub](https://github.com/iCyuba/Pong)
+If you want the server code, look [here](https://github.com/iCyuba/Pong/tree/main/server). It uses NodeJS and WebSockets.
 
 ## License
 
