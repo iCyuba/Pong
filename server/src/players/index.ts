@@ -100,14 +100,14 @@ export default class Players extends Handler {
     // Remove the player from the list of players
     remove(this.all, player);
 
-    // Send the player unregistered message to players who aren't in a session
-    this.broadcastNotInSession(Messages.Unregister(player));
-
     // Delete any invites the player sent or received
     this.game.invites.removePlayer(player);
 
     // Remove any sessions the player is in
     this.game.sessions.removePlayer(player);
+
+    // Send the player unregistered message to players who aren't in a session
+    this.broadcastNotInSession(Messages.Unregister(player));
 
     // Return the player
     return player;
