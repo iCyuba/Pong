@@ -11,16 +11,16 @@ namespace Pong
     {
       public double PosX { get; set; }
       public double PosY { get; set; }
-      public double VelX { get; set; }
-      public double VelY { get; set; }
+      public double Angle { get; set; }
+      public int Velocity { get; set; }
 
-      public UpdateEvent(double posX, double posY, double velX, double velY)
+      public UpdateEvent(double posX, double posY, double angle, int velocity)
         : base("update")
       {
         PosX = posX;
         PosY = posY;
-        VelX = velX;
-        VelY = velY;
+        Angle = angle;
+        Velocity = velocity;
       }
 
       /// <summary>

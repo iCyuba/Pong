@@ -98,14 +98,14 @@ namespace Pong
     /// <br/>
     /// It's called by game 3 seconds after it receives the "start" event
     /// </summary>
-    public void Start(double velX, double velY)
+    public void Start(double angle)
     {
       // Set the timestamp to the current time
       // This is so the ball doesn't start moving before the game starts
       LastServerTimestamp = DateTime.UtcNow.Ticks;
 
-      VelX = velX;
-      VelY = velY;
+      Velocity = BaseVelocity;
+      Angle = angle;
     }
 
     /// <summary>
@@ -120,8 +120,8 @@ namespace Pong
 
       ServerPosX = updateEvent.PosX;
       ServerPosY = updateEvent.PosY;
-      VelX = updateEvent.VelX;
-      VelY = updateEvent.VelY;
+      Velocity = updateEvent.Velocity;
+      Angle = updateEvent.Angle;
     }
 
     public override void Bounce()

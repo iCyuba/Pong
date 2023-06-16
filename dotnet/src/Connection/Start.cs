@@ -11,14 +11,12 @@ namespace Pong
 
     public class StartEvent : GameEvent
     {
-      public double VelX { get; set; }
-      public double VelY { get; set; }
+      public double Angle { get; set; }
 
-      public StartEvent(double velX, double velY)
+      public StartEvent(double angle)
         : base("start")
       {
-        VelX = velX;
-        VelY = velY;
+        Angle = angle;
       }
 
       /// <summary>

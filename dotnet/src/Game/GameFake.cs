@@ -15,9 +15,9 @@ namespace Pong
       // Start the game immediately
       Start();
 
-      // Set the velocity of the ball to a static value (idk it just looks nice)
-      BallInstance.VelX = 35;
-      BallInstance.VelY = 15;
+      // Set the angle of the ball to 35degrees cuz it looks nice
+      BallInstance.Angle = 35;
+      BallInstance.Velocity = Ball.BaseVelocity;
     }
 
     public override void Update(double deltaTime)

@@ -43,6 +43,11 @@
     public GameType Type { get; set; }
 
     /// <summary>
+    /// The side which scored last time
+    /// </summary>
+    private BallServer.Side? LastScored { get; set; }
+
+    /// <summary>
     /// Create a new instance of a GameServer with the specified width and height
     /// </summary>
     /// <param name="width">The width of the game</param>
@@ -71,7 +76,11 @@
       base.Start();
 
       // Place the ball in the middle of the screen and start it moving
-      BallInstance.RandomlyStartMoving(Ball.BaseVelocity);
+      BallInstance.RandomlyStartMoving(LastScored);
+
+      // If the right paddle is a bot, reset it's position to the middle
+      if (Type != GameType.Local)
+        RightPaddle.PosY = 50;
     }
 
     /// <summary>
@@ -123,6 +132,9 @@
       // If the ball went out of bounds on the right side, the left paddle scored
       else if (side == BallServer.Side.Right)
         LeftScore++;
+
+      // Set the last scored side
+      LastScored = side;
 
       // Check if the game is over
       if (CheckWin())

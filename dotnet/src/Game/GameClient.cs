@@ -55,7 +55,7 @@ namespace Pong
         throw new InvalidOperationException("LastStartEvent is null");
 
       // Start the ball
-      BallInstance.Start(LastStartEvent.VelX, LastStartEvent.VelY);
+      BallInstance.Start(LastStartEvent.Angle);
 
       // Set last start event to null
       LastStartEvent = null;

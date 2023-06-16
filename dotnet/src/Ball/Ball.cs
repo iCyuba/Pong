@@ -7,12 +7,27 @@ namespace Pong
     /// <summary>
     /// The base radius of the ball. Scaled by the size of the game
     /// </summary>
-    public const double BaseRadius = 2;
+    public const int BaseRadius = 2;
 
     /// <summary>
     /// The base velocity of the ball in percent of the screen per second
     /// </summary>
-    public const double BaseVelocity = 50;
+    public const int BaseVelocity = 50;
+
+    /// <summary>
+    /// The velocity of the ball in percent of the screen per second
+    /// </summary>
+    public int Velocity { get; set; }
+
+    /// <summary>
+    /// The angle in which the ball is moving
+    /// </summary>
+    public double Angle { get; set; }
+
+    /// <summary>
+    /// The angle but in radians
+    /// </summary>
+    public double AngleRadians => Angle * Math.PI / 180;
 
     // Basically just make the height and width the same thing
     // I know this isn't a good thing to do. I also however do not care
@@ -43,12 +58,12 @@ namespace Pong
     /// <summary>
     /// The velocity of the ball on the X axis
     /// </summary>
-    public double VelX { get; set; }
+    public double VelX => Velocity * Math.Cos(AngleRadians);
 
     /// <summary>
     /// The velocity of the ball on the Y axis
     /// </summary>
-    public double VelY { get; set; }
+    public double VelY => Velocity * Math.Sin(AngleRadians);
 
     /// <summary>
     /// New instance of a Ball..
@@ -61,8 +76,7 @@ namespace Pong
       // The width and height are multiplied by 2.. it's a radius... It's kinda ugly ik
       : base(50, 50, BaseRadius * 2, BaseRadius * 2, Brushes.HotPink, scale, offset)
     {
-      VelX = 0;
-      VelY = 0;
+      Velocity = 0;
     }
 
     /// <summary>
@@ -118,7 +132,7 @@ namespace Pong
       if (CheckWallCollision())
       {
         if (!lastCollisionForWalls)
-          VelY *= -1;
+          Angle = 360 - Angle;
 
         lastCollisionForWalls = true;
       }

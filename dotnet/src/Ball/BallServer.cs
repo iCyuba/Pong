@@ -44,19 +44,33 @@ namespace Pong
     }
 
     /// <summary>
-    /// Randomly start moving the ball in a random direction
+    /// Randomly start moving the ball in some direction
     /// </summary>
-    /// <param name="vel">The velocity of the ball, defaults to BaseVelocity</param>
-    public void RandomlyStartMoving(double vel = Ball.BaseVelocity)
+    public void RandomlyStartMoving(Side? side = null)
     {
-      Random r = new();
+      // Randomly choose a side if one wasn't given
+      if (side == null)
+        side = new Random().Next(2) == 0 ? Side.Left : Side.Right;
 
-      int angleInDegrees = r.Next(0, 360);
-      double angleInRadians = (angleInDegrees / 180.0) * Math.PI;
+      // Get the angle
+      int angle = RandomAngle();
 
-      // Math :/
-      VelX = Math.Cos(angleInRadians) * vel;
-      VelY = Math.Sin(angleInRadians) * vel;
+      // Normalize the angle so it's not annoying to work with
+      // On the server a named these: "good angles". do not ask....
+      angle = NormalizeAngle(angle);
+
+      // Add or subtract 90 degrees depending on the side
+      angle += side == Side.Left ? -90 : 90;
+
+      // Make sure the angle is positive
+      angle += 360; // don't @ me for this
+      angle %= 360; // it's just 2 lines..
+
+      // Set the angle
+      Angle = angle;
+
+      // Set the velocity to the base velocity
+      Velocity = BaseVelocity;
     }
 
     /// <summary>
@@ -120,7 +134,13 @@ namespace Pong
       // Note: Since I am passing Game in the constructor, I can access the paddles from the Game property. No need for a parameter here
       if (CheckPaddleCollision(new[] { Game.LeftPaddle, Game.RightPaddle }))
       {
-        VelX *= -1;
+        Angle = 180 - Angle;
+
+        // To make the game more interesting, we want to increase the velocity of the ball
+        // Note this is disabled in gametype is impossible so the ball doesn't go out of the screen on the menu
+        if (Game.Type != GameServer.GameType.BotImpossible)
+          Velocity += 5;
+
         return;
       }
 
@@ -130,6 +150,36 @@ namespace Pong
       // and invoke the OnOutOfBounds event if it is
       if (goalCollision != null)
         OnOutOfBounds?.Invoke(this, goalCollision.Value);
+    }
+
+    /// <summary>
+    /// Generate a random angle for the ball to go in
+    /// <br/>
+    /// Note: This is between 0 and 180 degrees. This is so I can pick the side by adding or removing 90 degrees
+    /// </summary>
+    public static int RandomAngle()
+    {
+      Random r = new();
+
+      int angleInDegrees = r.Next(0, 180);
+
+      return angleInDegrees;
+    }
+
+    /// <summary>
+    /// Normalize the angle so it's not annoying to play with
+    /// </summary>
+    /// <param name="angle">The angle to normalize</param>
+    public static int NormalizeAngle(int angle)
+    {
+      // Normalize the angle so it's not annoying to play with
+      // The ball should never go straight up or down or straight to the side
+      if (angle % 90 < 15)
+        angle += 15;
+      else if (angle % 90 > 75)
+        angle -= 15;
+
+      return angle;
     }
   }
 }
