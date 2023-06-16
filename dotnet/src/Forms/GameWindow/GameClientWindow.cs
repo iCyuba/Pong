@@ -22,9 +22,21 @@ namespace Pong
       GameInstance = new GameClient(pictureBox.Width, pictureBox.Height, connection);
 
       // Register the events
-      RegisterEvents();
+      RegisterEventHandlers();
+    }
+
+    public override void RegisterEventHandlers()
+    {
+      base.RegisterEventHandlers();
 
       FormClosed += OnClosed;
+    }
+
+    public override void UnregisterEventHandlers(object? sender = null, EventArgs? e = null)
+    {
+      base.UnregisterEventHandlers(sender, e);
+
+      FormClosed -= OnClosed;
     }
 
     /// <summary>

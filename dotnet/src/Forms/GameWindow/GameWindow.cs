@@ -31,7 +31,7 @@ namespace Pong
       // Can't do it here cuz GameInstance is null here
     }
 
-    protected void RegisterEvents()
+    public virtual void RegisterEventHandlers()
     {
       // Register event handlers
       GameInstance.OnShowTopMessage += OnShowTopMessage;
@@ -41,6 +41,22 @@ namespace Pong
       GameInstance.OnStartIn += OnStartIn;
       GameInstance.OnStart += OnStart;
       GameInstance.OnScore += OnScore;
+
+      FormClosed += UnregisterEventHandlers;
+    }
+
+    public virtual void UnregisterEventHandlers(object? sender = null, EventArgs? e = null)
+    {
+      // Unregister event handlers
+      GameInstance.OnShowTopMessage -= OnShowTopMessage;
+      GameInstance.OnHideTopMessage -= OnHideTopMessage;
+      GameInstance.OnShowBottomMessage -= OnShowBottomMessage;
+      GameInstance.OnHideBottomMessage -= OnHideBottomMessage;
+      GameInstance.OnStartIn -= OnStartIn;
+      GameInstance.OnStart -= OnStart;
+      GameInstance.OnScore -= OnScore;
+
+      FormClosed -= UnregisterEventHandlers;
     }
 
     /// <summary>

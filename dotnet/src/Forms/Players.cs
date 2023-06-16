@@ -2,10 +2,25 @@
 
 namespace Pong
 {
+  // I am not proud of this class. It is awful...
+  // Open a PR if you want to improve it
+  // I however do not want to spend any more time on this
   public partial class Players : Form
   {
-    public DataTable Data { get; set; }
-    public Connection Connection { get; set; }
+    /// <summary>
+    /// The connection to use
+    /// </summary>
+    private Connection Connection { get; set; }
+
+    /// <summary>
+    /// The data table for the players. It is used as the data source for the data grid view
+    /// </summary>
+    private DataTable Data { get; set; }
+
+    /// <summary>
+    /// A game window that's currently open. Can be null. most likely is...
+    /// </summary>
+    private GameClientWindow? GameWindow { get; set; }
 
     public Players(Connection connection)
     {
@@ -42,6 +57,7 @@ namespace Pong
       Connection.OnUnregisterHandler += RemovePlayer;
       Connection.OnInviteHandler += Invited;
       Connection.OnCreateHandler += SessionCreated;
+      Connection.OnEndHandler += SessionEnded;
 
       // Set the label to the player's name
       username.Text = $"Registered as: {Connection.Name}";
@@ -54,10 +70,15 @@ namespace Pong
     {
       if (createEvent.Player1 == Connection.Name || createEvent.Player2 == Connection.Name)
       {
-        // Create a new game client window and show it
-        GameClientWindow gameWindow = new(Connection);
+        // If GameWindow is not null, unregister the close event handler and close the window
+        // this is to prevent the game from ending when the player had a game open and then created a new session
+        GameWindow?.UnregisterEventHandlers();
+        GameWindow?.Close();
 
-        Menu.ShowForm(this, gameWindow);
+        // Create a new game client window and show it
+        GameWindow = new(Connection);
+
+        Menu.ShowForm(this, GameWindow);
       }
       else
       {
@@ -65,6 +86,18 @@ namespace Pong
         RemovePlayer(null, new(createEvent.Player1));
         RemovePlayer(null, new(createEvent.Player2));
       }
+    }
+
+    /// <summary>
+    /// Add the players back to the data table when the session ends. Ignore if it's our name
+    /// </summary>
+    private void SessionEnded(object? _, Connection.EndEvent endEvent)
+    {
+      if (endEvent.Player1 != Connection.Name)
+        AddPlayer(endEvent.Player1);
+
+      if (endEvent.Player2 != Connection.Name)
+        AddPlayer(endEvent.Player2);
     }
 
     /// <summary>

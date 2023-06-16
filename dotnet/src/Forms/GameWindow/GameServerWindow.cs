@@ -15,7 +15,7 @@ namespace Pong
       GameInstance = new GameServer(pictureBox.Width, pictureBox.Height, type);
 
       // Register the events
-      RegisterEvents();
+      RegisterEventHandlers();
     }
   }
 }
