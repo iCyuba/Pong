@@ -2,6 +2,11 @@ namespace Pong
 {
   public partial class GameClientWindow : GameWindow<GameClient, BallClient, PaddleClient>
   {
+    /// <summary>
+    /// The connection associated with this window
+    /// </summary>
+    private Connection Connection { get; set; }
+
     public override GameClient GameInstance { get; set; }
 
     /// <summary>
@@ -11,11 +16,24 @@ namespace Pong
     public GameClientWindow(Connection connection)
       : base()
     {
+      Connection = connection;
+
       // Initialize the game instance with the connection
       GameInstance = new GameClient(pictureBox.Width, pictureBox.Height, connection);
 
       // Register the events
       RegisterEvents();
+
+      FormClosed += OnClosed;
+    }
+
+    /// <summary>
+    /// Send an end event when the window is closed
+    /// </summary>
+    private void OnClosed(object? sender, FormClosedEventArgs e)
+    {
+      // idc about any response
+      var _ = Connection.End();
     }
   }
 }

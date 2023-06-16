@@ -27,5 +27,15 @@ namespace Pong
         return Deserialize<EndEvent>(json);
       }
     }
+
+    /// <summary>
+    /// Send an end event to the server. This will end the session..
+    /// </summary>
+    public async Task End()
+    {
+      var endEvent = new Dictionary<string, string> { { "type", "end" } };
+
+      await Send(endEvent);
+    }
   }
 }
