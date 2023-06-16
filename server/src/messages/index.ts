@@ -12,3 +12,4 @@ export { default as Score } from "@/messages/score";
 export { default as Start } from "@/messages/start";
 export { default as Unregister } from "@/messages/unregister";
 export { default as Update } from "@/messages/update";
+export { default as Win } from "@/messages/win";

@@ -1,6 +1,7 @@
 import * as Messages from "@/messages";
 
 import Invite from "@/invites/invite";
+import Players from "@/players";
 import Player from "@/players/player";
 import Ball from "@/sessions/ball";
 import Paddle, { Velocity } from "@/sessions/paddle";
@@ -115,6 +116,21 @@ export default class Session {
   }
 
   /**
+   * Reset the game.
+   *
+   * Called when both players are ready again
+   */
+  reset() {
+    // Set both scores to 0
+    this.scores[SessionPlayer.Player1] = 0;
+    this.scores[SessionPlayer.Player2] = 0;
+
+    // Set isReady to false
+    this.isReady[SessionPlayer.Player1] = false;
+    this.isReady[SessionPlayer.Player2] = false;
+  }
+
+  /**
    * A player has sent a "ready" message
    *
    * This message is sent when a player presses any key (maybe I'll change this. idk)
@@ -220,8 +236,32 @@ export default class Session {
     // Stop the session for 3 seconds
     this.end(); // This gets called immediately
 
-    // And start again lmaoo
-    this.start(); // This gets called in 3 seconds
+    // And start again if no player won
+    if (!this.checkWin()) this.start(); // This gets called in 3 seconds
+  }
+
+  /**
+   * Checks if a player won and if so, stops the game until both players are ready again
+   * @returns {boolean} Whether a player won
+   */
+  private checkWin(): boolean {
+    // Check if a player has 10 points
+    if (this.scores[SessionPlayer.Player1] >= 10) {
+      // Send a win message to both players
+      Players.broadcast(Messages.Win(this.player1), [this.player1, this.player2]);
+
+      // Stop the game
+      this.reset();
+    } else if (this.scores[SessionPlayer.Player2] >= 10) {
+      // Send a win message to both players
+      Players.broadcast(Messages.Win(this.player2), [this.player1, this.player2]);
+
+      // Reset the game
+      this.reset();
+    } else return false; // Return false if no player won
+
+    // Return true if a player won
+    return true;
   }
 
   /**
