@@ -28,14 +28,6 @@ You gonna have to build it because I said so
   - Local
   - Online
 
-## Note: Do not send any identifiable information to the server!!!
-
-The server isn't using SSL!
-
-Using the WSS protocol isn't planned as of rn!
-
-So once again, do not send any identifiable information (such as your name in the game) to the server!
-
 ## Naming scheme
 
 Apparently my class names aren't clear soo..

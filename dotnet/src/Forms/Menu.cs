@@ -23,7 +23,7 @@
       multiplayerOnline.Enabled = false;
 
       // Create the connection and connect to the server (idk why I made the autoConnect a thing, i'm not using it lmao)
-      Connection = new("ws://pong.icy.cx:3000", false);
+      Connection = new("wss://pong.icy.cx", false);
       Connection
         .Connect()
         .ContinueWith(
@@ -105,10 +105,7 @@
     private void OnlineMultiplayerClick(object sender, EventArgs e)
     {
       // Ask for the player's name
-      string name = Microsoft.VisualBasic.Interaction.InputBox(
-        "What is your name?\n(Warning: the server isn't secure! don't use your real name)",
-        "Name"
-      );
+      string name = Microsoft.VisualBasic.Interaction.InputBox("What is your name?", "Name");
 
       // Register the player
       var _ = Connection.Register(name);
