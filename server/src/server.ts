@@ -1,3 +1,5 @@
+import { randomUUID, UUID } from "crypto";
+
 import {
   App,
   TemplatedApp,
@@ -11,7 +13,7 @@ import Game from "@/game";
 import MessageHandler from "@/handlers/message";
 
 /** A WebSocket connection with some extra data ig */
-export type WebSocket<UserData = any> = uWebSocket<UserData>;
+export type WebSocket<UserData = { uuid: UUID }> = uWebSocket<UserData>;
 
 /**
  * A WebSocket server for the game. This class is responsible for handling all connections
@@ -64,9 +66,8 @@ export default class Server {
     if (this.listenSocket) us_listen_socket_close(this.listenSocket);
     this.listenSocket = undefined;
 
-    // TODO: Close the game
-    // this.game.close();
-    this.game.sessions.stopGameLoop();
+    // Close the game
+    this.game.stop();
   }
 
   /** Text decoder for decoding ArrayBuffer addresses */
@@ -77,6 +78,10 @@ export default class Server {
    * @param {WebSocket} ws A WebSocket connection
    */
   private onConnection(ws: WebSocket): void {
+    // Generate a new UUID for the connection
+    const uuid = randomUUID();
+    ws.getUserData().uuid = uuid;
+
     // Log the connection
     console.log(new Date(), "Connect", this.decoder.decode(ws.getRemoteAddressAsText()));
   }
@@ -86,23 +91,19 @@ export default class Server {
    * @param {WebSocket} ws A WebSocket connection
    */
   private onClose(ws: WebSocket): void {
+    // Find the UUID of the connection
+    const uuid = ws.getUserData().uuid;
+
+    // If there's no UUID, this connection shouldn't be here
+    if (!uuid) return;
+
     // Remove the player from the game (if they're not registered, this does nothing)
-    const player = this.game.players.removeWebSocket(ws);
+    const player = this.game.players.removeUUID(uuid);
 
     // Log the disconnection
     // I give up. This will only log if the NODE_ENV isn't test.
     // I want this to work yk. But it will always run after the tests are done so it will always fail
     if (process.env.NODE_ENV !== "test")
       console.log(new Date(), "Closed connection", player?.name || "unregistered");
-  }
-
-  /**
-   * Closes the server
-   */
-  override close(cb?: (err?: Error) => void): void {
-    super.close(cb);
-
-    // Stop the game
-    this.game.stop();
   }
 }

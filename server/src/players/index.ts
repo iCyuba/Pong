@@ -1,3 +1,4 @@
+import { UUID } from "crypto";
 import { find, remove } from "lodash-es";
 
 import { WebSocket } from "@/server";
@@ -49,21 +50,21 @@ export default class Players extends Handler {
   }
 
   /**
-   * Find a player from their WebSocket
-   * @param {WebSocket} ws A WebSocket connection
-   * @returns {Player | undefined} The player with the WebSocket connection, or undefined if not found
-   */
-  fromWebSocket(ws: WebSocket): Player | undefined {
-    return find(this.all, { ws });
-  }
-
-  /**
    * Find a player by their name
    * @param {string} name The name of the player
    * @returns {Player | undefined} The player with the WebSocket connection, or undefined if not found
    */
   fromName(name: string): Player | undefined {
     return find(this.all, { name });
+  }
+
+  /**
+   * Find a player from their uuid
+   * @param {UUID} uuid The uuid of the player
+   * @returns {Player | undefined} The player with the uuid, or undefined if not found
+   */
+  fromUUID(uuid: UUID): Player | undefined {
+    return find(this.all, { uuid });
   }
 
   /**
@@ -74,8 +75,11 @@ export default class Players extends Handler {
    * @throws Error
    */
   addPlayer(ws: WebSocket, name: string): Player {
+    // Get the uuid of the websocket
+    const uuid = ws.getUserData().uuid;
+
     // Check if the player is already registered
-    if (this.fromWebSocket(ws)) throw new Error("Already registered");
+    if (this.fromUUID(uuid)) throw new Error("Already registered");
 
     // Check if the username is already taken
     if (this.fromName(name)) throw new Error("Username is already in use");
@@ -114,13 +118,13 @@ export default class Players extends Handler {
   }
 
   /**
-   * Remove a player by their WebSocket from the list
-   * @param {WebSocket} ws The player's WebSocket connection
-   * @returns {Player | undefined} The player who was removed or undefined if the WebSocket doesn't belong to anyone
+   * Remove a player by their uuid from the list
+   * @param {UUID} uuid The uuid of the player
+   * @returns {Player | undefined} The player who was removed or undefined if the uuid doesn't belong to anyone
    */
-  removeWebSocket(ws: WebSocket): Player | undefined {
+  removeUUID(uuid: UUID): Player | undefined {
     // Find the player to remove
-    const player = this.fromWebSocket(ws);
+    const player = this.fromUUID(uuid);
 
     // If no player was found, simply return
     if (!player) return;

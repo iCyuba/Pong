@@ -36,8 +36,11 @@ export abstract class RegisteredEventHandler<T extends Event> extends EventHandl
    * @param {T} event The event that was sent
    */
   handle(ws: WebSocket, event: T): void | Promise<void> {
+    // Get the UUID of the connection
+    const uuid = ws.getUserData().uuid;
+
     // Get the player that sent the event
-    const player = this.game.players.fromWebSocket(ws);
+    const player = this.game.players.fromUUID(uuid);
 
     // If the player is not registered, throw an error
     if (!player) throw new Error("Not registered");

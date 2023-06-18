@@ -1,20 +1,15 @@
 import { WebSocket } from "@/server";
 
 /**
- * A player in the game
- * @property {WebSocket} socket The WebSocket connection of the player
- * @property {string} name The name of the player
- * @property {Session} session The session that the player is in (Ommited in SessionPlayer)
- * @property {number} position The position of the player in the session
- * @property {number} score The score of the player in the session
- */
-
-/**
  * A class that represents a player in the game
  */
 export default class Player {
   /** The websocket connection of the player */
-  readonly ws: WebSocket;
+  private readonly ws: WebSocket;
+
+  /** The UUID of the connection */
+  readonly uuid: string;
+
   /** The name of the player */
   readonly name: string;
 
@@ -29,6 +24,7 @@ export default class Player {
     Player.validateName(name);
 
     this.ws = ws;
+    this.uuid = ws.getUserData().uuid;
     this.name = name;
   }
 
