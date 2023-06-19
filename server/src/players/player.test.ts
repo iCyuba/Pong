@@ -65,7 +65,7 @@ describe("Online tests", () => {
 
   // Create a new server instance before all tests with a random port
   beforeAll(done => {
-    server = new Server(0, done);
+    server = new Server(0, undefined, done);
   });
 
   // Close the server after all tests

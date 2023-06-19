@@ -2,6 +2,9 @@
 
 # Node.js: (Copied from the Node.js .gitignore)
 
+# SSL folder is private lmao
+ssl/
+
 # Logs
 logs
 *.log

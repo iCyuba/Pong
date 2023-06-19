@@ -2,6 +2,8 @@ import { randomUUID, UUID } from "crypto";
 
 import {
   App,
+  AppOptions,
+  SSLApp,
   TemplatedApp,
   us_listen_socket,
   us_listen_socket_close,
@@ -26,7 +28,7 @@ export default class Server {
   readonly messageHandler: MessageHandler = new MessageHandler(this.game);
 
   /** An instance of the uWebSockets.js app */
-  readonly app: TemplatedApp = App();
+  readonly app: TemplatedApp;
 
   /** The listen socket, given to us by uWebSockets.js in the listen callback */
   listenSocket?: us_listen_socket;
@@ -39,9 +41,15 @@ export default class Server {
   /**
    * Create a new server
    * @param {number} port The port to listen on (defaults to a random port => 0)
+   * @param {boolean} sslOptions Options to use for SSLApp. if none are provided App is used instead
    * @param {() => void} callback An optional callback to run when the server is ready
    */
-  constructor(port: number = 0, callback?: () => void) {
+  constructor(port: number = 0, sslOptions?: AppOptions, callback?: () => void) {
+    // If ssl is enabled create an ssl app
+    if (sslOptions) this.app = SSLApp(sslOptions);
+    // fallback to insecure version
+    else this.app = App();
+
     // Handle all WebSocket connections on any path
     this.app.ws("/*", {
       /* Handlers */

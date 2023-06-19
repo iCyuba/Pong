@@ -189,10 +189,16 @@ $ npm ci
 $ npm run build
 ```
 
+> Production build with ssl (you must have key.pem and cert.pem in /server/ssl/)
+
+```sh
+$ npm run build:ssl
+```
+
 > Development build:
 
 ```sh
-$ npm run dev:build
+$ npm run build:dev
 ```
 
 > If you want to run the server in watch mode with nodemon you can use this command instead and skip step 3:

@@ -12,7 +12,7 @@ describe("Sending invitations from player to player", () => {
 
   // Create a new server instance before all tests with a random port
   beforeAll(done => {
-    server = new Server(0, done);
+    server = new Server(0, undefined, done);
   });
 
   // Once all tests are done, close the server instance

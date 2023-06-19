@@ -2,8 +2,11 @@ import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import NodemonPlugin from "nodemon-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 
+const useSsl = process.env.SSL === "true";
+
 export default {
   mode: process.env.NODE_ENV === "development" ? "development" : "production",
+  entry: useSsl ? "./src/ssl.ts" : "./src/index.ts",
   target: "node",
   resolve: {
     plugins: [new TsconfigPathsPlugin()],
@@ -18,6 +21,8 @@ export default {
         test: /\.node$/,
         loader: "node-loader",
       },
+      // load .pem files with asset/resource (imports the path of the file)
+      { test: /\.pem$/, type: "asset/resource" },
     ],
   },
   plugins: [
